@@ -1,0 +1,33 @@
+.page {
+  max-width: 520px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.canvas {
+  border: 1px solid var(--border);
+  width: fit-content;
+}
+
+button {
+  width: fit-content;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.status {
+  margin: 0;
+}
