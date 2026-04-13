@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import drawing from './img/drawing.jpg'
 
-class App extends Component
+class Game extends React.Component
 {
-state = { data: null };
+  state = { data: null };
 
   componentDidMount()
   {
@@ -31,16 +32,35 @@ state = { data: null };
 
   render() {
     return (
-      <div className="App">
+      <div className="Game">
 
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
+        <div className="Game-banner">
+
+          <img src={logo} className="Game-logo" alt="logo" />
+
+          <text className="AI-generated-text">
+            Premiere histoire: blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla
+          </text>
+
+          <div className="Drawings-carrousel">
+            <button className="Carousel-button">previous</button>
+            <img src={drawing} className="Drawings" alt="logo" />
+            <img src={drawing} className="Drawings" alt="logo" />
+            <img src={drawing} className="Drawings" alt="logo" />
+            <button className="Carousel-button">Next</button>
+          </div>
+
+          <text className="AI-generated-text">
+            Deuxieme histoire: blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla
+          </text>
+
+        </div>
 
       </div>
     );
   }
 }
 
-export default App;
+
+
+export default Game;

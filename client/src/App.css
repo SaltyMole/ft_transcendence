@@ -1,34 +1,75 @@
-.App {
+.Game {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  position: relative; /* Required for the pseudo-element to anchor to */
+  overflow: hidden;   /* Clips the spinning corners */
+}
+.Game::before {
+  content: '';
+  position: absolute;
+  inset: -100%;
+  background-image: url('img/game-bg.jpg');
+  background-repeat: repeat;
+  background-size: 50vh 50vh; /* adjust tile size to taste */
+  animation: slide 10s linear infinite;
+  z-index: 0;
+}
+/* Push all direct children above the spinning background */
+.Game > * {
+  position: relative;
+  z-index: 1;
+}
+
+.Game-banner {
+  background-color: #282c34d9;
+  min-height: 100vh;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Game-logo {
+  height: 20vmin;
+  pointer-events: none;
+  animation: spin infinite 20s linear;
+}
+
+.AI-generated-text {
+  align-items: center;
+  word-wrap: break-word;
+  max-width: 90%;
   font-size: calc(10px + 2vmin);
+  color: rgb(255, 255, 255);
+}
+
+.Drawings-carrousel {
+  display: flex;
+  align-items: center;
+  max-width: 90%;
+  margin: 10px;
+}
+
+.Carousel-button {
+  background-color: rgb(80, 17, 162);
   color: white;
+  min-width: 75px;
+  margin: 2%;
 }
 
-.App-link {
-  color: #61dafb;
+.Drawings {
+  max-width: 25%;
+  margin: 2%;
 }
 
-@keyframes App-logo-spin {
+
+
+
+
+
+@keyframes spin {
   from {
     transform: rotate(0deg);
   }
@@ -37,3 +78,11 @@
   }
 }
 
+@keyframes slide {
+  from {
+    transform: translate(0px,0px);
+  }
+  to {
+    transform: translate(50vh,50vh);
+  }
+}
