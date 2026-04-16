@@ -35,10 +35,38 @@ class Drawing_board extends React.Component
 				<div className="Board"></div>
 
 				<div className="Foot">
-					<div className="Colors">
+
+					<div className="ColorsEnsemble">
 						<div className="SelectedColor"></div>
+						<div className="ColorsButtonsBackground">
+							<div>
+								<button className={`${"ColorButton"} ${"White"}`}></button>
+								<button className={`${"ColorButton"} ${"LightGrey"}`}></button>
+								<button className={`${"ColorButton"} ${"LightRed"}`}></button>
+								<button className={`${"ColorButton"} ${"LightOrange"}`}></button>
+								<button className={`${"ColorButton"} ${"LightYellow"}`}></button>
+								<button className={`${"ColorButton"} ${"LightGreen"}`}></button>
+								<button className={`${"ColorButton"} ${"LightSkyBlue"}`}></button>
+								<button className={`${"ColorButton"} ${"LightOceanBlue"}`}></button>
+								<button className={`${"ColorButton"} ${"LightPurple"}`}></button>
+								<button className={`${"ColorButton"} ${"LightPink"}`}></button>
+								<button className={`${"ColorButton"} ${"LightBrown"}`}></button>
+							</div>
+							<div>
+								<button className={`${"ColorButton"} ${"Black"}`}></button>
+								<button className={`${"ColorButton"} ${"DarkGrey"}`}></button>
+								<button className={`${"ColorButton"} ${"DarkRed"}`}></button>
+								<button className={`${"ColorButton"} ${"DarkOrange"}`}></button>
+								<button className={`${"ColorButton"} ${"DarkYellow"}`}></button>
+								<button className={`${"ColorButton"} ${"DarkGreen"}`}></button>
+								<button className={`${"ColorButton"} ${"DarkSkyBlue"}`}></button>
+								<button className={`${"ColorButton"} ${"DarkOceanBlue"}`}></button>
+								<button className={`${"ColorButton"} ${"DarkPurple"}`}></button>
+								<button className={`${"ColorButton"} ${"DarkPink"}`}></button>
+								<button className={`${"ColorButton"} ${"DarkBrown"}`}></button>
+							</div>
+						</div>
 					</div>
-					
 				</div>
 			</div>
 		);

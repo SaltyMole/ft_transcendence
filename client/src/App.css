@@ -22,28 +22,81 @@
 	height: 15.65vh;
 	width: 100vw;
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	border-radius: 0px 25px 0px 0px;
 	box-shadow: inset 0px 5px 10px 1px #491A65;
+	overflow: auto;
 	z-index: 1;
 }
 
-.Colors {
+.ColorsEnsemble {
 	display: flex;
-	margin: 7vh 5px;
+	margin: 0px 2.34vw;
 	z-index: 2;
 }
-
 .SelectedColor {
-	background-color: #ffffff;
-	height: 9.26vh;
-	width: 9.26vh;
-	display: flex;
-	margin: 0px 5px;
+	background-color: #000000;
+	height: 7vw;
+	max-height: 7vh;
+	width: 7vw;
+	max-width: 7vh;
+	align-self: center;
+	margin-right: 1.04vw;
 	border-radius: 10px 10px 10px 10px;
 	box-shadow: 2px 4px 3px #491A65;
 }
+.ColorsButtonsBackground {
+	background-color: #00000000;
+	display: flex;
+	flex-direction: column;
+	align-self: center;
+	margin-right: 1.04vw;
+	border-radius: 10px 10px 10px 10px;
+	box-shadow: 2px 4px 3px #491A65;
+	font-size: 0;
+}
+.ColorButton {
+	height: 5vw;
+	max-height: 5vh;
+	width: 5vw;
+	max-width: 5vh;
+	border: none;
+	outline: none;
+	font-size: 0;
+	margin: 0;
+}
+.White {background-color: #ffffff; border-radius: 10px 0px 0px 0px;}
+.Black {background-color: #000000; border-radius: 0px 0px 0px 10px;}
 
+.LightGrey {background-color: #D9D9D9;}
+.DarkGrey {background-color: #666666;}
+
+.LightRed {background-color: #FF0000;}
+.DarkRed {background-color: #930000;}
+
+.LightOrange {background-color: #FF6A00;}
+.DarkOrange {background-color: #983F00;}
+
+.LightYellow {background-color: #FFC300;}
+.DarkYellow {background-color: #977400;}
+
+.LightGreen {background-color: #95FF00;}
+.DarkGreen {background-color: #548F00;}
+
+.LightSkyBlue {background-color: #00D9FF;}
+.DarkSkyBlue {background-color: #0094AE;}
+
+.LightOceanBlue {background-color: #0033FF;}
+.DarkOceanBlue {background-color: #001876;}
+
+.LightPurple {background-color: #A100FF;}
+.DarkPurple {background-color: #6800A4;}
+
+.LightPink {background-color: #F200FF;}
+.DarkPink {background-color: #95009D;}
+
+.LightBrown {background-color: #BC4F51; border-radius: 0px 10px 0px 0px;}
+.DarkBrown {background-color: #772E30; border-radius: 0px 0px 10px 0px;}
 
 
 @keyframes spin {
