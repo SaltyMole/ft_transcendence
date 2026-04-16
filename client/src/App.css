@@ -1,88 +1,65 @@
-.Game {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative; /* Required for the pseudo-element to anchor to */
-  overflow: hidden;   /* Clips the spinning corners */
-}
-.Game::before {
-  content: '';
-  position: absolute;
-  inset: -100%;
-  background-image: url('img/game-bg.jpg');
-  background-repeat: repeat;
-  background-size: 50vh 50vh; /* adjust tile size to taste */
-  animation: slide 10s linear infinite;
-  z-index: 0;
-}
-/* Push all direct children above the spinning background */
-.Game > * {
-  position: relative;
-  z-index: 1;
+.Background {
+	background-color: #D7C9FF;
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	flex-direction: column;
+	z-index: 0;
 }
 
-.Game-banner {
-  background-color: #282c34d9;
-  min-height: 100vh;
-  max-width: 90%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.Board {
+	background-color: #FFFADE;
+	height: 100vh;
+	width: 76.56vw;
+	display: flex;
+	border-radius: 0px 25px 25px 0px;
+	box-shadow: 2px 4px 3px #491A65;
+	z-index: 2;
 }
 
-.Game-logo {
-  height: 20vmin;
-  pointer-events: none;
-  animation: spin infinite 20s linear;
+.Foot {
+	background-color: #58508D;
+	height: 15.65vh;
+	width: 100vw;
+	display: flex;
+	flex-direction: column;
+	border-radius: 0px 25px 0px 0px;
+	box-shadow: inset 0px 5px 10px 1px #491A65;
+	z-index: 1;
 }
 
-.AI-generated-text {
-  align-items: center;
-  word-wrap: break-word;
-  max-width: 90%;
-  font-size: calc(10px + 2vmin);
-  color: rgb(255, 255, 255);
+.Colors {
+	display: flex;
+	margin: 7vh 5px;
+	z-index: 2;
 }
 
-.Drawings-carrousel {
-  display: flex;
-  align-items: center;
-  max-width: 90%;
-  margin: 10px;
+.SelectedColor {
+	background-color: #ffffff;
+	height: 9.26vh;
+	width: 9.26vh;
+	display: flex;
+	margin: 0px 5px;
+	border-radius: 10px 10px 10px 10px;
+	box-shadow: 2px 4px 3px #491A65;
 }
-
-.Carousel-button {
-  background-color: rgb(80, 17, 162);
-  color: white;
-  min-width: 75px;
-  margin: 2%;
-}
-
-.Drawings {
-  max-width: 25%;
-  margin: 2%;
-}
-
-
-
 
 
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 @keyframes slide {
-  from {
-    transform: translate(0px,0px);
-  }
-  to {
-    transform: translate(50vh,50vh);
-  }
+	from {
+		transform: translate(0px,0px);
+	}
+	to {
+		transform: translate(50vh,50vh);
+	}
 }
