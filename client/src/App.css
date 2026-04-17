@@ -7,18 +7,98 @@
 	z-index: 0;
 }
 
-.Board {
-	background-color: #FFFADE;
-	height: 100vh;
-	width: 76.56vw;
+.UpperPart {
 	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	width: 100vw;
+	height: 85vh;
+	overflow: scroll;
+}
+
+.Board {
+	grid-column: 1;
+	background-color: #FFFADE;
+	aspect-ratio: 4/3;
+	width: 110.5vh;
 	border-radius: 0px 3vh 3vh 0px;
 	box-shadow: 2px 4px 3px #491A65;
 	z-index: 2;
 }
 
+.ChatBox {
+	grid-column: 2;
+	display: flex;
+	flex-direction: column;
+	height: 81vh;
+	min-width: 20vw;
+	margin-left: 1vw;
+	margin-right: 1vw;
+	margin-top: 1vh;
+	margin-bottom: 1vh;
+	padding-right: 1vw;
+	flex: 1;
+}
+.Chat {
+	overflow: scroll;
+
+	font-size: 2.5vw;
+	color: #58508D;
+	text-shadow: 0px 2px 2px #00000059;
+	overflow-wrap: break-word;
+}
+.ChatInputBox {
+	display: flex;
+	background-color: #58508D;
+	min-height: 7vh;
+	margin-left: 2vh;
+	margin-right: 2vh;
+	border-radius: 5vh 5vh 5vh 5vh;
+	box-shadow: 2px 4px 3px #491A65;
+	margin-top: auto;
+	margin-bottom: 2vh;
+}
+.ChatInput {
+	background-color: #00000000;
+	border: none;
+	align-self: center;
+	outline: none;
+	margin-left: 1vw;
+	margin-right: auto;
+	min-width: 11vw;
+	width: 100vw;
+	min-height: 6vh;
+
+	font-size: 3vh;
+	color: #ffffff;
+}
+
+.SendChatButton {
+	background-color: #FFFADE;
+	min-height: 5vh;
+	height: 5vw;
+	max-height: 5vh;
+	min-width: 5vh;
+	width: 5vw;
+	max-width: 5vh;
+	border: none;
+	outline: none;
+	border-radius: 3vh 3vh 3vh 3vh;
+	align-self: center;
+	margin-left: auto;
+	margin-right: 0.5vw;
+	box-shadow: 2px 4px 3px #491A65;
+}
+.SendChatButton:hover {
+	box-shadow: inset 2px 2px 3px 1px #491A65;
+}
+
 .Foot {
 	background-color: #58508D;
+	position: fixed;
+	bottom: 0;
+	height: 17vh;
 	width: 100%;
 	display: flex;
 	flex-direction: row;
@@ -39,7 +119,7 @@
 
 .ColorsEnsemble {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	flex-direction: row;
 	justify-content: center;
 	margin-top: 1vh;
@@ -49,10 +129,10 @@
 	z-index: 2;
 }
 .SelectedColor {
+	flex: 1;
 	height: 7vw;
 	max-height: 7vh;
-	width: 7vw;
-	max-width: 7vh;
+	width: 1.5vh;
 	align-self: center;
 	margin-right: 1.04vw;
 	margin-bottom: 0.5vh;
@@ -207,32 +287,19 @@
 
 
 .ToolsEnsemble {
-	background-color: #001876;
 	display: flex;
 	flex-wrap: wrap;
 	align-self: center;
 	z-index: 2;
 }
-.Tools {
-	align-self: center;
-	margin: 0px 1vw 0px 1vw;
-}
-.Thickness {
-	align-self: center;
-	margin: 0px 1vw 0px 1vw;
-}
-.Trash {
-	align-self: center;
-	margin: 0px 1vw 0px 1vw;
-}
 .ToolButton {
 	background-color: #D7C9FF;
-	height: 7vw;
-	max-height: 7vh;
-	width: 7vw;
+	width: 6vw;
 	max-width: 7vh;
+	height: 6vw;
+	max-height: 7vh;
 	align-self: center;
-	margin: 0px 0.4vw 0px 0.4vw;
+	margin: 0px 0.4vh 0px 0.4vh;
 	border-radius: 1.5vh 1.5vh 1.5vh 1.5vh;
 	box-shadow: 2px 4px 3px #491A65;
 	border: none;
@@ -241,6 +308,41 @@
 }
 .ToolButton:hover {
 	box-shadow: inset 2px 2px 3px 1px #491A65;
+}
+
+.SendDrawingButton {
+	background-color: #D7C9FF;
+	width: 7vw;
+	max-width: 15vh;
+	height: 15vh;
+	max-height: 15vh;
+	margin: 0px 0.4vh 0px 0.4vh;
+	border-radius: 1.5vh 0px 0px 0px;
+	box-shadow: -4px -4px 3px #491A65;
+	border: none;
+	outline: none;
+	margin-top: auto;
+	margin-left: auto;
+}
+.SendDrawingButton:hover {
+	box-shadow: inset 2px 2px 3px 1px #491A65;
+}
+
+
+
+
+
+.FilmGrain {
+	background-image: url(https://www.transparenttextures.com/patterns/black-felt.png);
+	background-repeat: repeat;
+	background-size: 25%;
+	opacity: 0.25;
+	pointer-events: none;
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	z-index: 5;
 }
 
 
