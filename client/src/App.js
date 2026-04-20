@@ -9,29 +9,47 @@ var selected_thickness = "medium"
 function chat_input_focus()
 {
 	const chatInput = document.getElementById("ChatInput");
-	console.log(chatInput.value);
+	console.log("chatInput focused");
 
 	if (chatInput.focus && chatInput.value === "Chat here...")
 		document.getElementById("ChatInput").value = "";
 	else if (chatInput.focus && chatInput.value === "")
 		document.getElementById("ChatInput").value = "Chat here...";
 }
-
 function chat_input_unfocus()
 {
 	const chatInput = document.getElementById("ChatInput");
-	console.log(chatInput.value);
+	console.log("chatInput losed focus");
 
 	if (chatInput.focus && chatInput.value === "")
 		document.getElementById("ChatInput").value = "Chat here...";
 }
 
-function set_select_color(color)
+
+
+function set_select_color(color, id)
 {
 	document.getElementById("SelectedColor").style.backgroundColor = color;
 	selected_color = color;
 	console.log("new selected color = ", selected_color);
+
+	// Reset all butons style
+	const colorButton = document.getElementsByClassName("ColorButton")
+	for (let i = 0; i < colorButton.length; i++)
+	{
+		colorButton[i].style.borderStyle = "none";
+		colorButton[i].style.zIndex = 1;
+	}
+
+	// Set new style for selected color button
+	if (document.getElementById(id).id === "Black")
+		document.getElementById(id).style.borderColor = "white";
+	document.getElementById(id).style.borderStyle = "double";
+	document.getElementById(id).style.borderWidth = "thick"
+	
 }
+
+
 
 function set_select_tool(tool)
 {
@@ -62,8 +80,9 @@ function set_select_tool(tool)
 		document.getElementById("Bucket").style.backgroundColor = "#491A65";
 		document.getElementById("BucketSvg").style.fill = "#ffffff";
 	}
-		
 }
+
+
 
 function set_select_thickness(thickness)
 {
@@ -94,8 +113,9 @@ function set_select_thickness(thickness)
 		document.getElementById("ThickThickness").style.backgroundColor = "#491A65";
 		document.getElementById("ThickSvg").style.fill = "#ffffff";
 	}
-		
 }
+
+
 
 function clear_board()
 {
@@ -112,8 +132,9 @@ class Drawing_board extends React.Component
 	componentDidMount()
 	{
 		// Set tool and thickness state at launch
-		set_select_tool("pen");
-		set_select_thickness("medium");
+		set_select_tool(selected_tool);
+		set_select_thickness(selected_thickness);
+		set_select_color(selected_color, "Black")
 
 		// Call our fetch function below once the component mounts
 		this.callBackendAPI()
@@ -176,29 +197,29 @@ class Drawing_board extends React.Component
 						<div className="ColorsEnsemble">
 							<div id="SelectedColor" className="SelectedColor" style={{ backgroundColor: selected_color }}></div>
 							<div className="ColorsButtonsBackground">
-								<button onClick={() => set_select_color("#ffffff")} className={`${"ColorButton"} ${"White"}`}></button>
-								<button onClick={() => set_select_color("#D9D9D9")} className={`${"ColorButton"} ${"LightGrey"}`}></button>
-								<button onClick={() => set_select_color("#FF0000")} className={`${"ColorButton"} ${"LightRed"}`}></button>
-								<button onClick={() => set_select_color("#FF6A00")} className={`${"ColorButton"} ${"LightOrange"}`}></button>
-								<button onClick={() => set_select_color("#FFC300")} className={`${"ColorButton"} ${"LightYellow"}`}></button>
-								<button onClick={() => set_select_color("#95FF00")} className={`${"ColorButton"} ${"LightGreen"}`}></button>
-								<button onClick={() => set_select_color("#00D9FF")} className={`${"ColorButton"} ${"LightSkyBlue"}`}></button>
-								<button onClick={() => set_select_color("#0033FF")} className={`${"ColorButton"} ${"LightOceanBlue"}`}></button>
-								<button onClick={() => set_select_color("#A100FF")} className={`${"ColorButton"} ${"LightPurple"}`}></button>
-								<button onClick={() => set_select_color("#F200FF")} className={`${"ColorButton"} ${"LightPink"}`}></button>
-								<button onClick={() => set_select_color("#BC4F51")} className={`${"ColorButton"} ${"LightBrown"}`}></button>
+								<button onClick={() => set_select_color("#ffffff", "White")}			className="ColorButton" id="White"></button>
+								<button onClick={() => set_select_color("#D9D9D9", "LightGrey")}		className="ColorButton" id="LightGrey"></button>
+								<button onClick={() => set_select_color("#FF0000", "LightRed")}		className="ColorButton" id="LightRed"></button>
+								<button onClick={() => set_select_color("#FF6A00", "LightOrange")}		className="ColorButton" id="LightOrange"></button>
+								<button onClick={() => set_select_color("#FFC300", "LightYellow")}		className="ColorButton" id="LightYellow"></button>
+								<button onClick={() => set_select_color("#95FF00", "LightGreen")}		className="ColorButton" id="LightGreen"></button>
+								<button onClick={() => set_select_color("#00D9FF", "LightSkyBlue")}	className="ColorButton" id="LightSkyBlue"></button>
+								<button onClick={() => set_select_color("#0033FF", "LightOceanBlue")}	className="ColorButton" id="LightOceanBlue"></button>
+								<button onClick={() => set_select_color("#A100FF", "LightPurple")}		className="ColorButton" id="LightPurple"></button>
+								<button onClick={() => set_select_color("#F200FF", "LightPink")}		className="ColorButton" id="LightPink"></button>
+								<button onClick={() => set_select_color("#BC4F51", "LightBrown")}		className="ColorButton" id="LightBrown"></button>
 
-								<button onClick={() => set_select_color("#000000")} className={`${"ColorButton"} ${"Black"}`}></button>
-								<button onClick={() => set_select_color("#666666")} className={`${"ColorButton"} ${"DarkGrey"}`}></button>
-								<button onClick={() => set_select_color("#930000")} className={`${"ColorButton"} ${"DarkRed"}`}></button>
-								<button onClick={() => set_select_color("#983F00")} className={`${"ColorButton"} ${"DarkOrange"}`}></button>
-								<button onClick={() => set_select_color("#977400")} className={`${"ColorButton"} ${"DarkYellow"}`}></button>
-								<button onClick={() => set_select_color("#548F00")} className={`${"ColorButton"} ${"DarkGreen"}`}></button>
-								<button onClick={() => set_select_color("#0094AE")} className={`${"ColorButton"} ${"DarkSkyBlue"}`}></button>
-								<button onClick={() => set_select_color("#001876")} className={`${"ColorButton"} ${"DarkOceanBlue"}`}></button>
-								<button onClick={() => set_select_color("#6800A4")} className={`${"ColorButton"} ${"DarkPurple"}`}></button>
-								<button onClick={() => set_select_color("#95009D")} className={`${"ColorButton"} ${"DarkPink"}`}></button>
-								<button onClick={() => set_select_color("#772E30")} className={`${"ColorButton"} ${"DarkBrown"}`}></button>
+								<button onClick={() => set_select_color("#000000", "Black")}			className="ColorButton" id="Black"></button>
+								<button onClick={() => set_select_color("#666666", "DarkGrey")}		className="ColorButton" id="DarkGrey"></button>
+								<button onClick={() => set_select_color("#930000", "DarkRed")}			className="ColorButton" id="DarkRed"></button>
+								<button onClick={() => set_select_color("#983F00", "DarkOrange")}		className="ColorButton" id="DarkOrange"></button>
+								<button onClick={() => set_select_color("#977400", "DarkYellow")}		className="ColorButton" id="DarkYellow"></button>
+								<button onClick={() => set_select_color("#548F00", "DarkGreen")}		className="ColorButton" id="DarkGreen"></button>
+								<button onClick={() => set_select_color("#0094AE", "DarkSkyBlue")}		className="ColorButton" id="DarkSkyBlue"></button>
+								<button onClick={() => set_select_color("#001876", "DarkOceanBlue")}	className="ColorButton" id="DarkOceanBlue"></button>
+								<button onClick={() => set_select_color("#6800A4", "DarkPurple")}		className="ColorButton" id="DarkPurple"></button>
+								<button onClick={() => set_select_color("#95009D", "DarkPink")}		className="ColorButton" id="DarkPink"></button>
+								<button onClick={() => set_select_color("#772E30", "DarkBrown")}		className="ColorButton" id="DarkBrown"></button>
 							</div>
 						</div>
 
