@@ -6,26 +6,6 @@ var selected_tool = "pen"
 var selected_thickness = "medium"
 
 
-function chat_input_focus()
-{
-	const chatInput = document.getElementById("ChatInput");
-	console.log("chatInput focused");
-
-	if (chatInput.focus && chatInput.value === "Chat here...")
-		document.getElementById("ChatInput").value = "";
-	else if (chatInput.focus && chatInput.value === "")
-		document.getElementById("ChatInput").value = "Chat here...";
-}
-function chat_input_unfocus()
-{
-	const chatInput = document.getElementById("ChatInput");
-	console.log("chatInput losed focus");
-
-	if (chatInput.focus && chatInput.value === "")
-		document.getElementById("ChatInput").value = "Chat here...";
-}
-
-
 
 function set_select_color(color, id)
 {
@@ -180,7 +160,7 @@ class Drawing_board extends React.Component
 							</div>
 
 							<div className="ChatInputBox">
-								<input onFocus={chat_input_focus} onBlur={chat_input_unfocus} defaultValue="Chat here..." id="ChatInput" className="ChatInput"></input>
+								<input placeholder='Chat here...' id="ChatInput" className="ChatInput"></input>
 
 								<button className="SendChatButton">
 									<svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg>
