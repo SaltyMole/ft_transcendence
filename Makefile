@@ -1,4 +1,4 @@
-.PHONY: all install frontend-run backend-run
+.PHONY: all install frontend-run backend-run clean
 
 all: frontend backend
 
@@ -8,8 +8,8 @@ install:
 frontend-run: install
 	cd ./client && npm start
 
-clean:
-	cd ./client && npm ci && rm -rf node_modules 
-
 backend-run:
 	node server.js
+
+clean:
+	cd ./client && npm ci && rm -rf node_modules
