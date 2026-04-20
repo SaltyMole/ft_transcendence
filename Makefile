@@ -12,4 +12,5 @@ backend-run:
 	node server.js
 
 clean:
-	cd ./client && npm ci && rm -rf node_modules
+	cd ./client && npm ci
+	cd ./client && rm -rf node_modules
