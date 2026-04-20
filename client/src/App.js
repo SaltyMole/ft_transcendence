@@ -14,8 +14,7 @@ var thickness_medium = 10
 var thickness_thick = 20
 var selected_thickness = thickness_medium
 
-var board_i = 0;
-
+const boardRef = { current: null };
 
 
 function set_select_color(color, id)
@@ -37,7 +36,7 @@ function set_select_color(color, id)
 		document.getElementById(id).style.borderColor = "white";
 	document.getElementById(id).style.borderStyle = "double";
 	document.getElementById(id).style.borderWidth = "thick"
-	
+
 }
 
 
@@ -45,8 +44,7 @@ function set_select_color(color, id)
 function set_select_tool(tool)
 {
 	selected_tool = tool;
-	console.log("new selected tool = ", selected_tool);
-	
+
 	// Reset all tools colors and svg fills
 	document.getElementById("Pen").style.backgroundColor = "";
 	document.getElementById("PenSvg").style.fill = "";
@@ -58,16 +56,19 @@ function set_select_tool(tool)
 	// Set new color and svg fill to new selected tool
 	if (selected_tool === pen)
 	{
+		console.log("new selected tool = pen");
 		document.getElementById("Pen").style.backgroundColor = "#491A65";
 		document.getElementById("PenSvg").style.fill = "#ffffff";
 	}
 	else if (selected_tool === eraser)
 	{
+		console.log("new selected tool = eraser");
 		document.getElementById("Eraser").style.backgroundColor = "#491A65";
 		document.getElementById("EraserSvg").style.fill = "#ffffff";
 	}
 	else if (selected_tool === bucket)
 	{
+		console.log("new selected tool = bucket");
 		document.getElementById("Bucket").style.backgroundColor = "#491A65";
 		document.getElementById("BucketSvg").style.fill = "#ffffff";
 	}
@@ -78,7 +79,6 @@ function set_select_tool(tool)
 function set_select_thickness(thickness)
 {
 	selected_thickness = thickness;
-	console.log("new selected thickness = ", selected_thickness);
 
 	// Reset all thicknesses colors and svg fills
 	document.getElementById("FineThickness").style.backgroundColor = "";
@@ -91,16 +91,19 @@ function set_select_thickness(thickness)
 	// Set new color and svg fill to new selected thickness
 	if (selected_thickness === thinckness_fine)
 	{
+		console.log("new selected thickness = fine");
 		document.getElementById("FineThickness").style.backgroundColor = "#491A65";
 		document.getElementById("FineSvg").style.fill = "#ffffff";
 	}
 	else if (selected_thickness === thickness_medium)
 	{
+		console.log("new selected thickness = medium");
 		document.getElementById("MediumThickness").style.backgroundColor = "#491A65";
 		document.getElementById("MediumSvg").style.fill = "#ffffff";
-	}	
+	}
 	else if (selected_thickness === thickness_thick)
 	{
+		console.log("new selected thickness = thick");
 		document.getElementById("ThickThickness").style.backgroundColor = "#491A65";
 		document.getElementById("ThickSvg").style.fill = "#ffffff";
 	}
@@ -110,42 +113,61 @@ function set_select_thickness(thickness)
 
 function clear_board()
 {
+	boardRef.current?.clear();
 	console.log("board cleared !");
-}
-
-
-function update_board_i()
-{
-	board_i++;
 }
 
 
 
 const Board = () => {
-	const [tool, setTool] = React.useState('pen');
 	const [lines, setLines] = React.useState([]);
+
+	React.useEffect(() => {
+		boardRef.current = {
+			clear: () => setLines([]),
+		};
+	}, []);
+
+	// const [tool, setTool] = React.useState('pen');
 	const isDrawing = React.useRef(false);
+	const containerRef = React.useRef(null);
+	const [size, setSize] = React.useState({ width: 0, height: 0 });
+
+	React.useEffect(() => {
+		const el = containerRef.current;
+		if (!el) return;
+		const observer = new ResizeObserver(([entry]) => {
+			setSize({ width: entry.contentRect.width, height: entry.contentRect.height });
+		});
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, []);
 
 	const handleMouseDown = (e) => {
 		isDrawing.current = true;
 		const pos = e.target.getStage().getPointerPosition();
-		setLines([...lines, { tool, points: [pos.x, pos.y] }]);
+		setLines(prev => [...prev, {
+			points: [pos.x, pos.y],
+			color: selected_color,
+			thickness: selected_thickness,
+			tool: selected_tool,
+		}]);
 	};
 
 	const handleMouseMove = (e) => {
-		// no drawing - skipping
-		if (!isDrawing.current) {
-		return;
-		}
+		if (!isDrawing.current) return;
+
 		const stage = e.target.getStage();
 		const point = stage.getPointerPosition();
-		let lastLine = lines[lines.length - 1];
-		// add point
-		lastLine.points = lastLine.points.concat([point.x, point.y]);
 
-		// replace last
-		lines.splice(lines.length - 1, 1, lastLine);
-		setLines(lines.concat());
+		setLines(prev => {
+			const lastLine = prev[prev.length - 1];
+			const updatedLine = {
+				...lastLine,
+				points: [...lastLine.points, point.x, point.y], // new array, not mutated
+			};
+			return [...prev.slice(0, -1), updatedLine]; // new array, not spliced
+		});
 	};
 
 	const handleMouseUp = () => {
@@ -153,28 +175,29 @@ const Board = () => {
 	};
 
 	return (
-		<div>
+		<div ref={containerRef} style={{ width: '100%', height: '100%' }}>
 			<Stage
-				width={window.innerWidth}
-				height={window.innerHeight}
+				width={size.width}
+				height={size.height}
 				onMouseDown={handleMouseDown}
-				onMousemove={handleMouseMove}
-				onMouseup={handleMouseUp}
+				onMouseMove={handleMouseMove}
+				onMouseUp={handleMouseUp}
 				onTouchStart={handleMouseDown}
 				onTouchMove={handleMouseMove}
 				onTouchEnd={handleMouseUp}
+				onMouseLeave={handleMouseUp}
 			>
 				<Layer>
 				{lines.map((line, i) => (
 					<Line
 					key={i}
 					points={line.points}
-					stroke={selected_color}
-					strokeWidth={selected_thickness}
+					stroke={line.color}
+					strokeWidth={line.tool === eraser ? line.thickness*2 : line.thickness}
 					tension={0.5}
 					lineCap="round"
 					lineJoin="round"
-					globalCompositeOperation={selected_tool}
+					globalCompositeOperation={line.tool}
 					/>
 				))}
 				</Layer>
@@ -194,7 +217,7 @@ class DrawingInterface extends React.Component
 		// Set tool and thickness state at launch
 		set_select_tool(selected_tool);
 		set_select_thickness(selected_thickness);
-		set_select_color(selected_color, "Black")
+		set_select_color(selected_color, "Black");
 
 		// Call our fetch function below once the component mounts
 		this.callBackendAPI()
@@ -218,8 +241,6 @@ class DrawingInterface extends React.Component
 	};
 
 
-	
-
 	render() {
 		return (
 			<div>
@@ -229,8 +250,8 @@ class DrawingInterface extends React.Component
 
 					<div className="UpperPart">
 
-						<div onClick="update_board_i" className="Board">
-							<Board key={board_i} />
+						<div className="Board" id="Board">
+							<Board />
 						</div>
 
 						<div className="ChatBox">
@@ -250,8 +271,8 @@ class DrawingInterface extends React.Component
 								</button>
 							</div>
 						</div>
-						
-						
+
+
 
 					</div>
 
@@ -318,7 +339,7 @@ class DrawingInterface extends React.Component
 						</div>
 
 						<button className="SendDrawingButton"></button>
-						
+
 					</div>
 				</div>
 

@@ -14,7 +14,7 @@
 	align-items: flex-start;
 	width: 100vw;
 	height: 85vh;
-	overflow: scroll;
+	overflow: auto;
 }
 
 .Board {
@@ -24,6 +24,7 @@
 	width: 110.5vh;
 	border-radius: 0px 3vh 3vh 0px;
 	box-shadow: 2px 4px 3px #491A65;
+	overflow: hidden;
 	z-index: 2;
 }
 
@@ -41,7 +42,7 @@
 	flex: 1;
 }
 .Chat {
-	overflow: scroll;
+	overflow: auto;
 	font-size:calc(100% + 1vw);
 	color: #58508D;
 	text-shadow: 0px 2px 2px #00000059;
