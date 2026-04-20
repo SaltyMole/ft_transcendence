@@ -159,9 +159,7 @@ class Drawing_board extends React.Component
 
 						</div>
 
-						<button className="SendDrawingButton">
-							SEND
-						</button>
+						<button className="SendDrawingButton"></button>
 						
 					</div>
 				</div>
