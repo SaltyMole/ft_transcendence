@@ -9,9 +9,9 @@ var eraser = "destination-out"
 var bucket = ""
 var selected_tool = pen
 
-var thinckness_fine = 2
-var thickness_medium = 5
-var thickness_thick = 15
+var thinckness_fine = 3
+var thickness_medium = 10
+var thickness_thick = 25
 var selected_thickness = thickness_medium
 
 const boardRef = { current: null };
@@ -161,7 +161,7 @@ const Board = () => {
 		setLines(prev => [...prev, {
 			points: [pos.x / size.width, pos.y / size.height], // store as ratio
 			color: selected_color,
-			thickness: selected_thickness / size.width,
+			thickness: selected_thickness,
 			tool: selected_tool,
 		}]);
 		console.log(selected_thickness / size.width);
@@ -203,7 +203,7 @@ const Board = () => {
 					key={i}
 					points={line.points.map((p, j) => j % 2 === 0 ? p * size.width : p * size.height)} // Scale with screen size
 					stroke={line.color}
-					strokeWidth={line.tool === eraser ? (line.thickness * size.width)*2 : line.thickness * size.width}
+					strokeWidth={line.tool === eraser ? (line.thickness * (size.width / 1000))*2 : line.thickness * (size.width / 1000)}
 					tension={0.5}
 					lineCap="round"
 					lineJoin="round"
