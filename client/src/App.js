@@ -164,6 +164,7 @@ const Board = () => {
 			thickness: selected_thickness / size.width,
 			tool: selected_tool,
 		}]);
+		console.log(selected_thickness / size.width);
 	};
 
 	const handleMouseMove = (e) => {
