@@ -194,12 +194,13 @@ const Board = () => {
 				onTouchStart={handleMouseDown}
 				onTouchMove={handleMouseMove}
 				onTouchEnd={handleMouseUp}
+				onMouseLeave={handleMouseUp}
 			>
 				<Layer>
 				{lines.map((line, i) => (
 					<Line
 					key={i}
-					points={line.points.map((p, j) => j % 2 === 0 ? p * size.width : p * size.height)}
+					points={line.points.map((p, j) => j % 2 === 0 ? p * size.width : p * size.height)} // Scale with screen size
 					stroke={line.color}
 					strokeWidth={line.tool === eraser ? (line.thickness * size.width)*2 : line.thickness * size.width}
 					tension={0.5}
