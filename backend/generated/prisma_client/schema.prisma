@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma_client"
+
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int          @id @default(autoincrement())
+  username     String       @unique
+  games        GamePlayer[]
+  avatarUrl    String?
+  passwordHash String
+  drawnRounds  Round[]      @relation("UserDrawnRounds")
+}
+
+model Game {
+  id         Int          @id @default(autoincrement())
+  status     String
+  maxPlayers Int
+  players    GamePlayer[]
+  rounds     Round[]
+}
+
+model GamePlayer {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  game   Game @relation(fields: [gameId], references: [id])
+  gameId Int
+  score  Int  @default(0)
+}
+
+model Round {
+  id       Int    @id @default(autoincrement())
+  game     Game   @relation(fields: [gameId], references: [id])
+  gameId   Int
+  drawer   User   @relation("UserDrawnRounds", fields: [drawerId], references: [id])
+  drawerId Int
+  word     String
+}
+
+model Message {
+  id        Int     @id @default(autoincrement())
+  gameId    Int
+  userId    Int
+  content   String
+  isCorrect Boolean
+}
