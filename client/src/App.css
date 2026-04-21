@@ -27,6 +27,16 @@
 	overflow: hidden;
 	z-index: 2;
 }
+.KonvaBoard {
+	grid-column: 1;
+	background-color: #FFFADE;
+	aspect-ratio: 4/3;
+	width: 110.5vh;
+	border-radius: 0px 3vh 3vh 0px;
+	box-shadow: 2px 4px 3px #491A65;
+	overflow: hidden;
+	z-index: 2;
+}
 
 .ChatBox {
 	grid-column: 2;

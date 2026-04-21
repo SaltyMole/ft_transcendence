@@ -9,9 +9,9 @@ var eraser = "destination-out"
 var bucket = ""
 var selected_tool = pen
 
-var thinckness_fine = 5
-var thickness_medium = 10
-var thickness_thick = 20
+var thinckness_fine = 2
+var thickness_medium = 5
+var thickness_thick = 15
 var selected_thickness = thickness_medium
 
 const boardRef = { current: null };
@@ -32,8 +32,21 @@ function set_select_color(color, id)
 	}
 
 	// Set new style for selected color button
-	if (document.getElementById(id).id === "Black")
+	if (document.getElementById(id).id === "Black" |
+		document.getElementById(id).id === "DarkGrey" |
+		document.getElementById(id).id === "DarkRed" |
+		document.getElementById(id).id === "DarkOrange" |
+		document.getElementById(id).id === "DarkYellow" |
+		document.getElementById(id).id === "DarkGreen" |
+		document.getElementById(id).id === "DarkSkyBlue" |
+		document.getElementById(id).id === "DarkOceanBlue" |
+		document.getElementById(id).id === "DarkPurple" |
+		document.getElementById(id).id === "DarkPink" |
+		document.getElementById(id).id === "DarkBrown")
+	{
 		document.getElementById(id).style.borderColor = "white";
+	}
+		
 	document.getElementById(id).style.borderStyle = "double";
 	document.getElementById(id).style.borderWidth = "thick"
 
@@ -128,7 +141,6 @@ const Board = () => {
 		};
 	}, []);
 
-	// const [tool, setTool] = React.useState('pen');
 	const isDrawing = React.useRef(false);
 	const containerRef = React.useRef(null);
 	const [size, setSize] = React.useState({ width: 0, height: 0 });
@@ -147,26 +159,23 @@ const Board = () => {
 		isDrawing.current = true;
 		const pos = e.target.getStage().getPointerPosition();
 		setLines(prev => [...prev, {
-			points: [pos.x, pos.y],
+			points: [pos.x / size.width, pos.y / size.height], // store as ratio
 			color: selected_color,
-			thickness: selected_thickness,
+			thickness: selected_thickness / size.width,
 			tool: selected_tool,
 		}]);
 	};
 
 	const handleMouseMove = (e) => {
 		if (!isDrawing.current) return;
-
 		const stage = e.target.getStage();
 		const point = stage.getPointerPosition();
-
 		setLines(prev => {
 			const lastLine = prev[prev.length - 1];
-			const updatedLine = {
+			return [...prev.slice(0, -1), {
 				...lastLine,
-				points: [...lastLine.points, point.x, point.y], // new array, not mutated
-			};
-			return [...prev.slice(0, -1), updatedLine]; // new array, not spliced
+				points: [...lastLine.points, point.x / size.width, point.y / size.height], // store as ratio
+			}];
 		});
 	};
 
@@ -185,15 +194,14 @@ const Board = () => {
 				onTouchStart={handleMouseDown}
 				onTouchMove={handleMouseMove}
 				onTouchEnd={handleMouseUp}
-				onMouseLeave={handleMouseUp}
 			>
 				<Layer>
 				{lines.map((line, i) => (
 					<Line
 					key={i}
-					points={line.points}
+					points={line.points.map((p, j) => j % 2 === 0 ? p * size.width : p * size.height)}
 					stroke={line.color}
-					strokeWidth={line.tool === eraser ? line.thickness*2 : line.thickness}
+					strokeWidth={line.tool === eraser ? (line.thickness * size.width)*2 : line.thickness * size.width}
 					tension={0.5}
 					lineCap="round"
 					lineJoin="round"
@@ -251,7 +259,7 @@ class DrawingInterface extends React.Component
 					<div className="UpperPart">
 
 						<div className="Board" id="Board">
-							<Board />
+							<Board className="KonvaBoard"/>
 						</div>
 
 						<div className="ChatBox">
