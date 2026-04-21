@@ -1,0 +1,1 @@
+Prisma studio : http://localhost:5555/
