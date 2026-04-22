@@ -52,10 +52,17 @@ model Round {
   word     String
 }
 
+model Friendship {
+  id         Int    @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  status     String // "pending" | "accepted"
+}
+
 model Message {
-  id        Int     @id @default(autoincrement())
-  gameId    Int
-  userId    Int
-  content   String
-  isCorrect Boolean
+  id         Int      @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  content    String
+  createdAt  DateTime @default(now())
 }

@@ -117,12 +117,19 @@ exports.Prisma.RoundScalarFieldEnum = {
   word: 'word'
 };
 
+exports.Prisma.FriendshipScalarFieldEnum = {
+  id: 'id',
+  senderId: 'senderId',
+  receiverId: 'receiverId',
+  status: 'status'
+};
+
 exports.Prisma.MessageScalarFieldEnum = {
   id: 'id',
-  gameId: 'gameId',
-  userId: 'userId',
+  senderId: 'senderId',
+  receiverId: 'receiverId',
   content: 'content',
-  isCorrect: 'isCorrect'
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -146,6 +153,7 @@ exports.Prisma.ModelName = {
   Game: 'Game',
   GamePlayer: 'GamePlayer',
   Round: 'Round',
+  Friendship: 'Friendship',
   Message: 'Message'
 };
 /**
@@ -197,13 +205,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma_client\"\n\n  previewFeatures = [\"driverAdapters\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id           Int          @id @default(autoincrement())\n  username     String       @unique\n  email        String       @unique\n  games        GamePlayer[]\n  avatarUrl    String?\n  passwordHash String\n  drawnRounds  Round[]      @relation(\"UserDrawnRounds\")\n}\n\nmodel Game {\n  id         Int          @id @default(autoincrement())\n  status     String\n  maxPlayers Int\n  players    GamePlayer[]\n  rounds     Round[]\n}\n\nmodel GamePlayer {\n  id     Int  @id @default(autoincrement())\n  user   User @relation(fields: [userId], references: [id])\n  userId Int\n  game   Game @relation(fields: [gameId], references: [id])\n  gameId Int\n  score  Int  @default(0)\n}\n\nmodel Round {\n  id       Int    @id @default(autoincrement())\n  game     Game   @relation(fields: [gameId], references: [id])\n  gameId   Int\n  drawer   User   @relation(\"UserDrawnRounds\", fields: [drawerId], references: [id])\n  drawerId Int\n  word     String\n}\n\nmodel Message {\n  id        Int     @id @default(autoincrement())\n  gameId    Int\n  userId    Int\n  content   String\n  isCorrect Boolean\n}\n",
-  "inlineSchemaHash": "29ea7dbf874f336f52b90d0a95043e78d6f6981d6d15e1e873157fea0a87536f",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma_client\"\n\n  previewFeatures = [\"driverAdapters\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id           Int          @id @default(autoincrement())\n  username     String       @unique\n  email        String       @unique\n  games        GamePlayer[]\n  avatarUrl    String?\n  passwordHash String\n  drawnRounds  Round[]      @relation(\"UserDrawnRounds\")\n}\n\nmodel Game {\n  id         Int          @id @default(autoincrement())\n  status     String\n  maxPlayers Int\n  players    GamePlayer[]\n  rounds     Round[]\n}\n\nmodel GamePlayer {\n  id     Int  @id @default(autoincrement())\n  user   User @relation(fields: [userId], references: [id])\n  userId Int\n  game   Game @relation(fields: [gameId], references: [id])\n  gameId Int\n  score  Int  @default(0)\n}\n\nmodel Round {\n  id       Int    @id @default(autoincrement())\n  game     Game   @relation(fields: [gameId], references: [id])\n  gameId   Int\n  drawer   User   @relation(\"UserDrawnRounds\", fields: [drawerId], references: [id])\n  drawerId Int\n  word     String\n}\n\nmodel Friendship {\n  id         Int    @id @default(autoincrement())\n  senderId   Int\n  receiverId Int\n  status     String // \"pending\" | \"accepted\"\n}\n\nmodel Message {\n  id         Int      @id @default(autoincrement())\n  senderId   Int\n  receiverId Int\n  content    String\n  createdAt  DateTime @default(now())\n}\n",
+  "inlineSchemaHash": "0780963c0166f2d57341dde1693ec49ba5e98097bd46ebdd807b321813c4976f",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"games\",\"kind\":\"object\",\"type\":\"GamePlayer\",\"relationName\":\"GamePlayerToUser\"},{\"name\":\"avatarUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"passwordHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"drawnRounds\",\"kind\":\"object\",\"type\":\"Round\",\"relationName\":\"UserDrawnRounds\"}],\"dbName\":null},\"Game\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"maxPlayers\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"players\",\"kind\":\"object\",\"type\":\"GamePlayer\",\"relationName\":\"GameToGamePlayer\"},{\"name\":\"rounds\",\"kind\":\"object\",\"type\":\"Round\",\"relationName\":\"GameToRound\"}],\"dbName\":null},\"GamePlayer\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"GamePlayerToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"game\",\"kind\":\"object\",\"type\":\"Game\",\"relationName\":\"GameToGamePlayer\"},{\"name\":\"gameId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"score\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null},\"Round\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"game\",\"kind\":\"object\",\"type\":\"Game\",\"relationName\":\"GameToRound\"},{\"name\":\"gameId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"drawer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserDrawnRounds\"},{\"name\":\"drawerId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"word\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"Message\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"gameId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isCorrect\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"games\",\"kind\":\"object\",\"type\":\"GamePlayer\",\"relationName\":\"GamePlayerToUser\"},{\"name\":\"avatarUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"passwordHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"drawnRounds\",\"kind\":\"object\",\"type\":\"Round\",\"relationName\":\"UserDrawnRounds\"}],\"dbName\":null},\"Game\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"maxPlayers\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"players\",\"kind\":\"object\",\"type\":\"GamePlayer\",\"relationName\":\"GameToGamePlayer\"},{\"name\":\"rounds\",\"kind\":\"object\",\"type\":\"Round\",\"relationName\":\"GameToRound\"}],\"dbName\":null},\"GamePlayer\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"GamePlayerToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"game\",\"kind\":\"object\",\"type\":\"Game\",\"relationName\":\"GameToGamePlayer\"},{\"name\":\"gameId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"score\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null},\"Round\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"game\",\"kind\":\"object\",\"type\":\"Game\",\"relationName\":\"GameToRound\"},{\"name\":\"gameId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"drawer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserDrawnRounds\"},{\"name\":\"drawerId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"word\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"Friendship\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"senderId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"receiverId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"Message\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"senderId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"receiverId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

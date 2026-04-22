@@ -145,12 +145,19 @@ exports.Prisma.RoundScalarFieldEnum = {
   word: 'word'
 };
 
+exports.Prisma.FriendshipScalarFieldEnum = {
+  id: 'id',
+  senderId: 'senderId',
+  receiverId: 'receiverId',
+  status: 'status'
+};
+
 exports.Prisma.MessageScalarFieldEnum = {
   id: 'id',
-  gameId: 'gameId',
-  userId: 'userId',
+  senderId: 'senderId',
+  receiverId: 'receiverId',
   content: 'content',
-  isCorrect: 'isCorrect'
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -174,6 +181,7 @@ exports.Prisma.ModelName = {
   Game: 'Game',
   GamePlayer: 'GamePlayer',
   Round: 'Round',
+  Friendship: 'Friendship',
   Message: 'Message'
 };
 
