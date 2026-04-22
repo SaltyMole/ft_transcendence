@@ -217,7 +217,10 @@ const Board = () => {
 		backg.moveToBottom();
 		stage.draw();
 
-		const dataURL = stage.toDataURL({mimeType: 'image/png'});
+		const dataURL = stage.toDataURL({
+			mimeType: 'image/png',
+			pixelRatio: 1920 / stage.width()
+		});
 
 		backg.destroy();
 		stage.draw();

@@ -379,7 +379,7 @@
 	to {
 		transform:
 			rotate(0deg)
-			translate(-100vw,0px)
+			translate(-120vw,0px)
 			scale(0.1, 1)
 			skewX(-80deg)
 		;
