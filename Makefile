@@ -13,4 +13,5 @@ backend-run:
 
 clean:
 	cd ./client && npm ci
+	rm -rf node_modules
 	cd ./client && rm -rf node_modules

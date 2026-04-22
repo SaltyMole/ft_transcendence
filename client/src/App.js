@@ -1,6 +1,8 @@
 import React from 'react';
+import { useRef } from 'react';
 import './App.css';
 import { Stage, Layer, Line, Text } from 'react-konva';
+import Konva from 'konva';
 
 var selected_color = "#000000"
 
@@ -130,16 +132,26 @@ function clear_board()
 	console.log("board cleared !");
 }
 
+function export_drawing()
+{
+	boardRef.current?.handleExport();
+	console.log("drawing saved !");
+}
+
 
 
 const Board = () => {
+	const stageRef = useRef(null);
+
 	const [lines, setLines] = React.useState([]);
 
 	React.useEffect(() => {
 		boardRef.current = {
 			clear: () => setLines([]),
+			handleExport: () => handleExport([]),
 		};
 	}, []);
+
 
 	const isDrawing = React.useRef(false);
 	const containerRef = React.useRef(null);
@@ -164,7 +176,6 @@ const Board = () => {
 			thickness: selected_thickness,
 			tool: selected_tool,
 		}]);
-		console.log(selected_thickness / size.width);
 	};
 
 	const handleMouseMove = (e) => {
@@ -184,9 +195,50 @@ const Board = () => {
 		isDrawing.current = false;
 	};
 
+	const handleExport = () => {
+		const stage = stageRef.current;
+		if (!stage) return;
+
+		const stageRect = new Konva.Rect({
+			x: 0,
+			y: 0,
+			width: stage.width(),
+			height: stage.height(),
+			fill: 'white',
+		});
+
+		const backg = new Konva.Layer();
+		backg.add(stageRect);
+		stage.add(backg);
+		backg.moveToBottom();
+		stage.draw();
+
+		const dataURL = stage.toDataURL({mimeType: 'image/png'});
+
+		backg.destroy();
+		stage.draw();
+
+		downloadURI(dataURL, 'drawing.png');
+	};
+
+	const downloadURI = async (uri, name) => {
+		// Convert dataURL to blob
+		const blob = await (await fetch(uri)).blob();
+
+		// Send to server
+		const formData = new FormData();
+		formData.append('file', blob, name);
+
+		await fetch('/api/save-image', {
+			method: 'POST',
+			body: formData,
+		});
+	};
+
 	return (
 		<div ref={containerRef} style={{ width: '100%', height: '100%' }}>
 			<Stage
+				ref={stageRef}
 				width={size.width}
 				height={size.height}
 				onMouseDown={handleMouseDown}
@@ -348,7 +400,7 @@ class DrawingInterface extends React.Component
 
 						</div>
 
-						<button className="SendDrawingButton"></button>
+						<button onClick={export_drawing} className="SendDrawingButton"></button>
 
 					</div>
 				</div>
