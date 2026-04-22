@@ -136,16 +136,16 @@ function export_drawing()
 {
 	boardRef.current?.handleExport();
 	console.log("drawing saved !");
-	document.getElementById("ZaWorldooo").style = "animation: 2s ease-in-out flip forwards";
+	document.getElementById("ZaWorldooo").style = "animation: 0.75s ease-in-out flip forwards";
 	setTimeout(function(){
 		
 	}, 2000);
 }
 
-function send_message_enter_key(event, ele) {
-	if(event.key === 'Enter') {
-		alert(ele.value);
-	}
+function send_message_enter_key(key) {
+	console.log(key);
+	if(key === 'Enter')
+		send_message();
 }
 function send_message()
 {
@@ -343,7 +343,7 @@ class DrawingInterface extends React.Component
 								</div>
 
 								<div className="ChatInputBox">
-									<input onKeyDown={send_message_enter_key} placeholder='Chat here...' id="ChatInput" className="ChatInput"></input>
+									<input onKeyDown={() => send_message_enter_key(window.event.key)} placeholder='Chat here...' id="ChatInput" className="ChatInput"></input>
 
 									<button onClick={send_message} className="SendChatButton">
 										<svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg>
