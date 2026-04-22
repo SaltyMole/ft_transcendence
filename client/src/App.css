@@ -1,3 +1,7 @@
+.BlackBG {
+	background-color: #1d1d1d;
+}
+
 .Background {
 	background-color: #D7C9FF;
 	height: 100vh;
@@ -101,7 +105,8 @@
 	box-shadow: 2px 4px 3px #491A65;
 }
 .SendChatButton:hover {
-	box-shadow: inset 2px 2px 3px 1px #491A65;
+	transition-duration: 150ms;
+	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #491A65;
 }
 
 .Foot {
@@ -168,6 +173,7 @@
 	margin: 0;
 }
 .ColorButton:hover {
+	transition-duration: 150ms;
 	box-shadow: inset 2px 2px 3px 1px #491A65;
 }
 #White {
@@ -317,7 +323,8 @@
 	font-size: 0;
 }
 .ToolButton:hover {
-	box-shadow: inset 2px 2px 3px 1px #491A65;
+	transition-duration: 150ms;
+	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #491A65;
 }
 
 
@@ -340,7 +347,8 @@
 	margin-left: auto;
 }
 .SendDrawingButton:hover {
-	box-shadow: inset 2px 2px 3px 1px #491A65;
+	transition-duration: 150ms;
+	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #491A65;
 }
 
 
@@ -360,21 +368,23 @@
 	z-index: 5;
 }
 
-
-@keyframes spin {
+@keyframes flip {
 	from {
-		transform: rotate(0deg);
+		transform:
+			rotate(0deg)
+			translate(0px,0px)
+			scale(1, 1)
+		;
 	}
 	to {
-		transform: rotate(360deg);
+		transform:
+			rotate(0deg)
+			translate(-100vw,0px)
+			scale(0.1, 1)
+			skewX(-80deg)
+		;
 	}
 }
 
-@keyframes slide {
-	from {
-		transform: translate(0px,0px);
-	}
-	to {
-		transform: translate(50vh,50vh);
-	}
-}
+
+
