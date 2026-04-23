@@ -1,5 +1,7 @@
 # Module Handoff Template
 
+v1.0
+
 Contract reference: CONTRACT_BASELINE.md
 
 If something does not apply, write N/A (dont leave blank)
