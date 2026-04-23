@@ -16,6 +16,8 @@ var thickness_medium = 10
 var thickness_thick = 25
 var selected_thickness = thickness_medium
 
+var phone_width = 850
+
 const boardRef = { current: null };
 
 
@@ -50,7 +52,7 @@ function set_select_color(color, id)
 	}
 
 	document.getElementById(id).style.borderStyle = "double";
-	if (window.innerWidth < 850)
+	if (window.innerWidth < phone_width)
 		document.getElementById(id).style.borderWidth = "medium";
 	else
 		document.getElementById(id).style.borderWidth = "thick";

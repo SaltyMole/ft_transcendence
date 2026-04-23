@@ -49,7 +49,7 @@
 	height: 81vh;
 	min-width: 20vw;
 	margin-left: 1vw;
-	margin-right: 1vw;
+	margin-right: 0vw;
 	margin-top: 1vh;
 	margin-bottom: 1vh;
 	padding-right: 1vw;
@@ -385,21 +385,43 @@
 
 
 
-@media (max-width: 850px) {
+@media (max-width: 800px) {
 	.UpperPart {
 		align-items: flex-start;
 	}
+	.Board {
+		border-radius: 0px 0vh 1.5vh 1.5vh;
+	}
 	.ChatBox {
-		height: calc(100vh - (100vw * 3/4) - 12vh - 8vh);
-		margin-top: -3vh;
+		height: calc(100vh - (100vw * 3/4) - 12vh - 13vh);
+		margin-top: -8vh;
 	}
 	.Foot {
-		height: 12vh;
+		border-radius: 1.5vh 1.5vh 0px 0px;
+		height: auto;
+		flex-wrap: wrap;
+	}
+	.ColorsEnsemble {
+		margin-left: 0px;
+	}
+	.SelectedColor {
+		width: 0px;
+		height: 0px;
 	}
 	.ColorButton {
+		height: 8.9vw;
+		width: 8.9vw;
 		border-width: 1vh;
+	}
+	.ToolButton {
+		width: 4.5vh;
+		height: 4.5vh;
+		border-radius: 0.7vh 0.7vh 0.7vh 0.7vh;
 	}
 	html, body {
 		overflow: hidden;
 	}
+}
+@media (max-width: 100px) {
+
 }
