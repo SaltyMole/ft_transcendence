@@ -359,7 +359,7 @@
 }
 
 
-.YesNoPopup {
+.YesNo {
 	visibility: hidden;
 	background-color: #000000aa;
 	z-index: 41;

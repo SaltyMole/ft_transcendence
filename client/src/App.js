@@ -161,44 +161,29 @@ function send_message()
 
 
 
+function YesNoPopup({question, yesAction}) {
 
-function displayYesNoPopup(yes_action, question)
-{
-	document.getElementById("YesNoPopup").style.visibility = "visible"
-	document.getElementById("YesNoPopup").yesAction = yes_action;
-	document.getElementById("YesNoPopup").question = question;
-}
-function YesNoPopup(props) {
-
-	function noAction()
+	function noActionExec()
 	{
-		document.getElementById("YesNoPopup").style.visibility = "hidden"
+		document.getElementById("YesNo").style.visibility = "hidden"
 	}
 
-	function yesAction()
+	function yesActionExec()
 	{
-		document.getElementById("YesNoPopup").yesAction()
-		document.getElementById("YesNoPopup").style.visibility = "hidden"
+		yesAction();
+		document.getElementById("YesNo").style.visibility = "hidden"
 	}
 
 	return (
-		<div id='YesNoPopup' className='YesNoPopup'>
+		<div id='YesNo' className='YesNo'>
 			<div className='YesNoBox'>
-				<text className='YesNoQuestion'>
-					{props.question}
-				</text>
+				<text className='YesNoQuestion'>{question}</text>
 				<div className='YesNoButtonsRow'>
-					<button onClick={noAction} className="YesNoButton">
-						no
-					</button>
-					<button onClick={yesAction} className="YesNoButton">
-						yes
-					</button>
+					<button onClick={noActionExec} className="YesNoButton">no</button>
+					<button onClick={yesActionExec} className="YesNoButton">yes</button>
 				</div>
-
 			</div>
 		</div>
-
 	)
 }
 
@@ -335,7 +320,7 @@ function Board() {
 
 class DrawingInterface extends React.Component
 {
-	state = { data: null };
+	state = { data: null, yesNoQuestion: "", yesNoAction: null };
 
 	componentDidMount()
 	{
@@ -365,6 +350,11 @@ class DrawingInterface extends React.Component
 		return body;
 	};
 
+	displayYesNoPopup = (action, question) => {
+		this.setState({ yesNoQuestion: question, yesNoAction: action });
+		document.getElementById("YesNo").style.visibility = "visible";
+	};
+
 
 	render() {
 		return (
@@ -372,7 +362,11 @@ class DrawingInterface extends React.Component
 				<div id="ZaWorldooo">
 					<div className="FilmGrain"></div>
 
-					<YesNoPopup id="YesNoPopup" question="" yesAction="" />
+					<YesNoPopup
+						id="YesNoPopup"
+						question={this.state.yesNoQuestion}
+						yesAction={this.state.yesNoAction}
+					/>
 
 					<div className="Background">
 
@@ -457,14 +451,14 @@ class DrawingInterface extends React.Component
 										<svg id="ThickSvg" xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M402-120q-118 0-200-82t-82-200q0-54 20-105.5t62-93.5l157-157q42-42 93.5-62T558-840q118 0 200 82t82 200q0 54-20 105.5T758-359L601-202q-42 42-93.5 62T402-120Z"/></svg>
 									</button>
 									&nbsp;&nbsp;
-									<button onClick={() => displayYesNoPopup(clear_board, "Do you really clear the board ?")} className={`${"ToolButton"} ${"Trash"}`}>
+									<button onClick={() => this.displayYesNoPopup(clear_board, "Do you really want to clear the board ?")} className={`${"ToolButton"} ${"Trash"}`}>
 										<svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
 									</button>
 								</div>
 
 							</div>
 
-							<button onClick={() => displayYesNoPopup(export_drawing, "Do you really want to export the drawing ?")} className="SendDrawingButton"></button>
+							<button onClick={() => this.displayYesNoPopup(export_drawing, "Do you really want to export the drawing ?")} className="SendDrawingButton"></button>
 
 						</div>
 					</div>
