@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function MyButtonConnect()
 {
-	const [connect, setConnect] = useState(false);
-	function handleClick() { connect ? setConnect(false) : setConnect(true)};
-	return( <button onClick={handleClick}>{connect ? 'Logout' : "Login"}</button>)
+	// const [connect, setConnect] = useState(false);
+	// function handleClick() { connect ? setConnect(false) : setConnect(true)};
+	function handleClick(){location.href = "../pages/Login.jsx"}
+	return( <button onclick={handleClick}>Login</button>)
 };
 
 function Header() {
+	const navigate = useNavigate();
   return (
     <header>
       <nav>
@@ -16,7 +18,9 @@ function Header() {
 			<div id = "pages" > 
 				<p><Link to="/">Accueil</Link>
         		<Link to="/Game">Game</Link>
-				 <MyButtonConnect id ="connect" /></p>
+				<Link to="/Login"> <button>Login</button> </Link> </p>
+				 {/* <MyButtonConnect id ="connect" /></p> */}
+
 			</div>  
 		</div>
       </nav>

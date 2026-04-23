@@ -34,7 +34,6 @@ body{
 	width: 60%; /*help todo fix*/
 	padding: 20px;
 	margin-right:20%;
-
 	text-align: center;
 	color:white;
 	border-radius: 10px;
@@ -45,6 +44,47 @@ body{
     top: 0;
 }
 
+
+.input_container {
+	max-width: 400px;
+	margin:auto;
+	/* gap: 6px; */
+	background: rgb(255, 255, 255);
+	padding: 15px;
+	border-radius: 20px;
+	background-color: #D7C9FF;
+	background-image: radial-gradient(at 47% 69%, rgb(110, 214, 221) 0px, transparent 50%),
+	radial-gradient(at 9% 32%, rgb(76, 230, 222) 0px, transparent 50%);
+
+}
+
+
+
+.input_label {
+  display: block;
+  margin-left: 0.4em;
+  color: #000;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+
+.input {
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 0.6em;
+  padding-left: 0.9em;
+  border-radius: 20px;
+  background: #fff;
+  transition: background 300ms, color 300ms;
+}
+
+.input:hover,.input:focus {
+  background: rgb(209, 126, 230);
+  color: #fff;
+}
 
 #homeText{
 	font-size: clamp(1.5rem, 5vw, 3rem);
