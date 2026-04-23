@@ -361,7 +361,8 @@
 
 .YesNo {
 	visibility: hidden;
-	background-color: #000000aa;
+	background-color: #00000042;
+	backdrop-filter: blur(5px);
 	z-index: 41;
 	position: absolute;
 	width: 100vw;
@@ -463,8 +464,12 @@
 		height: 4.5vh;
 		border-radius: 0.7vh 0.7vh 0.7vh 0.7vh;
 	}
+	.YesNo {
+		backdrop-filter: blur(3px);
+	}
 	.YesNoBox {
 		width: 75vw;
+		margin-bottom: 20vh;
 	}
 	.YesNoQuestion {
 		font-size: 5vw;
