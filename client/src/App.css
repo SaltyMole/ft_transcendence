@@ -4,7 +4,7 @@
 
 .Background {
 	background-color: #D7C9FF;
-	height: 100vh;
+	height: 90vh;
 	width: 100vw;
 	display: flex;
 	flex-direction: column;
@@ -63,11 +63,12 @@
 	overflow-wrap: break-word;
 }
 .ChatInputBox {
-	display: flex;
 	background-color: #58508D;
+	display:flex;
 	min-height: 7vh;
 	margin-left: 2vh;
 	margin-right: 2vh;
+	margin-bottom: 17vh;
 	border-radius: 5vh 5vh 5vh 5vh;
 	box-shadow: 2px 4px 3px #491A65;
 	margin-top: auto;
@@ -123,12 +124,6 @@
 	overflow: visible;
 	z-index: 1;
 }
-
-
-
-
-
-
 
 
 
@@ -368,6 +363,8 @@
 	z-index: 5;
 }
 
+
+
 @keyframes flip {
 	from {
 		transform:
@@ -388,3 +385,21 @@
 
 
 
+@media (max-width: 850px) {
+	.UpperPart {
+		align-items: flex-start;
+	}
+	.ChatBox {
+		height: calc(100vh - (100vw * 3/4) - 12vh - 8vh);
+		margin-top: -3vh;
+	}
+	.Foot {
+		height: 12vh;
+	}
+	.ColorButton {
+		border-width: 1vh;
+	}
+	html, body {
+		overflow: hidden;
+	}
+}

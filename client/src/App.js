@@ -48,9 +48,12 @@ function set_select_color(color, id)
 	{
 		document.getElementById(id).style.borderColor = "white";
 	}
-		
+
 	document.getElementById(id).style.borderStyle = "double";
-	document.getElementById(id).style.borderWidth = "thick"
+	if (window.innerWidth < 850)
+		document.getElementById(id).style.borderWidth = "medium";
+	else
+		document.getElementById(id).style.borderWidth = "thick";
 
 }
 
@@ -138,7 +141,7 @@ function export_drawing()
 	console.log("drawing saved !");
 	document.getElementById("ZaWorldooo").style = "animation: 0.75s ease-in-out flip forwards";
 	setTimeout(function(){
-		
+
 	}, 2000);
 }
 
@@ -350,8 +353,6 @@ class DrawingInterface extends React.Component
 									</button>
 								</div>
 							</div>
-
-
 
 						</div>
 
