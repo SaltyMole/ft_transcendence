@@ -21,33 +21,48 @@
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
-      <script src="/socket.io/socket.io.js"></script>
-      <script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
         const socket = io({
-            auth: {
-              serverOffset: 0
-            }
-        });
+          ackTimeout: 10000,
+          retries: 3,
+        })
+      // Pour tester, on simule un utilisateur connecté
+      const SENDER_ID = 1;
+      const RECEIVER_ID = 2;
 
-        const form = document.getElementById('form');
-        const input = document.getElementById('input');
-        const messages = document.getElementById('messages');
+      const form = document.getElementById('form');
+      const input = document.getElementById('input');
+      const messages = document.getElementById('messages');
 
-        form.addEventListener('submit', (e) => {
-          e.preventDefault();
-          if (input.value) {
-            socket.emit('chat message', input.value);
-            input.value = '';
-          }
-        });
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('chat message', {
+            senderId: SENDER_ID,
+            receiverId: RECEIVER_ID,
+            content: input.value
+          });
+          input.value = '';
+        }
+      });
 
-        socket.on('chat message', (msg, serverOffset) => {
+      // Historique à la connexion
+      socket.on('history', (msgs) => {
+        msgs.forEach((msg) => {
           const item = document.createElement('li');
-          item.textContent = msg;
+          item.textContent = msg.content;
           messages.appendChild(item);
-          window.scrollTo(0, document.body.scrollHeight);
-          socket.auth.serverOffset = serverOffset;
         });
-      </script>
+      });
+
+      // Nouveau message en temps réel
+      socket.on('chat message', (msg) => {
+        const item = document.createElement('li');
+        item.textContent = msg.content;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+    </script>
   </body>
 </html>
