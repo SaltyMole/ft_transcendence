@@ -299,12 +299,15 @@
 	flex-wrap: wrap;
 	align-self: center;
 	z-index: 2;
+	margin-top: 1vh;
+	margin-bottom: 1vh;
+	gap: 1vh;
 }
 .ToolButton {
 	background-color: #D7C9FF;
-	width: 6vw;
+	width: 5vw;
 	max-width: 7vh;
-	height: 6vw;
+	height: 5vw;
 	max-height: 7vh;
 	align-self: center;
 	margin: 0px 0.4vh 0px 0.4vh;
@@ -321,8 +324,17 @@
 
 
 
+.SpecialsButtons {
+	display: flex;
+	flex-wrap: wrap;
+	z-index: 2;
+	gap: 0.1vh;
+}
+
+
+
 .SendDrawingButton {
-	width: 13vw;
+	width: 10vw;
 	max-width: 13vh;
 	height: 13vw;
 	max-height: 13vh;
@@ -443,7 +455,7 @@
 
 
 
-@media (max-width: 800px) {
+@media (max-width: 700px){
 	.UpperPart {
 		align-items: flex-start;
 	}
