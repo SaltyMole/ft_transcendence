@@ -1,3 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+
+
+
+
+
 .BlackBG {
 	background-color: #1d1d1d;
 }
@@ -61,6 +69,7 @@
 	color: #58508D;
 	text-shadow: 0px 2px 2px #00000059;
 	overflow-wrap: break-word;
+	font-family: "Public Sans";
 }
 .ChatInputBox {
 	background-color: #58508D;
@@ -86,6 +95,7 @@
 	min-height: 6vh;
 
 	font-size: 3vh;
+	font-family: "Public Sans";
 	color: #ffffff;
 }
 
@@ -404,27 +414,29 @@
 	margin-top: auto;
 	margin-bottom: auto;
 	text-align: center;
-	font-size: 3vw;
+	font-size: 2.5vw;
 	margin-left: 1vw;
 	margin-right: 1vw;
 	color: #58508D;
 	text-shadow: 0px 2px 2px #000000ae;
+	font-family: "Public Sans";
 
 }
 .YesNoButtonsRow {
 	display: flex;
 	margin-top: auto;
 	margin-bottom: auto;
-	gap: 2vw;
+	gap: 5vw;
 }
 .YesNoButton {
 	background-color: #58508D;
 	color: #ffffff;
 	font-size: 3.5vw;
+	font-family: "Public Sans";
 	display: flex;
 	flex-direction: column;
-	width: 10vw;
-	height: 5vw;
+	width: 7vw;
+	height: 4.5vw;
 	border-radius: 1.5vh 1.5vh 1.5vh 1.5vh;
 	box-shadow: 2px 4px 3px #491A65;
 	border: none;
@@ -498,9 +510,12 @@
 	.YesNoQuestion {
 		font-size: 5vw;
 	}
+	.YesNoButtonsRow {
+		gap: 10vw;
+	}
 	.YesNoButton {
-		width: 30vw;
-		height: 12vw;
+		width: 15vw;
+		height: 10vw;
 		font-size: 7vw;
 	}
 	html, body {
