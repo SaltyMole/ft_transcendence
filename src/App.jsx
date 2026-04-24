@@ -8,7 +8,8 @@ import Home from "./pages/Home";
 import Game from "./pages/Game";
 import PrivatePolicy from "./pages/PrivatePolicy";
 import TermsOfService from "./pages/TermsOfService";
-import Login from "./pages/Login"
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 				
 //import About from "./pages/About";
 
@@ -24,6 +25,7 @@ function App() {
 				<Route path="/PrivatePolicy" element={<PrivatePolicy />} />
 				<Route path="/TermsOfService" element={<TermsOfService />}/> 
 				<Route path="/Login" element={<Login/>}/>
+				<Route path="/Register" element={<Register/>}/>
 			</Routes>
 			<Footer />
 		</BrowserRouter>

@@ -47,6 +47,7 @@ body{
 
 .input_container {
 	max-width: 400px;
+	border:black solid 2px;
 	margin:auto;
 	/* gap: 6px; */
 	background: rgb(255, 255, 255);
@@ -54,18 +55,20 @@ body{
 	border-radius: 20px;
 	background-color: #D7C9FF;
 	background-image: radial-gradient(at 47% 69%, rgb(110, 214, 221) 0px, transparent 50%),
-	radial-gradient(at 9% 32%, rgb(76, 230, 222) 0px, transparent 50%);
+	/* radial-gradient(at 9% 32%, rgb(76, 230, 222) 0px, transparent 50%); */
 
 }
 
 
 
 .input_label {
+	
   display: block;
   margin-left: 0.4em;
-  color: #000;
+  font-family:"Public Sans";
+  color: #4D007E;;
   text-transform: uppercase;
-  font-size: 0.9em;
+  font-weight: 1000;
   font-weight: bold;
 }
 
@@ -77,13 +80,12 @@ body{
   padding: 0.6em;
   padding-left: 0.9em;
   border-radius: 20px;
-  background: #fff;
+  background: #FFFADE;
   transition: background 300ms, color 300ms;
 }
 
-.input:hover,.input:focus {
-  background: rgb(209, 126, 230);
-  color: #fff;
+.input:focus {
+  background: #f2e59f;
 }
 
 #homeText{
@@ -188,22 +190,21 @@ footer{
 }
 
 button{
-	margin-left: 50px;
-	padding:10px 15px;
-	font-family:"Public Sans", sans-serif;
-	text-align: center;
-	background-color: #D7C9FF;
-	color: #4D007E;
-	border-radius: 8px;
-	border-color: #4D007E;
-	font-weight: 1000;
-	box-shadow: 2px 2px 4px #491a65;
+
+	text-align: center ;
+	padding:10px 10px;
+	font-weight:1000;
+	background-color: #58508D;
+    color: #FFFADE;
+    font-family: "Public Sans";
+    border-radius: 1.5vh;
+    box-shadow: 2px 4px 3px #491A65;
+	transition-duration: 150ms;
 }
 
 button:hover{
-	background-color: #4D007E;
-	color: #D7C9FF;
-
+box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #000000;
+transition-duration: 150ms;
 }
 
 
