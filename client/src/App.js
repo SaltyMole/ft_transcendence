@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import './App.css';
 import { Stage, Layer, Line } from 'react-konva';
 import Konva from 'konva';
@@ -18,6 +18,7 @@ var selected_thickness = thickness_medium
 var phone_width = 850
 
 const boardRef = { current: null };
+
 
 
 function set_select_color(color, id)
@@ -152,6 +153,11 @@ function send_message()
 	var message = document.getElementById("ChatInput").value;
 	document.getElementById("ChatInput").value = "";
 	console.log("Message sent in chat:", message);
+}
+
+function ScrollToBottom({ divRef }) {
+  useEffect(() => divRef.current.scrollIntoView());
+  return <div ref={divRef} />;
 }
 
 
@@ -322,8 +328,18 @@ class DrawingInterface extends React.Component
 {
 	state = { data: null, yesNoQuestion: "", yesNoAction: null };
 
+	scrollToBottomRef = React.createRef();
+	handleResize = () => {
+		console.log("Resized");
+		if (this.scrollToBottomRef.current) {
+			this.scrollToBottomRef.current.scrollIntoView();
+		}
+	};
+
 	componentDidMount()
 	{
+		window.addEventListener("resize", this.handleResize);
+
 		// Set tool and thickness state at launch
 		set_select_tool(selected_tool);
 		set_select_thickness(selected_thickness);
@@ -334,6 +350,10 @@ class DrawingInterface extends React.Component
 		.then(res => this.setState({ data: res.express }))
 		.catch(err => console.log(err));
 	}
+	componentWillUnmount() {
+		window.removeEventListener("resize", this.handleResize);
+	}
+
 	// Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
 	callBackendAPI = async () => {
 		const response = await fetch('/express_backend');
@@ -354,6 +374,7 @@ class DrawingInterface extends React.Component
 		this.setState({ yesNoQuestion: question, yesNoAction: action });
 		document.getElementById("YesNo").style.visibility = "visible";
 	};
+
 
 
 	render() {
@@ -377,7 +398,7 @@ class DrawingInterface extends React.Component
 							</div>
 
 							<div className="ChatBox">
-								<div className="Chat">
+								<div id="Chat" className="Chat">
 									<b>Paul:</b> c moche <br/>
 									<b>Pauline:</b> oui <br/>
 									<b>Zoe:</b> d'accord <br/>
@@ -385,6 +406,7 @@ class DrawingInterface extends React.Component
 									the bfg is ready<br/>
 									THE BFG IS READY<br/>
 									<b>Nathan:</b> oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+									<ScrollToBottom  divRef={this.scrollToBottomRef}/>
 								</div>
 
 								<div className="ChatInputBox">
