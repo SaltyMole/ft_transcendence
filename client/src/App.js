@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRef } from 'react';
 import './App.css';
-import { Stage, Layer, Line, Text } from 'react-konva';
+import { Stage, Layer, Line } from 'react-konva';
 import Konva from 'konva';
 
 var selected_color = "#000000"
@@ -136,7 +136,7 @@ function clear_board()
 function export_drawing()
 {
 	boardRef.current?.handleExport();
-	console.log("drawing saved !");
+	console.log("drawing sent !");
 	document.getElementById("ZaWorldooo").style = "animation: 0.75s ease-in-out flip forwards";
 	setTimeout(function(){
 
@@ -144,7 +144,6 @@ function export_drawing()
 }
 
 function send_message_enter_key(key) {
-	console.log(key);
 	if(key === 'Enter')
 		send_message();
 }
@@ -173,7 +172,7 @@ function YesNoPopup({question, yesAction}) {
 	return (
 		<div id='YesNo' className='YesNo'>
 			<div className='YesNoBox'>
-				<text className='YesNoQuestion'>{question}</text>
+				<p className='YesNoQuestion'>{question}</p>
 				<div className='YesNoButtonsRow'>
 					<button onClick={noActionExec} className="YesNoButton">no</button>
 					<button onClick={yesActionExec} className="YesNoButton">yes</button>
@@ -188,15 +187,6 @@ function Board() {
 	const stageRef = useRef(null);
 
 	const [lines, setLines] = React.useState([]);
-
-	React.useEffect(() => {
-		boardRef.current = {
-			clear: () => setLines([]),
-			handleExport: () => handleExport([]),
-			ctrl_z: () => setLines(prev => prev.slice(0, -1)),
-		};
-	}, []);
-
 
 	const isDrawing = React.useRef(false);
 	const containerRef = React.useRef(null);
@@ -281,6 +271,19 @@ function Board() {
 		});
 	};
 
+
+	const handleExportRef = React.useRef(handleExport);
+	React.useLayoutEffect(() => { handleExportRef.current = handleExport; });
+
+	React.useEffect(() => {
+		boardRef.current = {
+			clear: () => setLines([]),
+			handleExport: () => handleExportRef.current(),
+			ctrl_z: () => setLines(prev => prev.slice(0, -1)),
+		};
+	}, []);
+
+
 	return (
 		<div ref={containerRef} style={{ width: '100%', height: '100%' }}>
 			<Stage
@@ -342,7 +345,7 @@ class DrawingInterface extends React.Component
 		}
 		else
 		{
-			Text("Express connected");
+			console.log("Express connected");
 		}
 		return body;
 	};
