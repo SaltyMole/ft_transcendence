@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Button  from "./Button";
+// import isLoggedIn from "../App"
 
 function MyButtonConnect()
 {
@@ -11,6 +13,16 @@ function MyButtonConnect()
 
 function Header() {
 	const navigate = useNavigate();
+
+	// const handleAuth = () => {
+	// 	if (isLoggedIn)
+	// 	{
+	// 		setIsLoggetIn(false);
+	// 		navigate("/");
+	// 	}
+	// 	else
+	// 		navigate("/Login");
+	// }
   return (
     <header>
       <nav>
@@ -18,8 +30,8 @@ function Header() {
 			<div id = "pages" > 
 				<p><Link to="/">Accueil</Link>
         		<Link to="/Game">Game</Link>
-				<Link to="/Login"> <button>Login</button> </Link> </p>
-				 {/* <MyButtonConnect id ="connect" /></p> */}
+				 <Button value="ml-5" text="Login" type="btn" link="/login"/> </p>
+				{/* <button onClick= {handleAuth}> {isLoggedIn ? "Logout" : "Login"}</button> </p> */}
 
 			</div>  
 		</div>

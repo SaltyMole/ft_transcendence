@@ -49,6 +49,8 @@ body{
 	max-width: 400px;
 	border:black solid 2px;
 	margin:auto;
+  	font-family:"Public Sans";
+
 	/* gap: 6px; */
 	background: rgb(255, 255, 255);
 	padding: 15px;
@@ -86,6 +88,16 @@ body{
 
 .input:focus {
   background: #f2e59f;
+}
+
+.register {
+
+	color:#491A65;
+	font-weight: 600;
+	
+}
+.register:hover{
+	color:#FFFADE;
 }
 
 #homeText{

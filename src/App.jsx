@@ -10,10 +10,14 @@ import PrivatePolicy from "./pages/PrivatePolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import { useState } from 'react';
 				
 //import About from "./pages/About";
 
+// const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 function App() {
+	
   return (
 	<div className="app">
 		<BrowserRouter>
@@ -25,6 +29,7 @@ function App() {
 				<Route path="/PrivatePolicy" element={<PrivatePolicy />} />
 				<Route path="/TermsOfService" element={<TermsOfService />}/> 
 				<Route path="/Login" element={<Login/>}/>
+				{/* <Route path="/Login" element={<Login setIsLoggedIn={setIsLoggedIn}/>}/> */}
 				<Route path="/Register" element={<Register/>}/>
 			</Routes>
 			<Footer />
@@ -33,4 +38,4 @@ function App() {
 	);
 }
 
-export default App
+export default App;

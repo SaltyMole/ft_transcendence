@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Link } from "react-router-dom";
+import Button from '../components/Button';
+import Input from '../components/Input'
 function Login()
 {
 	const [email, setEmail] = useState('');
@@ -13,21 +15,17 @@ function Login()
 				<div>
 					<p></p>
 				</div>
-				<div class="input_container ">
+				<div class="input_container text-start ">
 					<form action="" method="post">
-						<div class="">
-							<label class="input_label mt-5"> Email :
-									<input  class="input" type="email" value={email} placeholder='exemple@email.fr' onChange={e => setEmail(e.target.value)} />
-							</label>
-						</div>
-						<div>
-							<label class="input_label mt-5 "> Password : 
-									<input  class="input" type="password" value={password} placeholder='password' onChange={e => setPassword(e.target.value)} />
-							</label>
-						</div>
-						<div class ="flex px-2 items-center mt-5">
-							<button type="submit">Login</button>
-							<Link class="underline" to="/Register"> Register </Link>
+						{/* <div class=""> */}
+							<Input text='Email@email.com' type="email" value={email} set={setEmail}/>
+						{/* </div>
+						<div> */}
+							<Input text='Password' type="password" value={password} set ={setPassword}/>
+						{/* </div> */}
+						<div class ="flex px-2 items-center justify-between mt-5">
+							<Button type="submit" text="Login"/>
+							<Link class="underline  register" to="/Register"> Register </Link>
 						</div>
 					</form>
 				</div>
