@@ -481,7 +481,7 @@ class DrawingInterface extends React.Component
 								</div>
 							</div>
 
-							
+
 
 							<button onClick={() => this.displayYesNoPopup(export_drawing, "Do you really want to export the drawing ?")} className="SendDrawingButton"></button>
 
