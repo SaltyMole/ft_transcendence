@@ -17,9 +17,9 @@ html, body, #root {
 }
 
 body{
-    /* background-color: #4D007E; */
     color: #FFFADE;
 	margin:0;
+	font-family:"Public Sans";
 	
 }
 
@@ -44,12 +44,39 @@ body{
     top: 0;
 }
 
+.overlayGames{
+	background-color: rgba(0, 0, 0, 0.6);
+	border-radius: 20px;
+	box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(199, 189, 189, 0.5),
+    inset 0 -1px 0 rgba(160, 152, 152, 0.1),
+    inset 0 0 20px 7px #a8adaeb3;
+	 width: 30%;
+	 /* align-items: center; */
+	 /* justify-content: center; */
+	 height : 200px;
+	 padding: 5px;
+	 font-weight : bold;
+	color: #FFFADE;
+	margin: auto;
+}
+
+.Games{
+	flex-direction: row;
+	display: flex;
+}
+
+.overlayGames:hover{
+	background-color: rgba(0, 0, 0, 0.0);
+	
+}
 
 .input_container {
 	max-width: 400px;
 	border:black solid 2px;
 	margin:auto;
-  	font-family:"Public Sans";
+  	/* font-family:"Public Sans"; */
 
 	/* gap: 6px; */
 	background: rgb(255, 255, 255);
@@ -124,11 +151,19 @@ a{
 	margin-left: 10px;
 }
 
-@media (max-width: 768px) {
-	a {
+@media (max-width: 900px) {
+	/* a {
 		margin-left: 0;
 		display: block;
 		margin-bottom: 10px;
+	} */
+
+	.Games{
+		flex-direction: column;
+	}
+	.overlayGames{
+		width: 80%;
+		margin-top: 10%;
 	}
 }
 

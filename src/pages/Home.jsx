@@ -14,7 +14,7 @@ function Home() {
   return (
     <>
     	<main>
-			<div class= 'overlay'>
+			<div className= 'overlay'>
 				<h1 id="homeText">Welcome to Transcendance</h1>
 			</div>
       	</main>

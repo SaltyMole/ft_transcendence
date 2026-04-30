@@ -12,14 +12,14 @@ function Register()
 		return (
 		<>
 			<main>
-				<div class= 'overlay'>
+				<div className= 'overlay'>
 					<h1 id="homeText">Register</h1>
 					<div>
 						<p></p>
 					</div>
-					<div class="input_container text-start ">
+					<div className="input_container text-start ">
 						<form action="" method="post">
-						<div class="">
+						<div className="">
 							<Input text='Email@email.com' type="email" value={email} set={setEmail}/>
 						</div>
 						<div>
@@ -28,7 +28,7 @@ function Register()
 						<div>
 							<Input text="Username" type="username" value={username} set ={setUsername}/>
 						</div>
-							<div class ="flex px-2 items-center mt-5">
+							<div className ="flex px-2 items-center mt-5">
 							 <button type="submit">Register</button>
 							</div>
 						</form>

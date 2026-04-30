@@ -10,22 +10,22 @@ function Login()
 	return (
     <>
     	<main>
-			<div class= 'overlay'>
+			<div className= 'overlay'>
 				<h1 id="homeText">Login</h1>
 				<div>
 					<p></p>
 				</div>
-				<div class="input_container text-start ">
+				<div className="input_container text-start ">
 					<form action="" method="post">
-						{/* <div class=""> */}
+						{/* <div className=""> */}
 							<Input text='Email@email.com' type="email" value={email} set={setEmail}/>
 						{/* </div>
 						<div> */}
 							<Input text='Password' type="password" value={password} set ={setPassword}/>
 						{/* </div> */}
-						<div class ="flex px-2 items-center justify-between mt-5">
+						<div className ="flex px-2 items-center justify-between mt-5">
 							<Button type="submit" text="Login"/>
-							<Link class="underline  register" to="/Register"> Register </Link>
+							<Link className="underline  register" to="/Register"> Register </Link>
 						</div>
 					</form>
 				</div>
