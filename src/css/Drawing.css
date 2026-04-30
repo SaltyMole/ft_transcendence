@@ -1,0 +1,524 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+
+
+
+
+
+.BlackBG {
+	background-color: #1d1d1d;
+}
+
+.Background {
+	background-color: #D7C9FF;
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	flex-direction: column;
+	z-index: 0;
+}
+
+.UpperPart {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	width: 100vw;
+	height: 85vh - 80px;
+	overflow: auto;
+}
+
+.Board {
+	grid-column: 1;
+	background-color: #FFFADE;
+	aspect-ratio: 4/3;
+	width: 110.5vh;
+	border-radius: 0px 3vh 3vh 0px;
+	box-shadow: 2px 4px 3px #491A65;
+	overflow: hidden;
+	z-index: 2;
+}
+.KonvaBoard {
+	grid-column: 1;
+	background-color: #FFFADE;
+	aspect-ratio: 4/3;
+	width: 110.5vh;
+	border-radius: 0px 3vh 3vh 0px;
+	box-shadow: 2px 4px 3px #491A65;
+	overflow: hidden;
+	z-index: 2;
+}
+
+.ChatBox {
+	grid-column: 2;
+	display: flex;
+	flex-direction: column;
+	height: 81vh;
+	min-width: 20vw;
+	margin-left: 1vw;
+	margin-right: 0vw;
+	margin-top: 1vh;
+	margin-bottom: 1vh;
+	padding-right: 1vw;
+	flex: 1;
+}
+.Chat {
+	overflow: auto;
+	font-size:calc(100% + 1vw);
+	color: #58508D;
+	text-shadow: 0px 2px 2px #00000059;
+	overflow-wrap: break-word;
+	font-family: "Public Sans";
+}
+.ChatInputBox {
+	background-color: #58508D;
+	display:flex;
+	min-height: 7vh;
+	margin-left: 2vh;
+	margin-right: 2vh;
+	margin-bottom: 17vh;
+	border-radius: 5vh 5vh 5vh 5vh;
+	box-shadow: 2px 4px 3px #491A65;
+	margin-top: 1vh;
+	margin-bottom: 2vh;
+}
+.ChatInput {
+	background-color: #00000000;
+	border: none;
+	align-self: center;
+	outline: none;
+	margin-left: 1vw;
+	margin-right: auto;
+	min-width: 11vw;
+	width: 100vw;
+	min-height: 6vh;
+
+	font-size: 3vh;
+	font-family: "Public Sans";
+	color: #ffffff;
+}
+
+.SendChatButton {
+	background-color: #FFFADE;
+	min-height: 5vh;
+	height: 5vw;
+	max-height: 5vh;
+	min-width: 5vh;
+	width: 5vw;
+	max-width: 5vh;
+	border: none;
+	outline: none;
+	border-radius: 3vh 3vh 3vh 3vh;
+	align-self: center;
+	margin-left: auto;
+	margin-right: 0.5vw;
+	box-shadow: 2px 4px 3px #491A65;
+}
+.SendChatButton:hover {
+	transition-duration: 150ms;
+	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #491A65;
+}
+
+.Foot {
+	background-color: #58508D;
+	position: fixed;
+	bottom: 0;
+	height: 17vh;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	border-radius: 0px 3vh 0px 0px;
+	box-shadow: inset 0px 5px 10px 1px #491A65;
+	overflow: visible;
+	z-index: 1;
+}
+
+
+
+.ColorsEnsemble {
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	justify-content: center;
+	margin-top: 1vh;
+	margin-bottom: 1vh;
+	margin-left: 1vw;
+	margin-right: 2vw;
+	z-index: 2;
+}
+.SelectedColor {
+	flex: 1;
+	height: 7vw;
+	max-height: 7vh;
+	width: 1.5vh;
+	align-self: center;
+	margin-right: 1.04vw;
+	margin-bottom: 0.5vh;
+	border-radius: 1.5vh 1.5vh 1.5vh 1.5vh;
+	box-shadow: 2px 4px 3px #491A65;
+}
+.ColorsButtonsBackground {
+	background-color: #00000000;
+	display: grid;
+	align-self: center;
+	border-radius: 1.5vh 1.5vh 1.5vh 1.5vh;
+	box-shadow: 2px 4px 3px #491A65;
+	font-size: 0;
+}
+.ColorButton {
+	height: 5vw;
+	max-height: 5vh;
+	width: 5vw;
+	max-width: 5vh;
+	border: none;
+	outline: none;
+	font-size: 0;
+	margin: 0;
+}
+.ColorButton:hover {
+	transition-duration: 150ms;
+	box-shadow: inset 2px 2px 3px 1px #491A65;
+}
+#White {
+	background-color: #ffffff; border-radius: 1.5vh 0px 0px 0px;
+	grid-column: 1;
+	grid-row: 1;
+}
+#Black {
+	background-color: #000000; border-radius: 0px 0px 0px 1.5vh;
+	grid-column: 1;
+	grid-row: 2;
+}
+
+#LightGrey {
+	background-color: #D9D9D9;
+	grid-column: 2;
+	grid-row: 1;
+}
+#DarkGrey {
+	background-color: #666666;
+	grid-column: 2;
+	grid-row: 2;
+}
+
+#LightRed {
+	background-color: #FF0000;
+	grid-column: 3;
+	grid-row: 1;
+}
+#DarkRed {
+	background-color: #930000;
+	grid-column: 3;
+	grid-row: 2;
+}
+
+#LightOrange {
+	background-color: #FF6A00;
+	grid-column: 4;
+	grid-row: 1;
+}
+#DarkOrange {
+	background-color: #983F00;
+	grid-column: 4;
+	grid-row: 2;
+}
+
+#LightYellow {
+	background-color: #FFC300;
+	grid-column: 5;
+	grid-row: 1;
+}
+#DarkYellow {
+	background-color: #977400;
+	grid-column: 5;
+	grid-row: 2;
+}
+
+#LightGreen {
+	background-color: #95FF00;
+	grid-column: 6;
+	grid-row: 1;
+}
+#DarkGreen {
+	background-color: #548F00;
+	grid-column: 6;
+	grid-row: 2;
+}
+
+#LightSkyBlue {
+	background-color: #00D9FF;
+	grid-column: 7;
+	grid-row: 1;
+}
+#DarkSkyBlue {
+	background-color: #0094AE;
+	grid-column: 7;
+	grid-row: 2;
+}
+
+#LightOceanBlue {
+	background-color: #0033FF;
+	grid-column: 8;
+	grid-row: 1;
+}
+#DarkOceanBlue {
+	background-color: #001876;
+	grid-column: 8;
+	grid-row: 2;
+}
+
+#LightPurple {
+	background-color: #A100FF;
+	grid-column: 9;
+	grid-row: 1;
+}
+#DarkPurple {
+	background-color: #6800A4;
+	grid-column: 9;
+	grid-row: 2;
+}
+
+#LightPink {
+	background-color: #F200FF;
+	grid-column: 10;
+	grid-row: 1;
+}
+#DarkPink {
+	background-color: #95009D;
+	grid-column: 10;
+	grid-row: 2;
+}
+
+#LightBrown {
+	background-color: #BC4F51; border-radius: 0px 1.5vh 0px 0px;
+	grid-column: 11;
+	grid-row: 1;
+}
+#DarkBrown {
+	background-color: #772E30; border-radius: 0px 0px 1.5vh 0px;
+	grid-column: 11;
+	grid-row: 2;
+}
+
+
+
+.ToolsEnsemble {
+	display: flex;
+	flex-wrap: wrap;
+	align-self: center;
+	z-index: 2;
+	margin-top: 1vh;
+	margin-bottom: 1vh;
+	gap: 1vh;
+}
+.ToolButton {
+	background-color: #D7C9FF;
+	width: 5vw;
+	max-width: 7vh;
+	height: 5vw;
+	max-height: 7vh;
+	align-self: center;
+	margin: 0px 0.4vh 0px 0.4vh;
+	border-radius: 1.5vh 1.5vh 1.5vh 1.5vh;
+	box-shadow: 2px 4px 3px #491A65;
+	border: none;
+	outline: none;
+	font-size: 0;
+}
+.ToolButton:hover {
+	transition-duration: 150ms;
+	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #491A65;
+}
+
+
+
+.SpecialsButtons {
+	display: flex;
+	flex-wrap: wrap;
+	z-index: 2;
+	gap: 0.1vh;
+}
+
+
+
+.SendDrawingButton {
+	width: 10vw;
+	max-width: 13vh;
+	height: 13vw;
+	max-height: 13vh;
+	margin: 0px 0px 0px 0.4vh;
+	border-radius: 1.5vh 0px 0px 0px;
+	background-image: url("../img/corner_send.png");
+	background-size: cover;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	box-shadow: -4px -4px 3px #491A65;
+	border: none;
+	outline: none;
+	margin-top: auto;
+	margin-left: auto;
+}
+.SendDrawingButton:hover {
+	transition-duration: 150ms;
+	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #491A65;
+}
+
+
+
+.FilmGrain {
+	background-image: url(https://www.transparenttextures.com/patterns/black-felt.png);
+	background-repeat: repeat;
+	background-size: 25%;
+	opacity: 0.25;
+	pointer-events: none;
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	z-index: 5;
+}
+
+
+.YesNo {
+	visibility: hidden;
+	background-color: #00000042;
+	backdrop-filter: blur(5px);
+	z-index: 41;
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.YesNoBox {
+	background-color: #D7C9FF;
+	border: #491a65;
+	border-style: solid;
+	border-width: medium;
+	width: 35vw;
+	aspect-ratio: 21/9;
+	border-radius: 1.5vh 1.5vh 1.5vh 1.5vh;
+	display: flex;
+	flex-direction: column;
+	justify-items: center;
+	align-items: center;
+	z-index: 42;
+	box-shadow: 20px 40px 15px #491a65a0;
+}
+.YesNoQuestion {
+	display: flex;
+	margin-top: auto;
+	margin-bottom: auto;
+	text-align: center;
+	font-size: 2.5vw;
+	margin-left: 1vw;
+	margin-right: 1vw;
+	color: #58508D;
+	text-shadow: 0px 2px 2px #000000ae;
+	font-family: "Public Sans";
+
+}
+.YesNoButtonsRow {
+	display: flex;
+	margin-top: auto;
+	margin-bottom: auto;
+	gap: 5vw;
+}
+.YesNoButton {
+	background-color: #58508D;
+	color: #ffffff;
+	font-size: 3.5vw;
+	font-family: "Public Sans";
+	display: flex;
+	flex-direction: column;
+	width: 7vw;
+	height: 4.5vw;
+	border-radius: 1.5vh 1.5vh 1.5vh 1.5vh;
+	box-shadow: 2px 4px 3px #491A65;
+	border: none;
+	outline: none;
+}
+.YesNoButton:hover {
+	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #000000;
+}
+
+
+@keyframes flip {
+	from {
+		transform:
+			rotate(0deg)
+			translate(0px,0px)
+			scale(1, 1)
+		;
+	}
+	to {
+		transform:
+			rotate(0deg)
+			translate(-120vw,0px)
+			scale(0.1, 1)
+			skewX(-80deg)
+		;
+	}
+}
+
+
+
+@media (max-width: 700px){
+	.UpperPart {
+		align-items: flex-start;
+	}
+	.Board {
+		border-radius: 0px 0vh 1.5vh 1.5vh;
+	}
+	.ChatBox {
+		height: calc(100vh - (100vw * 3/4) - 12vh - 13vh);
+		margin-top: -8vh;
+	}
+	.Foot {
+		border-radius: 1.5vh 1.5vh 0px 0px;
+		height: auto;
+		flex-wrap: wrap;
+	}
+	.ColorsEnsemble {
+		margin-left: 0px;
+	}
+	.SelectedColor {
+		width: 0px;
+		height: 0px;
+	}
+	.ColorButton {
+		height: 8.9vw;
+		width: 8.9vw;
+		border-width: 1vh;
+	}
+	.ToolButton {
+		width: 4.5vh;
+		height: 4.5vh;
+		border-radius: 0.7vh 0.7vh 0.7vh 0.7vh;
+	}
+	.YesNo {
+		backdrop-filter: blur(3px);
+	}
+	.YesNoBox {
+		width: 75vw;
+		margin-bottom: 20vh;
+	}
+	.YesNoQuestion {
+		font-size: 5vw;
+	}
+	.YesNoButtonsRow {
+		gap: 10vw;
+	}
+	.YesNoButton {
+		width: 15vw;
+		height: 10vw;
+		font-size: 7vw;
+	}
+	html, body {
+		overflow: hidden;
+	}
+}
