@@ -172,6 +172,7 @@
 	max-height: 5vh;
 	width: 5vw;
 	max-width: 5vh;
+	border-radius: 0px 0px 0px 0px;
 	border: none;
 	outline: none;
 	font-size: 0;
@@ -420,7 +421,6 @@
 	color: #58508D;
 	text-shadow: 0px 2px 2px #000000ae;
 	font-family: "Public Sans";
-
 }
 .YesNoButtonsRow {
 	display: flex;
@@ -435,15 +435,19 @@
 	font-family: "Public Sans";
 	display: flex;
 	flex-direction: column;
+	align-content: center;
+	justify-content: center;
 	width: 7vw;
 	height: 4.5vw;
 	border-radius: 1.5vh 1.5vh 1.5vh 1.5vh;
 	box-shadow: 2px 4px 3px #491A65;
 	border: none;
 	outline: none;
+	transition-duration: 0ms;
 }
 .YesNoButton:hover {
 	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #000000;
+	transition-duration: 0ms;
 }
 
 
@@ -467,7 +471,7 @@
 
 
 
-@media (max-width: 700px){
+@media (max-width: 900px){
 	.UpperPart {
 		align-items: flex-start;
 	}
