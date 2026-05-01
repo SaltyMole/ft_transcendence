@@ -14,7 +14,7 @@
 .LoadingGif {
 	z-index: 42;
 	position: absolute;
-	width: 30vw;
+	width: 50vh;
 	display: flex;
 	align-items: center;
 	justify-content: center;

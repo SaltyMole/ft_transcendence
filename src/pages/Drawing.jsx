@@ -3,6 +3,9 @@ import { useRef, useEffect } from 'react';
 import '../css/Drawing.css';
 import { Stage, Layer, Line } from 'react-konva';
 import Konva from 'konva';
+import Chat from "../components/Chat"
+
+
 
 var selected_color = "#000000"
 
@@ -19,6 +22,14 @@ var phone_width = 850
 
 const boardRef = { current: null };
 
+const testMessages = [
+  { key: 1, sender: "Paul", text: "c moche" },
+  { key: 2, sender: "Pauline", text: "oui" },
+  { key: 3, sender: "Zoe", text: "d'accord" },
+  { key: 4, sender: "Lucas", text: "mais non c'est artistique" },
+  { key: 5, sender: "Nathan", text: "pas gentil ;(" },
+  { key: 6, sender: "Nathan", text: "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" },
+];
 
 
 function set_select_color(color, id)
@@ -59,8 +70,6 @@ function set_select_color(color, id)
 
 }
 
-
-
 function set_select_tool(tool)
 {
 	selected_tool = tool;
@@ -85,8 +94,6 @@ function set_select_tool(tool)
 		document.getElementById("EraserSvg").style.fill = "#ffffff";
 	}
 }
-
-
 
 function set_select_thickness(thickness)
 {
@@ -122,6 +129,7 @@ function set_select_thickness(thickness)
 }
 
 
+
 function ctrl_z()
 {
 	boardRef.current?.ctrl_z();
@@ -142,22 +150,6 @@ function export_drawing()
 	setTimeout(function(){
 
 	}, 2000);
-}
-
-function send_message_enter_key(key) {
-	if(key === 'Enter')
-		send_message();
-}
-function send_message()
-{
-	var message = document.getElementById("ChatInput").value;
-	document.getElementById("ChatInput").value = "";
-	console.log("Message sent in chat:", message);
-}
-
-function ScrollToBottom({ divRef }) {
-  useEffect(() => divRef.current.scrollIntoView());
-  return <div ref={divRef} />;
 }
 
 
@@ -324,22 +316,13 @@ function Board() {
 };
 
 
+
 class DrawingInterface extends React.Component
 {
 	state = { data: null, yesNoQuestion: "", yesNoAction: null };
 
-	scrollToBottomRef = React.createRef();
-	handleResize = () => {
-		console.log("Resized");
-		if (this.scrollToBottomRef.current) {
-			this.scrollToBottomRef.current.scrollIntoView();
-		}
-	};
-
 	componentDidMount()
 	{
-		window.addEventListener("resize", this.handleResize);
-
 		// Set tool and thickness state at launch
 		set_select_tool(selected_tool);
 		set_select_thickness(selected_thickness);
@@ -349,9 +332,6 @@ class DrawingInterface extends React.Component
 		this.callBackendAPI()
 		.then(res => this.setState({ data: res.express }))
 		.catch(err => console.log(err));
-	}
-	componentWillUnmount() {
-		window.removeEventListener("resize", this.handleResize);
 	}
 
 	// Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
@@ -389,35 +369,20 @@ class DrawingInterface extends React.Component
 						yesAction={this.state.yesNoAction}
 					/>
 
-					<div className="Background">
+					<div className="MainBG">
 
 						<div className="UpperPart">
-
 							<div className="Board" id="Board">
 								<Board className="KonvaBoard"/>
 							</div>
 
-							<div className="ChatBox">
-								<div id="Chat" className="Chat">
-									<b>Paul:</b> c moche <br/>
-									<b>Pauline:</b> oui <br/>
-									<b>Zoe:</b> d'accord <br/>
-									<b>Nathan:</b> pas gentil ;( <br/>
-									the bfg is ready<br/>
-									THE BFG IS READY<br/>
-									<b>Nathan:</b> oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-									<ScrollToBottom  divRef={this.scrollToBottomRef}/>
-								</div>
-
-								<div className="ChatInputBox">
-									<input onKeyDown={() => send_message_enter_key(window.event.key)} placeholder='Chat here...' id="ChatInput" className="ChatInput"></input>
-
-									<button onClick={send_message} className="SendChatButton">
-										<svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg>
-									</button>
-								</div>
-							</div>
-
+							<Chat
+								messages={testMessages}
+								chatWidth="20vw"
+								chatHeight="81vh"
+								chatPhoneWidth="20vw"
+								chatPhoneHeight="calc(100vh - (100vw * 3/4) - 12vh - 14vh)"
+							/>
 						</div>
 
 						<div className="Foot">

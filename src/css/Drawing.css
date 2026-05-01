@@ -2,15 +2,11 @@
 
 
 
-
-
-
-
 .BlackBG {
 	background-color: #1d1d1d;
 }
 
-.Background {
+.MainBG {
 	background-color: #D7C9FF;
 	height: 100vh;
 	width: 100vw;
@@ -25,8 +21,8 @@
 	flex-wrap: wrap;
 	align-items: flex-start;
 	width: 100vw;
-	height: 85vh - 80px;
-	overflow: auto;
+	height: calc(100vh - 17vh); /* subtract the Foot height */
+	overflow: hidden; /* change from auto to hidden */
 }
 
 .Board {
@@ -50,75 +46,7 @@
 	z-index: 2;
 }
 
-.ChatBox {
-	grid-column: 2;
-	display: flex;
-	flex-direction: column;
-	height: 81vh;
-	min-width: 20vw;
-	margin-left: 1vw;
-	margin-right: 0vw;
-	margin-top: 1vh;
-	margin-bottom: 1vh;
-	padding-right: 1vw;
-	flex: 1;
-}
-.Chat {
-	overflow: auto;
-	font-size:calc(100% + 1vw);
-	color: #58508D;
-	text-shadow: 0px 2px 2px #00000059;
-	overflow-wrap: break-word;
-	font-family: "Public Sans";
-}
-.ChatInputBox {
-	background-color: #58508D;
-	display:flex;
-	min-height: 7vh;
-	margin-left: 2vh;
-	margin-right: 2vh;
-	margin-bottom: 17vh;
-	border-radius: 5vh 5vh 5vh 5vh;
-	box-shadow: 2px 4px 3px #491A65;
-	margin-top: 1vh;
-	margin-bottom: 2vh;
-}
-.ChatInput {
-	background-color: #00000000;
-	border: none;
-	align-self: center;
-	outline: none;
-	margin-left: 1vw;
-	margin-right: auto;
-	min-width: 11vw;
-	width: 100vw;
-	min-height: 6vh;
 
-	font-size: 3vh;
-	font-family: "Public Sans";
-	color: #ffffff;
-}
-
-.SendChatButton {
-	background-color: #FFFADE;
-	min-height: 5vh;
-	height: 5vw;
-	max-height: 5vh;
-	min-width: 5vh;
-	width: 5vw;
-	max-width: 5vh;
-	border: none;
-	outline: none;
-	border-radius: 3vh 3vh 3vh 3vh;
-	align-self: center;
-	margin-left: auto;
-	margin-right: 0.5vw;
-	box-shadow: 2px 4px 3px #491A65;
-}
-.SendChatButton:hover {
-	transition-duration: 150ms;
-	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #491A65;
-}
 
 .Foot {
 	background-color: #58508D;
@@ -471,16 +399,12 @@
 
 
 
-@media (max-width: 900px){
+@media (max-width: 80vh){
 	.UpperPart {
 		align-items: flex-start;
 	}
 	.Board {
 		border-radius: 0px 0vh 1.5vh 1.5vh;
-	}
-	.ChatBox {
-		height: calc(100vh - (100vw * 3/4) - 12vh - 13vh);
-		margin-top: -8vh;
 	}
 	.Foot {
 		border-radius: 1.5vh 1.5vh 0px 0px;
@@ -495,7 +419,7 @@
 		height: 0px;
 	}
 	.ColorButton {
-		height: 8.9vw;
+		height: 4vh;
 		width: 8.9vw;
 		border-width: 1vh;
 	}
@@ -503,6 +427,10 @@
 		width: 4.5vh;
 		height: 4.5vh;
 		border-radius: 0.7vh 0.7vh 0.7vh 0.7vh;
+	}
+	.SendDrawingButton {
+		height: 7vh;
+		width: 7vh;
 	}
 	.YesNo {
 		backdrop-filter: blur(3px);
