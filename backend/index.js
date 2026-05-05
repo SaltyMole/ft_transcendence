@@ -39,6 +39,9 @@ app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/upload', uploadRoutes);
 
+const friendRoutes = require('./routes/friend');
+app.use('/api/friends', friendRoutes);
+
 app.get("/", async (req, res) => {
   const userCount = await prisma.user.count();
   res.json(

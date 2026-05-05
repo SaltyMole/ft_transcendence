@@ -13,7 +13,7 @@ exports.uploadAvatar = async (req, res) => {
     const avatarUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
 
     await prisma.user.update({
-      where: { id: req.auth.userId },
+      where: { id: req.user.userId },
       data: { avatarUrl },
     });
 

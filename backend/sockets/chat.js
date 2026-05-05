@@ -17,14 +17,13 @@ async function registerChatEvents(io, socket) {
     });
   }
 
-  socket.on('chat message', async (msg, clientOffset, callback) => {
+  socket.on('chat message', async (msg,callback) => {
     try {
       const newMessage = await prisma.message.create({
         data: {
           senderId: msg.senderId,
           receiverId: msg.receiverId,
           content: msg.content,
-          clientOffset: clientOffset,
         },
       });
       io.emit('chat message', newMessage.content, newMessage.id);
