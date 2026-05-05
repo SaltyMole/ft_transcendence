@@ -5,7 +5,7 @@
 install:
 	npm install
 
-frontend-run: install
+frontend-run:
 	npm run dev -- --host
 
 backend-run:

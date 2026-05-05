@@ -9,7 +9,7 @@ function Chat({ chatWidth, chatHeight, chatPhoneWidth, chatPhoneHeight }) {
 	const [ws, setWs] = useState(null);
 
 	useEffect(() => {
-		const websocket = new WebSocket('ws://localhost:8080');
+		const websocket = new WebSocket(`ws://${window.location.hostname}:8080`);
 		setWs(websocket);
 
 		websocket.onopen = () => console.log('Connected to WebSocket server');
