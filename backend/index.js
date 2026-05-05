@@ -50,6 +50,10 @@ app.get("/", async (req, res) => {
 
 initSockets(io);  // ← initialise tous les événements Socket.io
 
+app.get('/chat', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/index.html'));
+});
+
 const PORT = 3000;
 server.listen(PORT, () => {  // ← server.listen et non app.listen
   console.log(`Server is running on http://localhost:${PORT}`);
