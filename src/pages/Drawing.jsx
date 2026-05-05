@@ -22,15 +22,6 @@ var phone_width = 850
 
 const boardRef = { current: null };
 
-const testMessages = [
-  { key: 1, sender: "Paul", text: "c moche" },
-  { key: 2, sender: "Pauline", text: "oui" },
-  { key: 3, sender: "Zoe", text: "d'accord" },
-  { key: 4, sender: "Lucas", text: "mais non c'est artistique" },
-  { key: 5, sender: "Nathan", text: "pas gentil ;(" },
-  { key: 6, sender: "Nathan", text: "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" },
-];
-
 
 function set_select_color(color, id)
 {
@@ -377,6 +368,7 @@ class DrawingInterface extends React.Component
 							</div>
 
 							<Chat
+								// messages={testMessages}
 								chatWidth="20vw"
 								chatHeight="81vh"
 								chatPhoneWidth="20vw"
