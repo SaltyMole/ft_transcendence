@@ -377,7 +377,6 @@ class DrawingInterface extends React.Component
 							</div>
 
 							<Chat
-								messages={testMessages}
 								chatWidth="20vw"
 								chatHeight="81vh"
 								chatPhoneWidth="20vw"
