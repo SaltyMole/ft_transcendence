@@ -14,6 +14,8 @@
 	margin-bottom: 1vh;
 	padding-right: 1vw;
 	flex: 1;
+
+	justify-content: flex-end;
 }
 .Chat {
 	min-height: 0;
@@ -48,7 +50,7 @@
 	margin-top: 1vh;
 	margin-left: 2vh;
 	margin-right: 2vh;
-	margin-bottom: 2vh;
+	margin-bottom: 1vh;
 	border-radius: 5vh 5vh 5vh 5vh;
 	box-shadow: 2px 4px 3px #491A65;
 }
