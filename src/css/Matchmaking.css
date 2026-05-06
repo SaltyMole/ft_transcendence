@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+.MatchmakingContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	height: 100%;
+}
+
+.MatchmakingText {
+	display: flex;
+	font-size:calc(5vw);
+	color: #D7C9FF;
+
+	text-shadow: 10px 10px 10px #000000;
+	font-family: "Public Sans";
+	overflow-wrap: break-word;
+}
+
+.PlayersAndChat {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 1vw;
+	align-items: center;
+}
+
+.PlayersDiv {
+	width: 35vw;
+	overflow: scroll;
+}
+
+.ChatDiv {
+	background-color: #0000008e;
+	border-radius: 2vh;
+	text-align: left;
+}
+
+.LaunchButton {
+	display: flex;
+	width: 25vw;
+	height: 5vw;
+	align-items: center;
+	justify-content: center;
+	font-size: 2vw;
+}
+
+
+
+
+@media (max-width: 100vh){
+	.PlayersAndChat {
+		width: 100%;
+	}
+	.PlayersDiv {
+		width: 50vw;
+	}
+	.LaunchButton {
+		width: 50vw;
+		height: 10vw;
+		font-size: 4vw;
+	}
+}
