@@ -21,7 +21,7 @@ const players = [
 	{key: 5, name: "Lucas", picture: LucasPicture},
 ];
 
-function Loading()
+function Matchmaking()
 {
 	return (
 	<>
@@ -53,4 +53,4 @@ function Loading()
 	)
 }
 
-export default Loading;
+export default Matchmaking;

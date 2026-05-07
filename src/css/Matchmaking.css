@@ -28,7 +28,7 @@
 
 .PlayersDiv {
 	width: 35vw;
-	overflow: scroll;
+	overflow-x: scroll;
 }
 
 .ChatDiv {

@@ -14,6 +14,7 @@ import Drawing from "./pages/Drawing";
 import Matchmaking from "./pages/Matchmaking";
 import Lobby from "./pages/Lobby";
 import Results from "./pages/Results";
+import E404 from "./pages/404";
 
 import Layout from "./components/Layout";
 import Loading from "./components/Loading";
@@ -48,6 +49,7 @@ function App() {
 					<Route path="/Matchmaking" element={<Matchmaking />} />
 					<Route path="/Lobby" element={<Lobby />} />
 					<Route path="/Results" element={<Results />} />
+					<Route path="/404" element={<E404 />} />
 				</Routes>
 			</Layout>
 
