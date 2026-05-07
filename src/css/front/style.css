@@ -11,17 +11,22 @@ html, body, #root {
 }
 
 .app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 }
 
-body{
+body {
     color: #FFFADE;
 	margin:0;
 	font-family:"Public Sans";
 	
 }
+img {
+	max-width: 100%;
+	width:1vh;
+ }
+
 
 
 .overlay {
@@ -44,7 +49,7 @@ body{
     top: 0;
 }
 
-.overlayGames{
+.overlayGames {
 	background-color: rgba(0, 0, 0, 0.6);
 	border-radius: 20px;
 	box-shadow: 
@@ -62,59 +67,59 @@ body{
 	margin: auto;
 }
 
-.Games{
+.Games {
 	flex-direction: row;
+
 	display: flex;
 }
 
-.overlayGames:hover{
+.overlayGames:hover {
 	background-color: rgba(0, 0, 0, 0.0);
-	
+	animation: animatetext 10s linear infinite;
 }
 
 .input_container {
 	max-width: 400px;
 	border:black solid 2px;
 	margin:auto;
-  	/* font-family:"Public Sans"; */
-
-	/* gap: 6px; */
 	background: rgb(255, 255, 255);
 	padding: 15px;
 	border-radius: 20px;
 	background-color: #D7C9FF;
 	background-image: radial-gradient(at 47% 69%, rgb(110, 214, 221) 0px, transparent 50%),
-	/* radial-gradient(at 9% 32%, rgb(76, 230, 222) 0px, transparent 50%); */
-
 }
 
-
+h2 {
+	font-size: 25px;
+	padding: 2%;
+}
 
 .input_label {
 	
-  display: block;
-  margin-left: 0.4em;
-  font-family:"Public Sans";
-  color: #4D007E;;
-  text-transform: uppercase;
-  font-weight: 1000;
-  font-weight: bold;
+	display: block;
+	margin-left: 0.4em;
+	font-family:"Public Sans";
+	color: #4D007E;;
+	text-transform: uppercase;
+	font-weight: 1000;
+	font-weight: bold;
 }
 
 
-.input {
-  border: none;
-  outline: none;
-  width: 100%;
-  padding: 0.6em;
-  padding-left: 0.9em;
-  border-radius: 20px;
-  background: #FFFADE;
-  transition: background 300ms, color 300ms;
+.Input {
+	border: none;
+	outline: none;
+	width: 100%;
+	padding: 0.6em;
+	padding-left: 0.9em;
+	border-radius: 20px;
+	background: #FFFADE;
+	transition: background 300ms, color 300ms;
 }
 
-.input:focus {
-  background: #f2e59f;
+
+.Input:focus {
+  	background: #f2e59f;
 }
 
 .register {
@@ -142,8 +147,17 @@ body{
 @keyframes animate {
 	0%   { background-color: red; color: cyan; }
 	33%  { background-color: rgb(46, 215, 220); color: magenta; }
-	66%  { background-color: blue; color: rgb(128, 49, 225); }
+	66%  { background-color: blue; color: rgb(154, 106, 213); }
 	100% { background-color: red; color: cyan; }
+	/* 0%   { background-position: 0% 50%; }
+	100% { background-position: 100% 50%; } */
+}
+
+@keyframes animatetext {
+	0%   { color: red; color: cyan; }
+	33%  {color: rgb(46, 215, 220); color: magenta; }
+	66%  { color: blue; color: rgb(128, 49, 225); }
+	100% { color: red; color: cyan; }
 	/* 0%   { background-position: 0% 50%; }
 	100% { background-position: 100% 50%; } */
 }
@@ -200,7 +214,7 @@ main {
 	padding:20px;
 }
 
-footer{
+footer {
 
     width: 100%;
 	text-align: center;
@@ -211,7 +225,7 @@ footer{
 
 
 
-.not-underline{
+.not-underline {
 	text-decoration: none;
 	margin-left: 0px;
 	color: #4D007E
@@ -228,7 +242,7 @@ footer{
 	align-items: center; */
 	width:100%
 }
-#connect{
+#connect {
 	display :flex;
 	align-items: center;
 	justify-content: center;
@@ -236,7 +250,21 @@ footer{
 	margin:50em
 }
 
-button{
+.buttonSend{
+	padding: 0.5%;
+	height: 15%;
+	background-color: #FFFADE;
+    border-radius: 1.5vh;
+    box-shadow: 2px 4px 3px #491A65;
+	transition-duration: 150ms;
+ }
+
+ .buttonSend:hover{
+box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #000000;
+transition-duration: 150ms;
+}
+
+.buttonP{
 
 	text-align: center ;
 	padding:10px 10px;
@@ -248,12 +276,68 @@ button{
     box-shadow: 2px 4px 3px #491A65;
 	transition-duration: 150ms;
 }
-
-button:hover{
-box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #000000;
-transition-duration: 150ms;
+.buttonJointheGame
+{
+	text-align: center;
+	background-color: grey;
+	border-radius: 0.5vh;
+	padding :-2px;
+	padding-left :2px ;
+	padding-right :2px ;
+	font-weight :1000;
+	font-size: 1vh;
+	box-shadow: 2px 4px 3px #585856;
+	transition-duration: 150ms;
+	margin-right: 5%;
 }
 
+.buttonP:hover{
+	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #000000;
+	transition-duration: 150ms;
+}
+
+.buttonJointheGame:hover{
+	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #000000;
+	transition-duration: 150ms;
+	
+
+}
+ul{
+	height: 100%;
+	width: 100%;
+	overflow-y: scroll;
+}
+li{
+	margin-top: 5%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 90%
+}
+.listGames{
+	margin: 5%;
+	height:70%;
+	width: 90%;
+}
+
+.code{
+	border: none;
+	outline: none;
+	width: 60%;
+	/* padding: 0.5em; */
+	text-align: center;
+	border-radius: 20px;
+	background: #FFFADE;
+	transition: background 300ms, color 300ms;
+	
+}
+
+.bim{
+		height: 80%;
+		max-width: 100%;
+		max-height: 100%;
+		/* align-items: center; */
+}
 
 @media (max-width: 768px) {
 	header {

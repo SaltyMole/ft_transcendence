@@ -30,7 +30,7 @@ function Header() {
 			<div id = "pages" > 
 				<p><Link to="/">Accueil</Link>
         		<Link to="/Game">Game</Link>
-				 <Button value="ml-5" text="Login" type="btn" link="/login"/> </p>
+				 <Button value=" buttonP ml-5" text="Login" type="btn" link="/login"/> </p>
 				{/* <button onClick= {handleAuth}> {isLoggedIn ? "Logout" : "Login"}</button> </p> */}
 
 			</div>  

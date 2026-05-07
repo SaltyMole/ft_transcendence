@@ -20,16 +20,16 @@ function Register()
 					<div className="input_container text-start ">
 						<form action="" method="post">
 						<div className="">
-							<Input text='Email@email.com' type="email" value={email} set={setEmail}/>
+							<Input classname ="Input"  classnameL="input_label mt-5" text='Email@email.com' type="email" value={email} set={setEmail}/>
 						</div>
 						<div>
-							<Input text='Password' type="password" value={password} set ={setPassword}/>
+							<Input classname ="Input"  classnameL="input_label mt-5" text='Password' type="password" value={password} set ={setPassword}/>
 						</div>
 						<div>
-							<Input text="Username" type="username" value={username} set ={setUsername}/>
+							<Input classname ="Input"  classnameL="input_label mt-5" text="Username" type="username" value={username} set ={setUsername}/>
 						</div>
 							<div className ="flex px-2 items-center mt-5">
-							 <button type="submit">Register</button>
+							 <button value ="buttonP" type="submit">Register</button>
 							</div>
 						</form>
 					</div>
