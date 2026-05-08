@@ -21,7 +21,7 @@
 .PlayersAndChat {
 	display: flex;
 	flex-direction: row;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	gap: 1vw;
 	align-items: center;
 }
@@ -49,8 +49,12 @@
 
 
 
-@media (max-width: 100vh){
+@media (max-width: 120vh){
 	.PlayersAndChat {
+		width: 100%;
+		flex-wrap: wrap;
+	}
+	.ChatDiv {
 		width: 100%;
 	}
 	.PlayersDiv {

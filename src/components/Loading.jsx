@@ -1,5 +1,4 @@
 import './Loading.css';
-import loading_gif from '../img/loading.gif'
 
 function Loading()
 {

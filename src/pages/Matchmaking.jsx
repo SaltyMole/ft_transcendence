@@ -37,8 +37,9 @@ function Matchmaking()
 						<div className="ChatDiv">
 							<Chat
 								chatWidth="20vw"
-								chatHeight="50vh"
-								chatPhoneWidth="50vw"
+								chatHeight="40vh"
+								chatPhoneModeWidth="700vh"
+								chatPhoneWidth="100%"
 								chatPhoneHeight="50vh"
 							/>
 						</div>
