@@ -9,7 +9,7 @@ function Game()
 	const [code, setCode] = useState('');
 	return (
 	<>
-    	<main className= "bg-cover bg-center h-screen" style={{ backgroundImage: `url(${test})` }}>
+    	<main className= "flex  h-screen" style={{ backgroundImage: `url(${test})` }}>
 			<div className= 'overlay '>
 				<h1 id="homeText">Games</h1>
 				<div className="Games pt-10">

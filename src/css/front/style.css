@@ -2,9 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Jacquarda+Bastarda+9&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
 @import "tailwindcss";
 
 html, body, #root {
+	max-height: 100%;
   	height: 100%;
 	width: 100%;
   	margin: 0;
@@ -20,6 +22,9 @@ body {
     color: #FFFADE;
 	margin:0;
 	font-family:"Public Sans";
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	
 }
 img {
@@ -36,17 +41,11 @@ img {
     inset 0 1px 0 rgba(199, 189, 189, 0.5),
     inset 0 -1px 0 rgba(160, 152, 152, 0.1),
     inset 0 0 20px 7px #a8adaeb3;
-	width: 60%; /*help todo fix*/
-	padding: 20px;
-	margin-right:20%;
+	width: 60%;
+	padding: 2%;
 	text-align: center;
-	color:white;
 	border-radius: 10px;
 	box-sizing: border-box;
-	height: 100%;
-    position: absolute;
-    right: 0;
-    top: 0;
 }
 
 .overlayGames {
@@ -102,7 +101,7 @@ h2 {
 	display: block;
 	margin-left: 0.4em;
 	font-family:"Public Sans";
-	color: #4D007E;;
+	color: #4D007E;
 	text-transform: uppercase;
 	font-weight: 1000;
 	font-weight: bold;
@@ -139,15 +138,14 @@ h2 {
 	font-size: 6vw;
 	-webkit-text-stroke: #000000;
 	/* text-size-adjust: 300%; */
-	font-family: "Jacquarda Bastarda 9", serif;
+	font-family:"Pixelify Sans";
  	background-image: linear-gradient(90deg, #D7C9FF, #7d21d2, #d4a5dd, #00B0C9);
 	background-repeat: no-repeat;
 	background-size: 200% auto;
 	animation: animate 10s linear infinite;
 	background-clip: text; 
-	text-shadow: 2px 2px 1px rgb(13, 13, 14);
+	text-shadow: 4px 4px 0px rgb(13, 13, 14);
 	-webkit-text-stroke: 0.5px #000000;
-	/* -webkit-text-fill-color: rgba(250, 250, 250, 0.5); */
 }
 
 @keyframes animate {
@@ -337,7 +335,7 @@ li{
 
 	.overlay {
 		padding: 20px;
-		width: 80%;
+		width: 100%;
 		margin:auto;
 
 	}
@@ -377,4 +375,5 @@ li{
 
 @theme {
   --color-FFFADE: #FFFADE; 
+  --color-Purple :#4D007E;
 }
