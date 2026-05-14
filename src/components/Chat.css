@@ -6,8 +6,9 @@
     flex-direction: column;
     width: var(--chatWidth);
     height: var(--chatHeight);
+    justify-self: center;
     margin-left: 1vw;
-    margin-right: 0vw;
+    margin-right: 1vw;
     margin-top: 1vh;
     margin-bottom: 1vh;
     padding-right: 1vw;
@@ -16,6 +17,9 @@
     justify-content: flex-end;
 }
 .Chat {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
     min-height: 0;
     overflow: auto;
     color: #58508d;

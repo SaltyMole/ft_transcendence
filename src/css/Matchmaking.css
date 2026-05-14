@@ -1,68 +1,102 @@
-@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 
 .MatchmakingContent {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-between;
-	height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
 }
 
 .MatchmakingText {
-	display: flex;
-	font-size:calc(5vw);
-	color: #D7C9FF;
+    display: flex;
+    font-size: calc(5vw);
+    color: #d7c9ff;
 
-	text-shadow: 10px 10px 10px #000000;
-	font-family: "Public Sans";
-	overflow-wrap: break-word;
+    text-shadow: 10px 10px 10px #000000;
+    font-family: "Public Sans";
+    overflow-wrap: break-word;
 }
 
-.PlayersAndChat {
+.PlayersAndCodeAndChat {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 1vw;
+    align-items: center;
+}
+
+.PlayersAndCode {
 	display: flex;
-	flex-direction: row;
-	flex-wrap: nowrap;
-	gap: 1vw;
-	align-items: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 1vw;
+    align-items: center;
 }
 
 .PlayersDiv {
-	width: 35vw;
-	overflow-x: scroll;
+    width: 35vw;
+    overflow-x: scroll;
+}
+
+.CodeDiv {
+	display: flex;
+    width: 25vw;
+    height: 5vw;
+    align-items: center;
+    justify-content: center;
+    font-size: 2vw;
+    background-color: #d7c9ff;
+    color: #58508D;
+    border-radius: 5vw;
 }
 
 .ChatDiv {
-	background-color: #0000008e;
-	border-radius: 2vh;
-	text-align: left;
+    background-color: #0000008e;
+    border-radius: 2vh;
+    width: 20vw;
+    text-align: left;
 }
 
 .LaunchButton {
-	display: flex;
-	width: 25vw;
-	height: 5vw;
-	align-items: center;
-	justify-content: center;
-	font-size: 2vw;
+    display: flex;
+    width: 25vw;
+    height: 5vw;
+    align-items: center;
+    justify-content: center;
+    font-size: 2vw;
 }
 
-
-
-
-@media (max-width: 120vh){
-	.PlayersAndChat {
+@media (max-width: 120vh) {
+	.overlay {
+		width: 100vw;
+		margin-right: 0px;
+	}
+	.MatchmakingContent {
+		width: 90vw;
+	}
+	.PlayersAndCodeAndChat {
+		width: 90vw;
+		flex-wrap: wrap;
+	}
+	.PlayersAndCode {
 		width: 100%;
 		flex-wrap: wrap;
+	}
+	.PlayersDiv {
+		width: 90vw;
+	}
+	.CodeDiv {
+		width: 90vw;
+		height: 10vh;
+		font-size: 5vw;
 	}
 	.ChatDiv {
 		width: 100%;
 	}
-	.PlayersDiv {
-		width: 50vw;
-	}
 	.LaunchButton {
-		width: 50vw;
-		height: 10vw;
-		font-size: 4vw;
+	    width: 50vw;
+	    height: 10vw;
+	    font-size: 4vw;
 	}
 }
