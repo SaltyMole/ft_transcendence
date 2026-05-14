@@ -52,13 +52,7 @@ function Matchmaking() {
 								</div>
 
 								<div className="ChatDiv">
-									<Chat
-										chatWidth="100%"
-										chatHeight="40vh"
-										chatPhoneModeWidth="0vw"
-										chatPhoneWidth="100%"
-										chatPhoneHeight="50vh"
-									/>
+									<Chat/>
 								</div>
 							</div>
 

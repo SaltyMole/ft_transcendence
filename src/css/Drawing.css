@@ -22,7 +22,7 @@
 	align-items: flex-start;
 	width: 100vw;
 	height: calc(100vh - 17vh); /* subtract the Foot height */
-	overflow: hidden; /* change from auto to hidden */
+	overflow: auto;
 }
 
 .Board {
@@ -44,6 +44,12 @@
 	box-shadow: 2px 4px 3px #491A65;
 	overflow: hidden;
 	z-index: 2;
+}
+
+.ChatDiiv {
+	display: flex;
+	width: 30vw;
+	height: 100%;
 }
 
 
@@ -402,9 +408,14 @@
 @media (max-width: 80vh){
 	.UpperPart {
 		align-items: flex-start;
+		overflow: hidden;
 	}
 	.Board {
 		border-radius: 0px 0vh 1.5vh 1.5vh;
+	}
+	.ChatDiiv {
+		width: 100vw;
+		height: calc(100vh - (100vw * 3/4) - 12vh - 14vh);
 	}
 	.Foot {
 		border-radius: 1.5vh 1.5vh 0px 0px;

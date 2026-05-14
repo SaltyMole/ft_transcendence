@@ -366,14 +366,10 @@ class DrawingInterface extends React.Component
 							<div className="Board" id="Board">
 								<Board className="KonvaBoard"/>
 							</div>
+							<div className='ChatDiiv'>
+								<Chat/>
+							</div>
 
-							<Chat
-								// messages={testMessages}
-								chatWidth="20vw"
-								chatHeight="81vh"
-								chatPhoneWidth="20vw"
-								chatPhoneHeight="calc(100vh - (100vw * 3/4) - 12vh - 14vh)"
-							/>
 						</div>
 
 						<div className="Foot">
