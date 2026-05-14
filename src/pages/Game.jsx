@@ -12,7 +12,7 @@ function Game()
     	<main className= "flex  h-screen" style={{ backgroundImage: `url(${test})` }}>
 			<div className= 'overlay '>
 				<h1 id="homeText">Games</h1>
-				<div className="Games pt-10">
+				<div className="Games">
 					<div className= "overlayGames flex-col flex  justify-between items-center ">
 						<h2> Join the game</h2>
 						<div className="bim test flex items-end justify-center pb-25">

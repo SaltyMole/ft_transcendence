@@ -14,11 +14,11 @@ function Home() {
   return (
     <>
     	<main>
-			<div className= 'overlay'>
+			<div className= 'overlay flex flex-col  '>
 				<h1 id="homeText">Game Name</h1>
 				<div className='input_container'>
 					<h2 className="underline font-extrabold text-Purple" >Goal</h2>
-					<p className="text-Purple">
+					<p className="text-Purple p-5">
 						Welcome to our game !<tr/> 
 						This game is a drawing game.<tr/> 
 						You are an adventurer, you are going on an adventure alone or with other adventurers.<tr/> 
@@ -30,7 +30,7 @@ function Home() {
 
 				</div>
 				<div className='input_container'>
-					<h2 className="underline font-extrabold text-Purple" >Rules</h2>
+					<h2 className="underline font-extrabold text-Purple p-5" >Rules</h2>
 					<p className="text-start text-Purple">
 						The rules are simple :<br/> 
 						- Everything is judged by an AI, try to think like one to find a better proposition than the other ones.<br/> 

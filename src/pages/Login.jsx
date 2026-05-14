@@ -10,7 +10,7 @@ function Login()
 	return (
     <>
     	<main>
-			<div className= 'overlay'>
+			<div className= 'overlay '>
 				<h1 id="homeText">Login</h1>
 				<div>
 					<p></p>

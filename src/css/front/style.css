@@ -137,6 +137,7 @@ h2 {
 #homeText{
 	font-size: 6vw;
 	-webkit-text-stroke: #000000;
+	/* padding-bottom: 3%; */
 	/* text-size-adjust: 300%; */
 	font-family:"Pixelify Sans";
  	background-image: linear-gradient(90deg, #D7C9FF, #7d21d2, #d4a5dd, #00B0C9);
@@ -325,20 +326,6 @@ li{
 }
 
 @media (max-width: 768px) {
-	header {
-		height: auto;
-	}
-
-	main {
-		flex-direction: column;
-	}
-
-	.overlay {
-		padding: 20px;
-		width: 100%;
-		margin:auto;
-
-	}
 
 	#pages {
 		flex-direction: column;
