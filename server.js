@@ -28,39 +28,122 @@ app.get('/express_backend', (req, res) => {
 
 
 // WEBSOCKEY
-const wss = new WebSocketServer({ port: 8080 });
+// const http = require("http");
+// const { WebSocketServer, WebSocket } = require("ws");
 
+// 1. Create ONE HTTP server
 const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World');
+res.writeHead(200, { "Content-Type": "text/plain" });
+res.end("Chat server running");
 });
 
-// Broadcast to all clients
-wss.broadcast = function broadcast(data) {
-  wss.clients.forEach(function each(client) {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(data);
-    }
-  });
-};
+// 2. Attach WebSocket to that same HTTP server (single port)
+const wss = new WebSocketServer({ server });
 
-wss.on('connection', (ws) => {
-  console.log('Client connected');
+// 3. Room registry: { roomId: Set<ws> }
+const rooms = {};
 
-//   ws.send('Welcome! You are connected to the WebSocket server.');
+// 4. Broadcast only to clients in the same room
+function broadcastToRoom(roomId, data, senderWs = null) {
+const room = rooms[roomId];
+if (!room) return;
 
-  ws.on('message', (message) => {
-    console.log(`Received: ${message}`);
-    wss.broadcast(message);
-  });
+const payload = JSON.stringify(data);
+room.forEach((client) => {
+	const isOpen = client.readyState === WebSocket.OPEN;
+	const isNotSender = client !== senderWs; // set to null to include sender
+	if (isOpen && isNotSender) {
+	client.send(payload);
+	}
+});
+}
 
-  ws.on('close', () => {
-    console.log('Client disconnected');
-  });
+wss.on("connection", (ws) => {
+console.log("Client connected");
+ws.currentRoom = null; // track which room this socket is in
+ws.username = null;
+
+ws.on("message", (raw) => {
+	let msg;
+
+	// 5. Always parse JSON — reject malformed messages
+	try {
+	msg = JSON.parse(raw);
+	} catch {
+	ws.send(JSON.stringify({ type: "error", text: "Invalid JSON" }));
+	return;
+	}
+
+	// 6. Route by message type
+	switch (msg.type) {
+
+	case "join": {
+		const { roomId, username } = msg;
+
+		// Leave previous room if switching
+		if (ws.currentRoom && rooms[ws.currentRoom]) {
+		rooms[ws.currentRoom].delete(ws);
+		broadcastToRoom(ws.currentRoom, {
+			type: "system",
+			text: `${ws.username} left the room`,
+			roomId: ws.currentRoom,
+		});
+		}
+
+		// Join new room
+		if (!rooms[roomId]) rooms[roomId] = new Set();
+		rooms[roomId].add(ws);
+		ws.currentRoom = roomId;
+		ws.username = username;
+
+		// Confirm join to the joiner
+		ws.send(JSON.stringify({ type: "joined", roomId, username }));
+
+		console.log(`${username} joined room: ${roomId}`);
+		break;
+	}
+
+	case "chat": {
+		if (!ws.currentRoom) {
+		ws.send(JSON.stringify({ type: "error", text: "Join a room first" }));
+		return;
+		}
+
+		const payload = {
+		type: "chat",
+		roomId: ws.currentRoom,
+		from: ws.username,
+		text: msg.text,
+		timestamp: new Date().toISOString(),
+		};
+
+		// Send to others in room
+		broadcastToRoom(ws.currentRoom, payload, ws);
+
+		// Echo back to sender (so their own message appears)
+		ws.send(JSON.stringify({ ...payload, self: true }));
+		break;
+	}
+
+	default:
+		ws.send(JSON.stringify({ type: "error", text: `Unknown type: ${msg.type}` }));
+	}
 });
 
-console.log('WebSocket server running on ws://localhost:8080');
+ws.on("close", () => {
+	if (ws.currentRoom && rooms[ws.currentRoom])
+		rooms[ws.currentRoom].delete(ws);
+
+	console.log(`${ws.username ?? "Client"} disconnected`);
+});
+});
+
+// 7. Single port for both HTTP and WS
+const PORT = 8080;
+server.listen(PORT, () => {
+console.log(`Server running on http://localhost:${PORT}`);
+console.log(`WebSocket ready on ws://localhost:${PORT}`);
+});
 
 
 

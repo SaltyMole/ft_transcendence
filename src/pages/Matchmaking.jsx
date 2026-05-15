@@ -52,7 +52,10 @@ function Matchmaking() {
 								</div>
 
 								<div className="ChatDiv">
-									<Chat/>
+									<Chat
+										clientName="User"
+										roomId="Matchmaking"
+									/>
 								</div>
 							</div>
 

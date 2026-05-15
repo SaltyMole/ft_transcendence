@@ -95,10 +95,3 @@
         0 0 transparent,
         inset 2px 2px 3px 1px #491a65;
 }
-
-
-.ChatBox--phone {
-    width: var(--chatPhoneWidth);
-    height: var(--chatPhoneHeight);
-    margin-top: -6vh;
-}

@@ -367,7 +367,10 @@ class DrawingInterface extends React.Component
 								<Board className="KonvaBoard"/>
 							</div>
 							<div className='ChatDiiv'>
-								<Chat/>
+								<Chat
+									clientName="User"
+									roomId="Drawing"
+								/>
 							</div>
 
 						</div>
