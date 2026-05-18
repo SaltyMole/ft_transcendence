@@ -25,7 +25,7 @@
 	display: flex;
 	font-size: calc(2vw);
 	color: #58508D;
-	text-shadow: 5px 5px 10px #000000;
+	text-shadow: 5px 5px 8px #000000;
 	font-family: "Public Sans";
 	overflow-wrap: break-word;
 
@@ -42,8 +42,12 @@
 
 .Carousel {
 	display: flex;
-	position: sticky;
 	flex-direction: column;
+
+	top: 0;
+	position: sticky;
+	align-self: flex-start;
+	
 	width: 50%;
 	height: fit-content;
 	background-color: #0000007f;
@@ -68,6 +72,7 @@
 
 .CombatStory {
 	display: flex;
+	flex-direction: column;
 	font-size: calc(1.5vw);
 	color: #ffffff;
 	text-shadow: 10px 10px 10px #000000;
@@ -78,10 +83,23 @@
 	text-align: left;
 	margin-left: 1vw;
 	margin-right: 1vw;
+	padding-top: 1vw;
 	padding-left: 1vw;
 	padding-right: 1vw;
+	padding-bottom: 1vw;
 	background-color: #00000071;
 	border-radius: 1vw;
+}
+
+.CombatStoryText {
+	font-size: 1.5vw;
+	color: #58508D;
+	text-shadow: 5px 5px 10px #000000;
+	background-color: #FFFADE;
+	width: 50%;
+	align-self: center;
+	border-radius: 1vw;
+	text-align: center;
 }
 
 
@@ -91,12 +109,18 @@
 		margin-right: 0px;
 	}
 	.LobbyText {
-		font-size: calc(10vw);
+		font-size: 10vw;
 	}
 	.Environment {
-		font-size: calc(5vw);
+		font-size: 5vw;
+	}
+	.CarouselText {
+		font-size: 3.5vw;
+	}
+	.CombatStoryText {
+		font-size: 3.5vw;
 	}
 	.CombatStory {
-		font-size: calc(4vw);
+		font-size: 4vw;
 	}
 }

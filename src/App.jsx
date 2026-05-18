@@ -1,6 +1,5 @@
 
-import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
-
+import {BrowserRouter, Routes, Route, Link, Navigate, useParams, generatePath} from "react-router-dom";
 import Header from "./components/Header";
 import Head from "./components/Head";
 import Footer from "./components/Footer";
@@ -46,7 +45,7 @@ function App() {
 					{/* <Route path="/Login" element={<Login setIsLoggedIn={setIsLoggedIn}/>}/> */}
 					<Route path="/Register" element={<Register/>}/>
 					<Route path="/Drawing" element={<Drawing />} />
-					<Route path="/Matchmaking" element={<Matchmaking />} />
+					<Route path="/Matchmaking/:gameID" element={<Matchmaking />} />
 					<Route path="/Lobby" element={<Lobby />} />
 					<Route path="/Results" element={<Results />} />
 					<Route path="/404" element={<E404 />} />

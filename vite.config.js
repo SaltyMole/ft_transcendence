@@ -11,6 +11,10 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:5000',
+	  '/gameroute': 'http://localhost:5000'
     },
+	watch: {
+      ignored: ['**/bdd.json']
+    }
   },
 })

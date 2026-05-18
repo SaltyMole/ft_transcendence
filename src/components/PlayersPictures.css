@@ -44,7 +44,7 @@
 	border-radius: 50%;
 }
 
-.PlayerName {
+.PlayerNamePicture {
 	display: flex;
 	font-size: calc(1.5vw);
 	color: #58508D;

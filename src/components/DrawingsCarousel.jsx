@@ -1,32 +1,46 @@
 import React, { useRef, useEffect, useState } from "react";
 import "./DrawingsCarousel.css";
+import getDrawings from "../game/getDrawings";
 
 
 
-const DrawingCarousel = ({ slides }) => {
-	const [index, setIndex] = useState(0)
+const DrawingCarousel = ({ gameID }) => {
+	const [index, setIndex] = useState(0);
+	const [drawings, setDrawings] = useState([]);
 
-	const prev = () => setIndex((i) => (i - 1 + slides.length) % slides.length)
-	const next = () => setIndex((i) => (i + 1) % slides.length)
+	useEffect(() => {
+		const fetchDrawings = () => {
+			getDrawings(gameID)
+			.then(drawings => setDrawings(drawings))
+			.catch(error => console.error(error));
+		}
+		
+		// Fetch
+		fetchDrawings();
+		const interval = setInterval(fetchDrawings, 2000);
 
-	const slide = slides[index]
+		// Cleaner unmount
+		return () => clearInterval(interval);
+	}, [gameID]);
+
+	const prev = () => setIndex((i) => (i - 1 + drawings.length) % drawings.length);
+	const next = () => setIndex((i) => (i + 1) % drawings.length);
+
+	const drawing = drawings[index];
+
+	if (!drawing) return null;
 
 	return (
-	<div className="DrawingCarouselContent">
-		<img src={slide.drawing} alt={`Drawing by ${slide.player}`} />
-
-		<p className="PlayerName">{slide.player}</p>
-
+		<div className="DrawingCarouselContent">
+		<img src={drawing.drawing} alt={`Drawing by ${drawing.player}`} />
+		<p className="PlayerName">{drawing.player}</p>
 		<div className="Buttons">
 			<button onClick={prev}>←</button>
 			<button onClick={next}>→</button>
 		</div>
-
-		<p>{index + 1} / {slides.length}</p>
-	</div>
-	)
-}
-
-
+		<p>{index + 1} / {drawings.length}</p>
+		</div>
+	);
+};
 
 export default DrawingCarousel;

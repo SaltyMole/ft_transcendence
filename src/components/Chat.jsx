@@ -8,7 +8,7 @@ function Chat({
 	chatPhoneWidth,
 	chatPhoneHeight,
 	clientName,
-	roomId,
+	gameID,
 }) {
 	const messagesEndRef = useRef(null);
 	const chatRef = useRef(null);
@@ -24,7 +24,7 @@ function Chat({
 		ws.onopen = () => {
 			console.log("Connected to WebSocket server");
 			setConnected(true);
-			ws.send(JSON.stringify({ type: "join", roomId: roomId, username: clientName }));
+			ws.send(JSON.stringify({ type: "join", gameID: gameID, username: clientName }));
 		};
 
 		ws.onmessage = (e) => {

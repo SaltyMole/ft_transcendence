@@ -40,12 +40,12 @@ res.end("Chat server running");
 // 2. Attach WebSocket to that same HTTP server (single port)
 const wss = new WebSocketServer({ server });
 
-// 3. Room registry: { roomId: Set<ws> }
+// 3. Room registry: { gameID: Set<ws> }
 const rooms = {};
 
 // 4. Broadcast only to clients in the same room
-function broadcastToRoom(roomId, data, senderWs = null) {
-const room = rooms[roomId];
+function broadcastToRoom(gameID, data, senderWs = null) {
+const room = rooms[gameID];
 if (!room) return;
 
 const payload = JSON.stringify(data);
@@ -78,7 +78,7 @@ ws.on("message", (raw) => {
 	switch (msg.type) {
 
 	case "join": {
-		const { roomId, username } = msg;
+		const { gameID, username } = msg;
 
 		// Leave previous room if switching
 		if (ws.currentRoom && rooms[ws.currentRoom]) {
@@ -86,20 +86,20 @@ ws.on("message", (raw) => {
 		broadcastToRoom(ws.currentRoom, {
 			type: "system",
 			text: `${ws.username} left the room`,
-			roomId: ws.currentRoom,
+			gameID: ws.currentRoom,
 		});
 		}
 
 		// Join new room
-		if (!rooms[roomId]) rooms[roomId] = new Set();
-		rooms[roomId].add(ws);
-		ws.currentRoom = roomId;
+		if (!rooms[gameID]) rooms[gameID] = new Set();
+		rooms[gameID].add(ws);
+		ws.currentRoom = gameID;
 		ws.username = username;
 
 		// Confirm join to the joiner
-		ws.send(JSON.stringify({ type: "joined", roomId, username }));
+		ws.send(JSON.stringify({ type: "joined", gameID, username }));
 
-		console.log(`${username} joined room: ${roomId}`);
+		console.log(`${username} joined room: ${gameID}`);
 		break;
 	}
 
@@ -111,7 +111,7 @@ ws.on("message", (raw) => {
 
 		const payload = {
 		type: "chat",
-		roomId: ws.currentRoom,
+		gameID: ws.currentRoom,
 		from: ws.username,
 		text: msg.text,
 		timestamp: new Date().toISOString(),
@@ -169,7 +169,17 @@ app.post('/api/save-image', upload.single('file'), (req, res) => {
 
 
 
+// JSON
+import fs from 'fs';
 
+app.use(express.json());
 
+app.post('/gameroute/create', (req, res) => {
+  const { id } = req.body;
+  const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
 
+  data.push({ id, players: [], drawings: [], environment: "", story: "" });
 
+  fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
+  res.json({ success: true, id });
+});

@@ -8,7 +8,7 @@
 
 .PlayerName {
 	display: flex;
-	font-size: calc(2vw);
+	font-size: 2vw;
 	color: #d7c9ff;
 
 	text-shadow: 10px 10px 10px #000000;
@@ -20,4 +20,12 @@
 	display: flex;
 	flex-direction: row;
 	gap: 1vw;
+}
+
+
+
+@media (max-width: 120vh)	{
+	.PlayerName {
+		font-size: 4vw;
+	}
 }

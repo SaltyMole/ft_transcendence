@@ -1,34 +1,22 @@
 import test from "../img/test.jpeg";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from 'react-router-dom';
 import "../css/front/style.css";
 import "../css/Matchmaking.css";
 import PlayersPictures from "../components/PlayersPictures";
 import Chat from "../components/Chat";
 
-import NathanPicture from "../img/nathan.png";
-import PaulPicture from "../img/paul.png";
-import PaulinePicture from "../img/pauline.png";
-import ZoePicture from "../img/zoe.jpg";
-import LucasPicture from "../img/lucas.webp";
 
-const players = [
-	{ key: 1, name: "Nathan", picture: NathanPicture },
-	{ key: 2, name: "Paul", picture: PaulPicture },
-	{ key: 3, name: "Pauline", picture: PaulinePicture },
-	{ key: 4, name: "Zoe", picture: ZoePicture },
-	{ key: 5, name: "Lucas", picture: LucasPicture },
-	{ key: 6, name: "Lucas", picture: LucasPicture },
-	{ key: 7, name: "Lucas", picture: LucasPicture },
-	{ key: 8, name: "Lucas", picture: LucasPicture },
-	{ key: 9, name: "Lucas", picture: LucasPicture },
-	{ key: 10, name: "Lucas", picture: LucasPicture },
-	{ key: 11, name: "Lucas", picture: LucasPicture },
-	{ key: 12, name: "Lucas", picture: LucasPicture },
-];
+// const gameID = "wPl5G6DO";
 
-const gameId = "42abcdef"
+const Matchmaking = () => {
+	const { gameID } = useParams();
 
-function Matchmaking() {
+	React.useEffect(() => {
+		console.log("iii", gameID);
+	}, []);
+	
+
 	return (
 		<>
 			<main
@@ -42,10 +30,10 @@ function Matchmaking() {
 								<div className="PlayersAndCode">
 
 									<div className="PlayersDiv">
-										<PlayersPictures Players={players} />
+										<PlayersPictures gameID={gameID} />
 									</div>
 									<div className="CodeDiv">
-										CODE: {gameId}
+										CODE: {gameID}
 									</div>
 
 
