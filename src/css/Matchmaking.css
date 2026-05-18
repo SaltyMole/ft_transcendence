@@ -76,6 +76,9 @@
 	.MatchmakingContent {
 		width: 90vw;
 	}
+	.MatchmakingText {
+		font-size: calc(10vw);
+	}
 	.PlayersAndCodeAndChat {
 		width: 90vw;
 		flex-wrap: wrap;

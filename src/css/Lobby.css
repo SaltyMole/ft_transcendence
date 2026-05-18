@@ -2,11 +2,69 @@
 
 
 
+.LobbyContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 100%;
+	overflow-y: scroll;
+	gap: 1vh;
+}
+
+.LobbyText {
+	display: flex;
+	font-size: calc(5vw);
+	color: #d7c9ff;
+
+	text-shadow: 10px 10px 10px #000000;
+	font-family: "Public Sans";
+	overflow-wrap: break-word;
+}
+
+.Environment {
+	display: flex;
+	font-size: calc(2vw);
+	color: #58508D;
+	text-shadow: 5px 5px 10px #000000;
+	font-family: "Public Sans";
+	overflow-wrap: break-word;
+
+	padding-left: 1vw;
+	padding-right: 1vw;
+	background-color: #d7c9ff;
+	border-radius: 1vw;
+}
+
+.CombatStory {
+	display: flex;
+	font-size: calc(1.5vw);
+	color: #ffffff;
+	text-shadow: 10px 10px 10px #000000;
+	font-family: "Public Sans";
+	overflow-wrap: break-word;
+
+	text-align: left;
+	margin-left: 1vw;
+	margin-right: 1vw;
+	padding-left: 1vw;
+	padding-right: 1vw;
+	background-color: #00000071;
+	border-radius: 1vw;
+}
 
 
 @media (max-width: 120vh) {
 	.overlay {
 		width: 100vw;
 		margin-right: 0px;
+	}
+	.LobbyText {
+		font-size: calc(10vw);
+	}
+	.Environment {
+		font-size: calc(5vw);
+	}
+	.CombatStory {
+		font-size: calc(4vw);
 	}
 }

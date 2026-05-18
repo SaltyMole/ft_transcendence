@@ -26,7 +26,7 @@ const players = [
 	{ key: 12, name: "Lucas", picture: LucasPicture },
 ];
 
-const code = "42abcdef"
+const gameId = "42abcdef"
 
 function Matchmaking() {
 	return (
@@ -45,7 +45,7 @@ function Matchmaking() {
 										<PlayersPictures Players={players} />
 									</div>
 									<div className="CodeDiv">
-										CODE: {code}
+										CODE: {gameId}
 									</div>
 
 
