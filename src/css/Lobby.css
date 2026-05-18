@@ -35,6 +35,37 @@
 	border-radius: 1vw;
 }
 
+.CarouselAndStory {
+	display: flex;
+	flex-direction: row;
+}
+
+.Carousel {
+	display: flex;
+	position: sticky;
+	flex-direction: column;
+	width: 50%;
+	height: fit-content;
+	background-color: #0000007f;
+	padding-top: 1vw;
+	padding-left: 1vw;
+	padding-right: 1vw;
+	padding-bottom: 1vw;
+	border-radius: 1vw;
+	color: #ffffff;
+	gap: 1vw;
+}
+
+.CarouselText {
+	font-size: 1.5vw;
+	color: #58508D;
+	text-shadow: 5px 5px 10px #000000;
+	background-color: #FFFADE;
+	width: 50%;
+	align-self: center;
+	border-radius: 1vw;
+}
+
 .CombatStory {
 	display: flex;
 	font-size: calc(1.5vw);
@@ -43,6 +74,7 @@
 	font-family: "Public Sans";
 	overflow-wrap: break-word;
 
+	width: 50%;
 	text-align: left;
 	margin-left: 1vw;
 	margin-right: 1vw;
