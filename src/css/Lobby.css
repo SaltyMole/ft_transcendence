@@ -48,7 +48,7 @@
 	position: sticky;
 	align-self: flex-start;
 	
-	width: 50%;
+	width: 25vw;
 	height: fit-content;
 	background-color: #0000007f;
 	padding-top: 1vw;
@@ -65,7 +65,7 @@
 	color: #58508D;
 	text-shadow: 5px 5px 10px #000000;
 	background-color: #FFFADE;
-	width: 50%;
+	width: 25vw;
 	align-self: center;
 	border-radius: 1vw;
 }

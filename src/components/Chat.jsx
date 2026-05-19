@@ -110,10 +110,10 @@ function Chat({
 			<input
 			type="text"
 			value={input}
-			placeholder={connected ? "Chat here..." : "Connecting..."}
+			placeholder="Chat here..."
 			onChange={(e) => setInput(e.target.value)}
 			onKeyDown={(e) => send_message_enter_key(e.key)}
-			disabled={!connected}
+			// disabled={!connected}
 			id="ChatInput"
 			className="ChatInput"
 			/>

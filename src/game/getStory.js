@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
 
 const getStory = async ( gameID ) => {
-	const response = await fetch('src/game/bdd.json');
-	
-	if (!response.ok) {
-		throw new Error(`HTTP error: ${response.status}`);
+	const response = await fetch('/src/game/bdd.json');
+	const data = await response.json();
+	const game = data.find(game => game.id === gameID);
+
+	if (!game) {
+		throw new Error(`Game ${gameID} not found`);
 	}
 
-	const data = await response.json();
-	return data.story;
+	return game.story;
 };
 
 export default getStory;

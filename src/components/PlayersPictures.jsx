@@ -19,6 +19,8 @@ function PlayersPictures({ gameID }) {
 		return () => clearInterval(interval);
 	}, []);
 
+	console.log(players);
+
 	return (
 		<div className="PlayersWrapper">
 			{players.map((player) => (

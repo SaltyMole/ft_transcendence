@@ -1,15 +1,15 @@
 import test from "../img/test.jpeg"
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../css/Lobby.css';
 import "../css/front/style.css";
 import DrawingCarousel from "../components/DrawingsCarousel"
 import getEnvironment from "../game/getEnvironment";
 import getStory from "../game/getStory";
 
+const Lobby = () => {
+	const { gameID } = useParams();
 
-
-function Lobby( gameID )
-{
 	const [environment, setEnvironment] = useState([]);
 	useEffect(() => {
 		const fetchEnvironment = () => {
@@ -36,7 +36,7 @@ function Lobby( gameID )
 
 		// Fetch
 		fetchStory();
-		const interval = setInterval(fetchStory, 2000);
+		const interval = setInterval(fetchStory, 10);
 
 		// Cleaner unmount
 		return () => clearInterval(interval);
@@ -52,7 +52,7 @@ function Lobby( gameID )
 						<div className="CarouselAndStory">
 							<div className="Carousel">
 								<h1 className="CarouselText">Drawings</h1>
-								<DrawingCarousel gameID={"42ABCDEF"} />
+								<DrawingCarousel gameID={gameID} />
 							</div>
 							<div className="CombatStory">
 								<h1 className="CombatStoryText">Fight</h1>

@@ -12,11 +12,6 @@ import Chat from "../components/Chat";
 const Matchmaking = () => {
 	const { gameID } = useParams();
 
-	React.useEffect(() => {
-		console.log("iii", gameID);
-	}, []);
-	
-
 	return (
 		<>
 			<main
@@ -42,7 +37,7 @@ const Matchmaking = () => {
 								<div className="ChatDiv">
 									<Chat
 										clientName="User"
-										roomId="Matchmaking"
+										gameID={gameID}
 									/>
 								</div>
 							</div>
