@@ -1,14 +1,37 @@
 import test from "../img/test.jpeg"
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, Navigate, useParams, generatePath } from "react-router-dom";
 import '../css/Lobby.css';
 import "../css/front/style.css";
 import DrawingCarousel from "../components/DrawingsCarousel"
 import getEnvironment from "../game/getEnvironment";
 import getStory from "../game/getStory";
+import getState from "../game/getState"
 
 const Lobby = () => {
-	const { gameID } = useParams();
+	const { gameID, name } = useParams();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		
+	}, []);
+
+	const [state, setState] = useState("");
+	useEffect(() => {
+		const fetchState = () => {
+			getState(gameID)
+			.then(fetchedState => {
+				setState(fetchedState);
+				if (fetchedState == "matchmaking")
+					navigate(`/matchmaking/${gameID}`);
+			})
+			.catch(error => console.error(error));
+		};
+
+		fetchState();
+		const interval = setInterval(fetchState, 2000);
+		return () => clearInterval(interval);
+	}, [gameID]);
 
 	const [environment, setEnvironment] = useState([]);
 	useEffect(() => {

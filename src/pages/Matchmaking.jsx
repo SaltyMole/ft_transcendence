@@ -9,11 +9,8 @@ import addPlayer from "../game/addPlayer"
 import changeState from "../game/changeState";
 import getState from "../game/getState"
 
-
-// const gameID = "wPl5G6DO";
-
 const Matchmaking = () => {
-	const { gameID } = useParams();
+	const { gameID, name } = useParams();
 	const navigate = useNavigate();
 
 	function launchGame() {
@@ -21,37 +18,22 @@ const Matchmaking = () => {
 		navigate(`/lobby/${gameID}`);
 	}
 
-	const [state, setState] = useState([]);
+	const [state, setState] = useState("");
 	useEffect(() => {
 		const fetchState = () => {
 			getState(gameID)
-			.then(state => setState(state))
+			.then(fetchedState => {
+				setState(fetchedState);
+				if (fetchedState == "playing")
+					navigate(`/lobby/${gameID}`);
+			})
 			.catch(error => console.error(error));
-		}
+		};
 
-		// Fetch
 		fetchState();
 		const interval = setInterval(fetchState, 2000);
-
-		// Cleaner unmount
 		return () => clearInterval(interval);
-	}, []);
-
-	useEffect(() => {
-		const checkState = () => {
-			console.log(state);
-
-			if (state == "playing")
-				navigate(`/lobby/${gameID}`);
-		}
-
-		// Check
-		checkState();
-		const interval = setInterval(checkState, 2000);
-
-		// Cleaner unmount
-		return () => clearInterval(interval);
-	}, []);
+	}, [gameID]);
 
 	return (
 		<>

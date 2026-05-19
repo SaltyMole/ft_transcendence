@@ -208,7 +208,7 @@ app.post('/gameroute/changestate', (req, res) => {
     return res.status(404).json({ success: false, error: `Game ${id} not found` });
   }
 
-  game.state(state);
+  game.state = state;
 
   fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
   res.json({ success: true, id });
