@@ -2,12 +2,14 @@ import React from 'react';
 import { useNavigate, Navigate, useParams, generatePath } from "react-router-dom";
 import test from "../img/test.jpeg"
 import createGame from "../game/createGame"
+import addPlayer from "../game/addPlayer"
 
 const Game = () => {
 	const navigate = useNavigate();
 
 	const handleCreateGame = async () => {
 		const gameID = await createGame();
+		await addPlayer(gameID, "user", "");
 		navigate(`/matchmaking/${gameID}`);
 	}
 	return (

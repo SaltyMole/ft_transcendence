@@ -183,3 +183,17 @@ app.post('/gameroute/create', (req, res) => {
   fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
   res.json({ success: true, id });
 });
+app.post('/gameroute/addplayer', (req, res) => {
+  const { id, name, picture } = req.body;
+  const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
+
+  const game = data.find(game => game.id === id);
+  if (!game) {
+    return res.status(404).json({ success: false, error: `Game ${id} not found` });
+  }
+
+  game.players.push({ name, picture});
+
+  fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
+  res.json({ success: true, id });
+});

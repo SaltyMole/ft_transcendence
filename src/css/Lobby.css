@@ -65,7 +65,7 @@
 	color: #58508D;
 	text-shadow: 5px 5px 10px #000000;
 	background-color: #FFFADE;
-	width: 25vw;
+	width: 50%;
 	align-self: center;
 	border-radius: 1vw;
 }
@@ -79,7 +79,7 @@
 	font-family: "Public Sans";
 	overflow-wrap: break-word;
 
-	width: 50%;
+	width: 25vw;
 	text-align: left;
 	margin-left: 1vw;
 	margin-right: 1vw;
