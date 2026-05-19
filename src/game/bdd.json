@@ -1,6 +1,7 @@
 [
   {
     "id": "1",
+    "state": "matchmaking",
     "players": [
       {
         "name": "Nathan",
