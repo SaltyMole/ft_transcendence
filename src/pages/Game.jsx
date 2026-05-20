@@ -2,21 +2,23 @@ import React, { useState } from 'react';
 import { useNavigate, Navigate, useParams, generatePath } from "react-router-dom";
 import test from "../img/test.jpeg"
 import createGame from "../game/createGame"
-import addPlayer from "../game/addPlayer"
+import joinGame from '../game/joinGame';
 
 const Game = () => {
 	const navigate = useNavigate();
 
 	const handleCreateGame = async (formData) => {
 		var gameID = await createGame();
-		var playerName = formData.get("query")
+		var playerName = formData.get("name")
 		navigate(`/matchmaking/${gameID}`, { state: { name: playerName } });
 	}
 
-	const handleJoinGame = (formData) => {
+	const handleJoinGame = async (formData) => {
 		var playerName = formData.get("name")
 		var gameID = formData.get("id")
-		navigate(`/matchmaking/${gameID}`, { state: { name: playerName } });
+		const canIJoin = await joinGame(gameID, playerName);
+		if (canIJoin == true)
+			navigate(`/matchmaking/${gameID}`, { state: { name: playerName } });
 	}
 
 	return (
@@ -30,7 +32,7 @@ const Game = () => {
 					height: '100px'
      			}}
 			>
-				<input name="query" placeholder='name' />
+				<input name="name" placeholder='name' />
 				<button type="submit">CreateGame</button>
 			</form>
 			<form action={handleJoinGame}

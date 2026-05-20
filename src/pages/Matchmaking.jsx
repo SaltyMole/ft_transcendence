@@ -5,38 +5,30 @@ import "../css/front/style.css";
 import "../css/Matchmaking.css";
 import PlayersPictures from "../components/PlayersPictures";
 import Chat from "../components/Chat";
-import addPlayer from "../game/addPlayer"
-import changeState from "../game/changeState";
 import getState from "../game/getState"
-import isPlayerInGame from "../game/isPlayerInGame";
+import launchGame from "../game/launchGame"
+import joinGame from "../game/joinGame";
 
 const Matchmaking = () => {
 	const { gameID } = useParams();
 	const { state } = useLocation();
 	const name = state?.name;
-	// const name = "Nat";
 
 	const navigate = useNavigate();
 
+	// Join the game at page load
 	useEffect(() => {
-		const checkPlayer = async () => {
-			const isInGame = await isPlayerInGame(gameID, name);
-			if (isInGame == false)
-			{
-				await addPlayer(gameID, name, "/src/img/nathan.png");
-			}
-		}
-
-		checkPlayer();
-		
+		joinGame(gameID, name);
 	}, []);
 
 
-	function launchGame() {
-		changeState(gameID, "playing");
+	// Launch the game
+	function launchFunction() {
+		launchGame(gameID);
 		navigate(`/lobby/${gameID}`);
 	}
 
+	// Get and update the state of the game
 	const [stateGameID, setState] = useState("");
 	useEffect(() => {
 		const fetchState = () => {
@@ -84,7 +76,7 @@ const Matchmaking = () => {
 								</div>
 							</div>
 
-						<button className="LaunchButton" onClick={launchGame}>Launch game</button>
+						<button className="LaunchButton" onClick={launchFunction}>Launch game</button>
 					</div>
 				</div>
 			</main>
