@@ -1,5 +1,5 @@
 import test from "../img/test.jpeg";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Navigate, useParams, generatePath, useLocation } from "react-router-dom";
 import "../css/front/style.css";
 import "../css/Matchmaking.css";
@@ -8,6 +8,7 @@ import Chat from "../components/Chat";
 import getState from "../game/getState"
 import launchGame from "../game/launchGame"
 import joinGame from "../game/joinGame";
+import removePlayer from "../game/removePlayer";
 
 const Matchmaking = () => {
 	const { gameID } = useParams();
@@ -16,11 +17,15 @@ const Matchmaking = () => {
 
 	const navigate = useNavigate();
 
-	// Join the game at page load
+	// When player leave the page
+	const location = useLocation();
 	useEffect(() => {
-		joinGame(gameID, name);
-	}, []);
-
+		return () => {
+			if (window.location.pathname !== `/lobby/${gameID}`) {
+			removePlayer(gameID, name);
+			}
+		};
+	}, [location]);
 
 	// Launch the game
 	function launchFunction() {

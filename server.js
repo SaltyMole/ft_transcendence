@@ -174,6 +174,7 @@ import fs from 'fs';
 
 app.use(express.json());
 
+// Create game route
 app.post('/gameroute/create', (req, res) => {
   const { id } = req.body;
   const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
@@ -184,6 +185,7 @@ app.post('/gameroute/create', (req, res) => {
   res.json({ success: true, id });
 });
 
+// Add player route
 app.post('/gameroute/addplayer', (req, res) => {
   const { id, name, picture } = req.body;
   const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
@@ -199,6 +201,23 @@ app.post('/gameroute/addplayer', (req, res) => {
   res.json({ success: true, id });
 });
 
+// Remove player route
+app.post('/gameroute/removeplayer', (req, res) => {
+  const { id, name, picture } = req.body;
+  const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
+
+  const game = data.find(game => game.id === id);
+  if (!game) {
+    return res.status(404).json({ success: false, error: `Game ${id} not found` });
+  }
+
+  game.players = game.players.filter(player => player.name !== name);
+
+  fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
+  res.json({ success: true, id });
+});
+
+// Change state route
 app.post('/gameroute/changestate', (req, res) => {
   const { id, state } = req.body;
   const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));

@@ -1,6 +1,6 @@
 import test from "../img/test.jpeg"
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Navigate, useParams, generatePath } from "react-router-dom";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, Navigate, useParams, generatePath, useLocation } from "react-router-dom";
 import '../css/Lobby.css';
 import "../css/front/style.css";
 import DrawingCarousel from "../components/DrawingsCarousel"
@@ -11,10 +11,6 @@ import getState from "../game/getState"
 const Lobby = () => {
 	const { gameID, name } = useParams();
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		
-	}, []);
 
 	const [state, setState] = useState("");
 	useEffect(() => {

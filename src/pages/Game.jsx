@@ -9,7 +9,8 @@ const Game = () => {
 
 	const handleCreateGame = async (formData) => {
 		var gameID = await createGame();
-		var playerName = formData.get("name")
+		var playerName = formData.get("name");
+		await joinGame(gameID, playerName);
 		navigate(`/matchmaking/${gameID}`, { state: { name: playerName } });
 	}
 
