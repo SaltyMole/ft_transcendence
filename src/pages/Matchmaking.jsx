@@ -1,6 +1,6 @@
 import test from "../img/test.jpeg";
 import React, { useState, useEffect } from "react";
-import { useNavigate, Navigate, useParams, generatePath } from "react-router-dom";
+import { useNavigate, Navigate, useParams, generatePath, useLocation } from "react-router-dom";
 import "../css/front/style.css";
 import "../css/Matchmaking.css";
 import PlayersPictures from "../components/PlayersPictures";
@@ -8,17 +8,36 @@ import Chat from "../components/Chat";
 import addPlayer from "../game/addPlayer"
 import changeState from "../game/changeState";
 import getState from "../game/getState"
+import isPlayerInGame from "../game/isPlayerInGame";
 
 const Matchmaking = () => {
-	const { gameID, name } = useParams();
+	const { gameID } = useParams();
+	const { state } = useLocation();
+	const name = state?.name;
+	// const name = "Nat";
+
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		const checkPlayer = async () => {
+			const isInGame = await isPlayerInGame(gameID, name);
+			if (isInGame == false)
+			{
+				await addPlayer(gameID, name, "/src/img/nathan.png");
+			}
+		}
+
+		checkPlayer();
+		
+	}, []);
+
 
 	function launchGame() {
 		changeState(gameID, "playing");
 		navigate(`/lobby/${gameID}`);
 	}
 
-	const [state, setState] = useState("");
+	const [stateGameID, setState] = useState("");
 	useEffect(() => {
 		const fetchState = () => {
 			getState(gameID)
@@ -59,7 +78,7 @@ const Matchmaking = () => {
 
 								<div className="ChatDiv">
 									<Chat
-										clientName="User"
+										clientName={name}
 										gameID={gameID}
 									/>
 								</div>
