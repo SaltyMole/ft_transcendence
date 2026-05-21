@@ -413,7 +413,7 @@
 	.Board {
 		border-radius: 0px 0vh 1.5vh 1.5vh;
 	}
-	.ChatDiiv {
+	.ChatDivDrawing {
 		width: 100vw;
 		height: calc(100vh - (100vw * 3/4) - 12vh - 14vh);
 	}

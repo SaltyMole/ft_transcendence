@@ -1,7 +1,7 @@
 [
   {
     "id": "1",
-    "state": "matchmaking",
+    "state": "playing",
     "players": [
       {
         "name": "Nathan",
@@ -22,13 +22,6 @@
       {
         "name": "Lucas",
         "picture": "/src/img/lucas.webp"
-      },
-      {
-        "name": "Nat",
-        "picture": "/src/img/nathan.png"
-      },
-      {
-        "picture": "/src/img/nathan.png"
       }
     ],
     "drawings": [
@@ -1105,6 +1098,103 @@
   {
     "id": "BAPwJE6l",
     "state": "playing",
+    "players": [],
+    "drawings": [
+      {
+        "player": "nath",
+        "drawing": "/uploads/drawing-BAPwJE6l-nath.png"
+      }
+    ],
+    "environment": "",
+    "story": ""
+  },
+  {
+    "id": "3V4n73Q1",
+    "state": "playing",
+    "players": [],
+    "drawings": [],
+    "environment": "",
+    "story": ""
+  },
+  {
+    "id": "bVn4dgMA",
+    "state": "playing",
+    "players": [
+      {
+        "name": "nath",
+        "picture": "/src/img/nathan.png"
+      }
+    ],
+    "drawings": [],
+    "environment": "",
+    "story": ""
+  },
+  {
+    "id": "eKXDs5ad",
+    "state": "playing",
+    "players": [],
+    "drawings": [
+      {
+        "player": "paul",
+        "drawing": "/uploads/drawing-eKXDs5ad-paul.png"
+      },
+      {
+        "player": "nath",
+        "drawing": "/uploads/drawing-eKXDs5ad-nath.png"
+      }
+    ],
+    "environment": "",
+    "story": ""
+  },
+  {
+    "id": "fIIAhAPk",
+    "state": "playing",
+    "players": [],
+    "drawings": [
+      {
+        "player": "paul",
+        "drawing": "/uploads/drawing-fIIAhAPk-paul.png"
+      },
+      {
+        "player": "nath",
+        "drawing": "/uploads/drawing-fIIAhAPk-nath.png"
+      }
+    ],
+    "environment": "",
+    "story": ""
+  },
+  {
+    "id": "HL2vJ7KC",
+    "state": "playing",
+    "players": [],
+    "drawings": [
+      {
+        "player": "paul",
+        "drawing": "/uploads/drawing-HL2vJ7KC-paul.png"
+      }
+    ],
+    "environment": "",
+    "story": ""
+  },
+  {
+    "id": "jHzkRytL",
+    "state": "playing",
+    "players": [],
+    "drawings": [],
+    "environment": "",
+    "story": ""
+  },
+  {
+    "id": "6qd7eeiM",
+    "state": "playing",
+    "players": [],
+    "drawings": [],
+    "environment": "",
+    "story": ""
+  },
+  {
+    "id": "VIylbRcN",
+    "state": "playing",
     "players": [
       {
         "name": "nath",
@@ -1114,7 +1204,7 @@
     "drawings": [
       {
         "player": "nath",
-        "drawing": "/uploads/drawing-BAPwJE6l-nath.png"
+        "drawing": "/uploads/drawing-VIylbRcN-nath.png"
       }
     ],
     "environment": "",

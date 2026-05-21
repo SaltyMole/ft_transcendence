@@ -233,6 +233,22 @@ app.post('/gameroute/adddrawing', (req, res) => {
   res.json({ success: true, id });
 });
 
+// Remove drawing route
+app.post('/gameroute/removedrawing', (req, res) => {
+  const { id, name } = req.body;
+  const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
+
+  const game = data.find(game => game.id === id);
+  if (!game) {
+    return res.status(404).json({ success: false, error: `Game ${id} not found` });
+  }
+
+  game.drawings = game.drawings.filter(drawing => drawing.player !== name);
+
+  fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
+  res.json({ success: true, id });
+});
+
 // Change state route
 app.post('/gameroute/changestate', (req, res) => {
   const { id, state } = req.body;

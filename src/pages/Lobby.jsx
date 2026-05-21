@@ -9,6 +9,7 @@ import getStory from "../game/getStory";
 import getState from "../game/getState"
 import havePlayerDrawn from "../game/havePlayerDrawn"
 import removePlayer from "../game/removePlayer";
+import removeDrawing from "../game/removeDrawing";
 import isPlayerInGame from "../game/isPlayerInGame";
 
 const Lobby = () => {
@@ -34,6 +35,7 @@ const Lobby = () => {
 		return () => {
 			if (window.location.pathname !== `/drawing/${gameID}`) {
 				removePlayer(gameID, playerName);
+				removeDrawing(gameID, playerName);
 			}
 		};
 	}, [location]);
