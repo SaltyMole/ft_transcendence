@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 const getDrawings = async ( gameID ) => {
 	const response = await fetch('/src/game/bdd.json');
 	const data = await response.json();

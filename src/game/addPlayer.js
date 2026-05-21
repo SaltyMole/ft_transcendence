@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 const addPlayer = async ( gameID, playerName, playerPicture ) => {
 	// Fetch data
 	const response = await fetch('/gameroute/addplayer', {

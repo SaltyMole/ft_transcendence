@@ -1,9 +1,12 @@
-import React from 'react';
-import { useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, Navigate, useParams, generatePath, useLocation } from "react-router-dom";
 import '../css/Drawing.css';
 import { Stage, Layer, Line } from 'react-konva';
 import Konva from 'konva';
 import Chat from "../components/Chat"
+import removePlayer from '../game/removePlayer';
+import addDrawing from '../game/addDrawing';
+import havePlayerDrawn from '../game/havePlayerDrawn';
 
 
 
@@ -21,6 +24,7 @@ var selected_thickness = thickness_medium
 var phone_width = 850
 
 const boardRef = { current: null };
+
 
 
 function set_select_color(color, id)
@@ -133,16 +137,6 @@ function clear_board()
 	console.log("board cleared !");
 }
 
-function export_drawing()
-{
-	boardRef.current?.handleExport();
-	console.log("drawing sent !");
-	document.getElementById("ZaWorldooo").style = "animation: 0.75s ease-in-out flip forwards";
-	setTimeout(function(){
-
-	}, 2000);
-}
-
 
 
 function YesNoPopup({question, yesAction}) {
@@ -180,6 +174,15 @@ function Board() {
 	const isDrawing = React.useRef(false);
 	const containerRef = React.useRef(null);
 	const [size, setSize] = React.useState({ width: 0, height: 0 });
+
+	// Update gameID and playerName variables
+	React.useEffect(() => {
+		boardRef.current = {
+			clear: () => setLines([]),
+			handleExport: (gameID, playerName) => handleExportRef.current(gameID, playerName),
+			ctrl_z: () => setLines(prev => prev.slice(0, -1)),
+		};
+	}, []);
 
 	React.useEffect(() => {
 		const el = containerRef.current;
@@ -219,7 +222,8 @@ function Board() {
 		isDrawing.current = false;
 	};
 
-	const handleExport = () => {
+	const handleExport = (gameID, playerName) => {
+
 		const stage = stageRef.current;
 		if (!stage) return;
 
@@ -245,7 +249,8 @@ function Board() {
 		backg.destroy();
 		stage.draw();
 
-		downloadURI(dataURL, 'drawing.png');
+		const fileName = "drawing-" + gameID + "-" + playerName + ".png";
+		downloadURI(dataURL, fileName);
 	};
 
 	const downloadURI = async (uri, name) => {
@@ -260,18 +265,8 @@ function Board() {
 		});
 	};
 
-
 	const handleExportRef = React.useRef(handleExport);
-	React.useLayoutEffect(() => { handleExportRef.current = handleExport; });
-
-	React.useEffect(() => {
-		boardRef.current = {
-			clear: () => setLines([]),
-			handleExport: () => handleExportRef.current(),
-			ctrl_z: () => setLines(prev => prev.slice(0, -1)),
-		};
-	}, []);
-
+	React.useLayoutEffect(() => { handleExportRef.current = handleExport; })
 
 	return (
 		<div ref={containerRef} style={{ width: '100%', height: '100%' }}>
@@ -308,144 +303,184 @@ function Board() {
 
 
 
-class DrawingInterface extends React.Component
-{
-	state = { data: null, yesNoQuestion: "", yesNoAction: null };
+const DrawingInterface = () => {
+	const { gameID } = useParams();
+	const { state } = useLocation();
+	const playerName = state?.name;
 
-	componentDidMount()
-	{
-		// Set tool and thickness state at launch
+	const navigate = useNavigate();
+
+	const [yesNoState, setYesNoState] = useState({
+		data: null,
+		yesNoQuestion: "",
+		yesNoAction: null,
+	});
+
+	// Kick player if not from the previous game page
+	useEffect(() => {
+		if (playerName == undefined)
+			navigate('/game');
+	}, []);
+
+	// Check and redirect to matchmaking interface if already done drawing
+	useEffect(() => {
+		const checkDrawn = async () => {
+			const doIHvaeToDraw = await havePlayerDrawn(gameID, playerName);
+			if (doIHvaeToDraw == true)
+				navigate(`/lobby/${gameID}`, { state: { name: playerName } });
+		}
+
+		checkDrawn();
+	}, []);
+
+	// When player leave the page (except lobby that is the next game page)
+	const location = useLocation();
+	useEffect(() => {
+		return () => {
+			if (window.location.pathname !== `/lobby/${gameID}`) {
+				removePlayer(gameID, playerName);
+			}
+		};
+	}, [location]);
+
+	// Set tools and API
+	useEffect(() => {
 		set_select_tool(selected_tool);
 		set_select_thickness(selected_thickness);
 		set_select_color(selected_color, "Black");
 
-		// Call our fetch function below once the component mounts
-		this.callBackendAPI()
-		.then(res => this.setState({ data: res.express }))
+		callBackendAPI()
+		.then(res => setYesNoState(prev => ({ ...prev, data: res.express })))
 		.catch(err => console.log(err));
-	}
+	}, []);
 
-	// Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
-	callBackendAPI = async () => {
+	// Wait for API call backend
+	const callBackendAPI = async () => {
 		const response = await fetch('/express_backend');
 		const body = await response.json();
 
-		if (response.status !== 200)
-		{
-			throw Error(body.message)
-		}
-		else
-		{
-			console.log("Express connected");
+		if (response.status !== 200) {
+		throw Error(body.message);
+		} else {
+		console.log("Express connected");
 		}
 		return body;
 	};
 
-	displayYesNoPopup = (action, question) => {
-		this.setState({ yesNoQuestion: question, yesNoAction: action });
+	// Change visibility if need to display yesNoPopup
+	const displayYesNoPopup = (action, question) => {
+		setYesNoState(prev => ({ ...prev, yesNoQuestion: question, yesNoAction: action }));
 		document.getElementById("YesNo").style.visibility = "visible";
 	};
 
+	// Export drawing
+	async function export_drawing() {
+		boardRef.current?.handleExport(gameID, playerName);
+		const drawingPath = "/uploads/drawing-" + gameID + "-" + playerName + ".png";
+		await addDrawing(gameID, playerName, drawingPath);
+		console.log("drawing sent!");
+		document.getElementById("ZaWorldooo").style = "animation: 0.75s ease-in-out flip forwards";
+		setTimeout(function() {
+			navigate(`/lobby/${gameID}`, { state: { name: playerName } });
+		}, 2000);
+	}
 
+	return (
+		<div className='BlackBG'>
+			<div id="ZaWorldooo">
+				<div className="FilmGrain"></div>
 
-	render() {
-		return (
-			<div className='BlackBG'>
-				<div id="ZaWorldooo">
-					<div className="FilmGrain"></div>
+				<YesNoPopup
+					id="YesNoPopup"
+					question={yesNoState.yesNoQuestion}
+					yesAction={yesNoState.yesNoAction}
+				/>
 
-					<YesNoPopup
-						id="YesNoPopup"
-						question={this.state.yesNoQuestion}
-						yesAction={this.state.yesNoAction}
-					/>
+				<div className="MainBG">
 
-					<div className="MainBG">
-
-						<div className="UpperPart">
-							<div className="Board" id="Board">
-								<Board className="KonvaBoard"/>
-							</div>
-							<div className='ChatDiiv'>
-								<Chat
-									clientName="User"
-									roomId="Drawing"
-								/>
-							</div>
-
+					<div className="UpperPart">
+						<div className="Board" id="Board">
+							<Board className="KonvaBoard"/>
+						</div>
+						<div className="ChatDivDrawing">
+							<Chat
+								clientName={playerName}
+								gameID={gameID}
+							/>
 						</div>
 
-						<div className="Foot">
+					</div>
 
-							<div className="ColorsEnsemble">
-								<div id="SelectedColor" className="SelectedColor" style={{ backgroundColor: selected_color }}></div>
-								<div className="ColorsButtonsBackground">
-									<button onClick={() => set_select_color("#ffffff", "White")}			className="ColorButton" id="White"></button>
-									<button onClick={() => set_select_color("#D9D9D9", "LightGrey")}		className="ColorButton" id="LightGrey"></button>
-									<button onClick={() => set_select_color("#FF0000", "LightRed")}		className="ColorButton" id="LightRed"></button>
-									<button onClick={() => set_select_color("#FF6A00", "LightOrange")}		className="ColorButton" id="LightOrange"></button>
-									<button onClick={() => set_select_color("#FFC300", "LightYellow")}		className="ColorButton" id="LightYellow"></button>
-									<button onClick={() => set_select_color("#95FF00", "LightGreen")}		className="ColorButton" id="LightGreen"></button>
-									<button onClick={() => set_select_color("#00D9FF", "LightSkyBlue")}	className="ColorButton" id="LightSkyBlue"></button>
-									<button onClick={() => set_select_color("#0033FF", "LightOceanBlue")}	className="ColorButton" id="LightOceanBlue"></button>
-									<button onClick={() => set_select_color("#A100FF", "LightPurple")}		className="ColorButton" id="LightPurple"></button>
-									<button onClick={() => set_select_color("#F200FF", "LightPink")}		className="ColorButton" id="LightPink"></button>
-									<button onClick={() => set_select_color("#BC4F51", "LightBrown")}		className="ColorButton" id="LightBrown"></button>
+					<div className="Foot">
 
-									<button onClick={() => set_select_color("#000000", "Black")}			className="ColorButton" id="Black"></button>
-									<button onClick={() => set_select_color("#666666", "DarkGrey")}		className="ColorButton" id="DarkGrey"></button>
-									<button onClick={() => set_select_color("#930000", "DarkRed")}			className="ColorButton" id="DarkRed"></button>
-									<button onClick={() => set_select_color("#983F00", "DarkOrange")}		className="ColorButton" id="DarkOrange"></button>
-									<button onClick={() => set_select_color("#977400", "DarkYellow")}		className="ColorButton" id="DarkYellow"></button>
-									<button onClick={() => set_select_color("#548F00", "DarkGreen")}		className="ColorButton" id="DarkGreen"></button>
-									<button onClick={() => set_select_color("#0094AE", "DarkSkyBlue")}		className="ColorButton" id="DarkSkyBlue"></button>
-									<button onClick={() => set_select_color("#001876", "DarkOceanBlue")}	className="ColorButton" id="DarkOceanBlue"></button>
-									<button onClick={() => set_select_color("#6800A4", "DarkPurple")}		className="ColorButton" id="DarkPurple"></button>
-									<button onClick={() => set_select_color("#95009D", "DarkPink")}		className="ColorButton" id="DarkPink"></button>
-									<button onClick={() => set_select_color("#772E30", "DarkBrown")}		className="ColorButton" id="DarkBrown"></button>
-								</div>
+						<div className="ColorsEnsemble">
+							<div id="SelectedColor" className="SelectedColor" style={{ backgroundColor: selected_color }}></div>
+							<div className="ColorsButtonsBackground">
+								<button onClick={() => set_select_color("#ffffff", "White")}			className="ColorButton" id="White"></button>
+								<button onClick={() => set_select_color("#D9D9D9", "LightGrey")}		className="ColorButton" id="LightGrey"></button>
+								<button onClick={() => set_select_color("#FF0000", "LightRed")}		className="ColorButton" id="LightRed"></button>
+								<button onClick={() => set_select_color("#FF6A00", "LightOrange")}		className="ColorButton" id="LightOrange"></button>
+								<button onClick={() => set_select_color("#FFC300", "LightYellow")}		className="ColorButton" id="LightYellow"></button>
+								<button onClick={() => set_select_color("#95FF00", "LightGreen")}		className="ColorButton" id="LightGreen"></button>
+								<button onClick={() => set_select_color("#00D9FF", "LightSkyBlue")}	className="ColorButton" id="LightSkyBlue"></button>
+								<button onClick={() => set_select_color("#0033FF", "LightOceanBlue")}	className="ColorButton" id="LightOceanBlue"></button>
+								<button onClick={() => set_select_color("#A100FF", "LightPurple")}		className="ColorButton" id="LightPurple"></button>
+								<button onClick={() => set_select_color("#F200FF", "LightPink")}		className="ColorButton" id="LightPink"></button>
+								<button onClick={() => set_select_color("#BC4F51", "LightBrown")}		className="ColorButton" id="LightBrown"></button>
+
+								<button onClick={() => set_select_color("#000000", "Black")}			className="ColorButton" id="Black"></button>
+								<button onClick={() => set_select_color("#666666", "DarkGrey")}		className="ColorButton" id="DarkGrey"></button>
+								<button onClick={() => set_select_color("#930000", "DarkRed")}			className="ColorButton" id="DarkRed"></button>
+								<button onClick={() => set_select_color("#983F00", "DarkOrange")}		className="ColorButton" id="DarkOrange"></button>
+								<button onClick={() => set_select_color("#977400", "DarkYellow")}		className="ColorButton" id="DarkYellow"></button>
+								<button onClick={() => set_select_color("#548F00", "DarkGreen")}		className="ColorButton" id="DarkGreen"></button>
+								<button onClick={() => set_select_color("#0094AE", "DarkSkyBlue")}		className="ColorButton" id="DarkSkyBlue"></button>
+								<button onClick={() => set_select_color("#001876", "DarkOceanBlue")}	className="ColorButton" id="DarkOceanBlue"></button>
+								<button onClick={() => set_select_color("#6800A4", "DarkPurple")}		className="ColorButton" id="DarkPurple"></button>
+								<button onClick={() => set_select_color("#95009D", "DarkPink")}		className="ColorButton" id="DarkPink"></button>
+								<button onClick={() => set_select_color("#772E30", "DarkBrown")}		className="ColorButton" id="DarkBrown"></button>
 							</div>
-
-							<div className="ToolsEnsemble">
-								<div className="Tools">
-									<button onClick={() => set_select_tool(pen)} className="ToolButton" id="Pen">
-										<svg id="PenSvg" xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
-									</button>
-									<button onClick={() => set_select_tool(eraser)} className="ToolButton" id="Eraser">
-										<svg id="EraserSvg" xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M690-240h190v80H610l80-80Zm-500 80-85-85q-23-23-23.5-57t22.5-58l440-456q23-24 56.5-24t56.5 23l199 199q23 23 23 57t-23 57L520-160H190Zm296-80 314-322-198-198-442 456 64 64h262Zm-6-240Z"/></svg>
-									</button>
-								</div>
-								<div className="Thickness">
-									<button onClick={() => set_select_thickness(thinckness_fine)} className="ToolButton" id="FineThickness">
-										<svg id="FineSvg" xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M280-200q-33 0-56.5-23.5T200-280q0-15 6-29.5t18-26.5l400-400q12-12 26.5-18t29.5-6q33 0 56.5 23.5T760-680q0 15-5.5 30T737-623L337-223q-12 12-26.5 17.5T280-200Z"/></svg>
-									</button>
-									<button onClick={() => set_select_thickness(thickness_medium)} className="ToolButton" id="MediumThickness">
-										<svg id="MediumSvg" xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M340-200q-58 0-99-41t-41-99q0-27 10.5-53t30.5-46l280-280q20-20 46-30.5t53-10.5q58 0 99 41t41 99q0 27-10.5 53T719-521L439-241q-20 20-46 30.5T340-200Z"/></svg>
-									</button>
-									<button onClick={() => set_select_thickness(thickness_thick)} className="ToolButton" id="ThickThickness">
-										<svg id="ThickSvg" xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M402-120q-118 0-200-82t-82-200q0-54 20-105.5t62-93.5l157-157q42-42 93.5-62T558-840q118 0 200 82t82 200q0 54-20 105.5T758-359L601-202q-42 42-93.5 62T402-120Z"/></svg>
-									</button>
-								</div>
-								<div className='SpecialsButtons'>
-									<button onClick={ctrl_z} className="ToolButton" id="ctrl_z">
-										<svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M280-200v-80h284q63 0 109.5-40T720-420q0-60-46.5-100T564-560H312l104 104-56 56-200-200 200-200 56 56-104 104h252q97 0 166.5 63T800-420q0 94-69.5 157T564-200H280Z"/></svg>
-									</button>
-									<button onClick={() => this.displayYesNoPopup(clear_board, "Do you really want to clear the board ?")} className={`${"ToolButton"} ${"Trash"}`}>
-										<svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
-									</button>
-								</div>
-							</div>
-
-
-
-							<button onClick={() => this.displayYesNoPopup(export_drawing, "Do you really want to export the drawing ?")} className="SendDrawingButton"></button>
-
 						</div>
+
+						<div className="ToolsEnsemble">
+							<div className="Tools">
+								<button onClick={() => set_select_tool(pen)} className="ToolButton" id="Pen">
+									<svg id="PenSvg" xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
+								</button>
+								<button onClick={() => set_select_tool(eraser)} className="ToolButton" id="Eraser">
+									<svg id="EraserSvg" xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M690-240h190v80H610l80-80Zm-500 80-85-85q-23-23-23.5-57t22.5-58l440-456q23-24 56.5-24t56.5 23l199 199q23 23 23 57t-23 57L520-160H190Zm296-80 314-322-198-198-442 456 64 64h262Zm-6-240Z"/></svg>
+								</button>
+							</div>
+							<div className="Thickness">
+								<button onClick={() => set_select_thickness(thinckness_fine)} className="ToolButton" id="FineThickness">
+									<svg id="FineSvg" xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M280-200q-33 0-56.5-23.5T200-280q0-15 6-29.5t18-26.5l400-400q12-12 26.5-18t29.5-6q33 0 56.5 23.5T760-680q0 15-5.5 30T737-623L337-223q-12 12-26.5 17.5T280-200Z"/></svg>
+								</button>
+								<button onClick={() => set_select_thickness(thickness_medium)} className="ToolButton" id="MediumThickness">
+									<svg id="MediumSvg" xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M340-200q-58 0-99-41t-41-99q0-27 10.5-53t30.5-46l280-280q20-20 46-30.5t53-10.5q58 0 99 41t41 99q0 27-10.5 53T719-521L439-241q-20 20-46 30.5T340-200Z"/></svg>
+								</button>
+								<button onClick={() => set_select_thickness(thickness_thick)} className="ToolButton" id="ThickThickness">
+									<svg id="ThickSvg" xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M402-120q-118 0-200-82t-82-200q0-54 20-105.5t62-93.5l157-157q42-42 93.5-62T558-840q118 0 200 82t82 200q0 54-20 105.5T758-359L601-202q-42 42-93.5 62T402-120Z"/></svg>
+								</button>
+							</div>
+							<div className='SpecialsButtons'>
+								<button onClick={ctrl_z} className="ToolButton" id="ctrl_z">
+									<svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M280-200v-80h284q63 0 109.5-40T720-420q0-60-46.5-100T564-560H312l104 104-56 56-200-200 200-200 56 56-104 104h252q97 0 166.5 63T800-420q0 94-69.5 157T564-200H280Z"/></svg>
+								</button>
+								<button onClick={() => displayYesNoPopup(clear_board, "Do you really want to clear the board ?")} className={`${"ToolButton"} ${"Trash"}`}>
+									<svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#000000"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+								</button>
+							</div>
+						</div>
+
+
+
+						<button onClick={() => displayYesNoPopup(export_drawing, "Do you really want to export the drawing ?")} className="SendDrawingButton"></button>
+
 					</div>
 				</div>
 			</div>
-		);
-	}
+		</div>
+	);
 }
 
 

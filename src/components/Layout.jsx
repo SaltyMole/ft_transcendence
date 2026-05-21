@@ -5,7 +5,7 @@ import Footer from "./Footer";
 
 const Layout = ({ children }) => {
 	const location = useLocation();
-	const hideHeaderFooter = location.pathname === '/drawing';
+	const hideHeaderFooter = location.pathname.startsWith('/drawing/');
 
 	return (
 		<>

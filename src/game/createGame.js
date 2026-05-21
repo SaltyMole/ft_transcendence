@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 function makeid(length) {
 	var result           = '';
 	var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -9,6 +7,7 @@ function makeid(length) {
 	}
 	return result;
 }
+
 const createGame = async () => {
 	// Create random game ID
 	const gameID = makeid(8);

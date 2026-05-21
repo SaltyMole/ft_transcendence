@@ -13,16 +13,22 @@ import removePlayer from "../game/removePlayer";
 const Matchmaking = () => {
 	const { gameID } = useParams();
 	const { state } = useLocation();
-	const name = state?.name;
+	const playerName = state?.name;
 
 	const navigate = useNavigate();
 
-	// When player leave the page
+	// If no playerName, then kick player because he didn't joined using the game page
+	useEffect(() => {
+		if (playerName == undefined)
+			navigate('/game');
+	}, []);
+
+	// When player leave the page (except lobby that is the next game page)
 	const location = useLocation();
 	useEffect(() => {
 		return () => {
 			if (window.location.pathname !== `/lobby/${gameID}`) {
-			removePlayer(gameID, name);
+				removePlayer(gameID, playerName);
 			}
 		};
 	}, [location]);
@@ -30,18 +36,18 @@ const Matchmaking = () => {
 	// Launch the game
 	function launchFunction() {
 		launchGame(gameID);
-		navigate(`/lobby/${gameID}`);
 	}
 
-	// Get and update the state of the game
+	// Get the state of the game and change page
 	const [stateGameID, setState] = useState("");
 	useEffect(() => {
 		const fetchState = () => {
 			getState(gameID)
 			.then(fetchedState => {
 				setState(fetchedState);
+				// If playing -> go to /lobby if have a name, else go back to /game
 				if (fetchedState == "playing")
-					navigate(`/lobby/${gameID}`);
+					navigate(`/lobby/${gameID}`, { state: { name: playerName } });
 			})
 			.catch(error => console.error(error));
 		};
@@ -75,7 +81,7 @@ const Matchmaking = () => {
 
 								<div className="ChatDiv">
 									<Chat
-										clientName={name}
+										clientName={playerName}
 										gameID={gameID}
 									/>
 								</div>

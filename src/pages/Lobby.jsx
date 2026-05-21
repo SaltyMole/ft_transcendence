@@ -7,19 +7,52 @@ import DrawingCarousel from "../components/DrawingsCarousel"
 import getEnvironment from "../game/getEnvironment";
 import getStory from "../game/getStory";
 import getState from "../game/getState"
+import havePlayerDrawn from "../game/havePlayerDrawn"
+import removePlayer from "../game/removePlayer";
 
 const Lobby = () => {
-	const { gameID, name } = useParams();
+	const { gameID } = useParams();
+	const { state } = useLocation();
+	const playerName = state?.name;
+
 	const navigate = useNavigate();
 
-	const [state, setState] = useState("");
+	// If no playerName, then kick player because he didn't joined using the game page
+	useEffect(() => {
+		if (playerName == undefined)
+			navigate('/game');
+	}, []);
+
+	// When player leave the page (except lobby that is the next game page)
+	const location = useLocation();
+	useEffect(() => {
+		return () => {
+			if (window.location.pathname !== `/drawing/${gameID}`) {
+				removePlayer(gameID, playerName);
+			}
+		};
+	}, [location]);
+
+	// Check and redirect to drawing interface
+	useEffect(() => {
+		const checkDrawn = async () => {
+			const doIHvaeToDraw = await havePlayerDrawn(gameID, playerName);
+			if (doIHvaeToDraw == false)
+				navigate(`/drawing/${gameID}`, { state: { name: playerName } });
+		}
+
+		checkDrawn();
+	}, []);
+
+	// Get game state and change path if necessary
+	const [gameState, setState] = useState("");
 	useEffect(() => {
 		const fetchState = () => {
 			getState(gameID)
 			.then(fetchedState => {
 				setState(fetchedState);
-				if (fetchedState == "matchmaking")
-					navigate(`/matchmaking/${gameID}`);
+				if (fetchedState == "finished")
+					navigate(`/results/${gameID}`, { state: { name: playerName } });
 			})
 			.catch(error => console.error(error));
 		};
@@ -29,6 +62,7 @@ const Lobby = () => {
 		return () => clearInterval(interval);
 	}, [gameID]);
 
+	// Get environment
 	const [environment, setEnvironment] = useState([]);
 	useEffect(() => {
 		const fetchEnvironment = () => {
@@ -45,6 +79,7 @@ const Lobby = () => {
 		return () => clearInterval(interval);
 	}, []);
 
+	// Get story
 	const [story, setStory] = useState([]);
 	useEffect(() => {
 		const fetchStory = () => {

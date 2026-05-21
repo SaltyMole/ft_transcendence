@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 const changeState = async ( gameID, state ) => {
 	// Fetch data
 	const response = await fetch('/gameroute/changestate', {

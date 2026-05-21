@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 const removePlayer = async ( gameID, playerName ) => {
 	// Fetch data
 	const response = await fetch('/gameroute/removeplayer', {

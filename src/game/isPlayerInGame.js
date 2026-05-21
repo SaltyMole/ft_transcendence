@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 const isPlayerInGame = async ( gameID, searchedName ) => {
 	const response = await fetch('/src/game/bdd.json');
 	const data = await response.json();
@@ -13,7 +11,7 @@ const isPlayerInGame = async ( gameID, searchedName ) => {
 	if (!player)
 		return (false);
 
-	return true;
+	return (true);
 };
 
 export default isPlayerInGame;

@@ -44,7 +44,7 @@ function App() {
 					<Route path="/Login" element={<Login/>}/>
 					{/* <Route path="/Login" element={<Login setIsLoggedIn={setIsLoggedIn}/>}/> */}
 					<Route path="/Register" element={<Register/>}/>
-					<Route path="/Drawing" element={<Drawing />} />
+					<Route path="/Drawing/:gameID" element={<Drawing />} />
 					<Route path="/Matchmaking/:gameID" element={<Matchmaking />} />
 					<Route path="/Lobby/:gameID" element={<Lobby />} />
 					<Route path="/Results" element={<Results />} />
