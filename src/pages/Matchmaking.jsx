@@ -9,6 +9,7 @@ import getState from "../game/getState"
 import launchGame from "../game/launchGame"
 import joinGame from "../game/joinGame";
 import removePlayer from "../game/removePlayer";
+import isPlayerInGame from "../game/isPlayerInGame";
 
 const Matchmaking = () => {
 	const { gameID } = useParams();
@@ -19,8 +20,12 @@ const Matchmaking = () => {
 
 	// If no playerName, then kick player because he didn't joined using the game page
 	useEffect(() => {
-		if (playerName == undefined)
-			navigate('/game');
+		const checkIsHere = async () => {
+			const isHeHere = await isPlayerInGame(gameID, playerName)
+			if (isHeHere == false)
+				navigate('/game');
+		}
+		checkIsHere();
 	}, []);
 
 	// When player leave the page (except lobby that is the next game page)

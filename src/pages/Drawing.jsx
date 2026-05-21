@@ -316,10 +316,14 @@ const DrawingInterface = () => {
 		yesNoAction: null,
 	});
 
-	// Kick player if not from the previous game page
+	// If no playerName, then kick player because he didn't joined using the game page
 	useEffect(() => {
-		if (playerName == undefined)
-			navigate('/game');
+		const checkIsHere = async () => {
+			const isHeHere = await isPlayerInGame(gameID, playerName)
+			if (isHeHere == false)
+				navigate('/game');
+		}
+		checkIsHere();
 	}, []);
 
 	// Check and redirect to matchmaking interface if already done drawing
