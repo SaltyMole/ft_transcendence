@@ -5,6 +5,7 @@ import {
   text,
   timestamp,
   integer,
+  boolean,
   pgEnum,
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
@@ -12,7 +13,7 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 
 // Enums
 export const friendshipStatusEnum = pgEnum('friendship_status', ['pending', 'accepted', 'rejected'])
-export const gameStatusEnum = pgEnum('game_status', ['waiting', 'in_progress', 'finished'])
+export const gameStatusEnum = pgEnum('game_status', ['waiting', 'drawing', 'in_progress', 'finished'])
 
 // Users table
 export const users = pgTable('users', {
@@ -59,7 +60,27 @@ export const gamePlayers = pgTable('game_players', {
   gameId: uuid('game_id').notNull().references(() => games.id, { onDelete: 'cascade' }),
   userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   score: integer('score').default(0),
+  isWinner: boolean('is_winner'),
   joinedAt: timestamp('joined_at').defaultNow().notNull(),
+})
+
+// Weapon drawings table — one drawing per player per game
+export const weaponDrawings = pgTable('weapon_drawings', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  gameId: uuid('game_id').notNull().references(() => games.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  drawingData: text('drawing_data').notNull(), // base64 encoded image
+  aiGuessedWeapon: varchar('ai_guessed_weapon', { length: 100 }),
+  submittedAt: timestamp('submitted_at').defaultNow().notNull(),
+})
+
+// Game stories table — AI-generated story and winner per game
+export const gameStories = pgTable('game_stories', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  gameId: uuid('game_id').notNull().references(() => games.id, { onDelete: 'cascade' }).unique(),
+  story: text('story').notNull(),
+  winnerId: uuid('winner_id').references(() => users.id, { onDelete: 'set null' }),
+  generatedAt: timestamp('generated_at').defaultNow().notNull(),
 })
 
 // Game messages table (group chat, only game players can post)
@@ -79,6 +100,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   friendshipsInitiated: many(friendships, { relationName: 'user' }),
   friendshipsReceived: many(friendships, { relationName: 'friend' }),
   gamePlayers: many(gamePlayers),
+  weaponDrawings: many(weaponDrawings),
 }))
 
 export const friendshipsRelations = relations(friendships, ({ one }) => ({
@@ -91,14 +113,26 @@ export const privateMessagesRelations = relations(privateMessages, ({ one }) => 
   receiver: one(users, { fields: [privateMessages.receiverId], references: [users.id], relationName: 'receiver' }),
 }))
 
-export const gamesRelations = relations(games, ({ many }) => ({
+export const gamesRelations = relations(games, ({ many, one }) => ({
   gamePlayers: many(gamePlayers),
   gameMessages: many(gameMessages),
+  weaponDrawings: many(weaponDrawings),
+  story: one(gameStories),
 }))
 
 export const gamePlayersRelations = relations(gamePlayers, ({ one }) => ({
   game: one(games, { fields: [gamePlayers.gameId], references: [games.id] }),
   user: one(users, { fields: [gamePlayers.userId], references: [users.id] }),
+}))
+
+export const weaponDrawingsRelations = relations(weaponDrawings, ({ one }) => ({
+  game: one(games, { fields: [weaponDrawings.gameId], references: [games.id] }),
+  user: one(users, { fields: [weaponDrawings.userId], references: [users.id] }),
+}))
+
+export const gameStoriesRelations = relations(gameStories, ({ one }) => ({
+  game: one(games, { fields: [gameStories.gameId], references: [games.id] }),
+  winner: one(users, { fields: [gameStories.winnerId], references: [users.id] }),
 }))
 
 export const gameMessagesRelations = relations(gameMessages, ({ one }) => ({
@@ -117,6 +151,10 @@ export const insertGameSchema = createInsertSchema(games)
 export const selectGameSchema = createSelectSchema(games)
 export const insertGamePlayerSchema = createInsertSchema(gamePlayers)
 export const selectGamePlayerSchema = createSelectSchema(gamePlayers)
+export const insertWeaponDrawingSchema = createInsertSchema(weaponDrawings)
+export const selectWeaponDrawingSchema = createSelectSchema(weaponDrawings)
+export const insertGameStorySchema = createInsertSchema(gameStories)
+export const selectGameStorySchema = createSelectSchema(gameStories)
 export const insertGameMessageSchema = createInsertSchema(gameMessages)
 export const selectGameMessageSchema = createSelectSchema(gameMessages)
 
@@ -131,5 +169,9 @@ export type Game = typeof games.$inferSelect
 export type NewGame = typeof games.$inferInsert
 export type GamePlayer = typeof gamePlayers.$inferSelect
 export type NewGamePlayer = typeof gamePlayers.$inferInsert
+export type WeaponDrawing = typeof weaponDrawings.$inferSelect
+export type NewWeaponDrawing = typeof weaponDrawings.$inferInsert
+export type GameStory = typeof gameStories.$inferSelect
+export type NewGameStory = typeof gameStories.$inferInsert
 export type GameMessage = typeof gameMessages.$inferSelect
 export type NewGameMessage = typeof gameMessages.$inferInsert
