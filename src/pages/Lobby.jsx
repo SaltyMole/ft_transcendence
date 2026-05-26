@@ -14,6 +14,7 @@ import isPlayerInGame from "../game/isPlayerInGame";
 import Chat from "../components/Chat";
 import getDrawings from "../game/getDrawings";
 import getPlayers from "../game/getPlayers"
+import generateStory from "../game/generateStory";
 
 const Lobby = () => {
 	const { gameID } = useParams();
@@ -21,6 +22,8 @@ const Lobby = () => {
 	const playerName = state?.name;
 
 	const navigate = useNavigate();
+
+
 
 	// If player not in this game, then kick player because he didn't joined using the game page
 	// Then if didn't drawn, then redirect to drawing page
@@ -40,16 +43,45 @@ const Lobby = () => {
 		checkDrawn();
 	}, []);
 
-	// When player leave the page (except drawing that is the next game page)
+
+
+	// When player change website page (except lobby that is the next game page)
+	// When player quit the website or close the page, then display a warning page to confirm
 	const location = useLocation();
 	useEffect(() => {
+		const handlePageHide = () => {
+			const blobPlayer = new Blob(
+				[JSON.stringify({ id: gameID, name: playerName })],
+				{ type: "application/json" }
+			);
+			navigator.sendBeacon("/gameroute/removeplayer", blobPlayer);
+
+			const blobDrawing = new Blob(
+				[JSON.stringify({ id: gameID, name: playerName })],
+				{ type: "application/json" }
+			);
+			navigator.sendBeacon("/gameroute/removedrawing", blobDrawing);
+		};
+
+		const handleBeforeUnload = (e) => {
+			e.preventDefault();
+			e.returnValue = "";
+		};
+
+		window.addEventListener("beforeunload", handleBeforeUnload);
+		window.addEventListener("pagehide", handlePageHide);
+
 		return () => {
+			window.removeEventListener("beforeunload", handleBeforeUnload);
+			window.removeEventListener("pagehide", handlePageHide);
 			if (window.location.pathname !== `/drawing/${gameID}`) {
 				removePlayer(gameID, playerName);
 				removeDrawing(gameID, playerName);
 			}
 		};
-	}, [location]);
+	}, []);
+
+
 
 	// Get game state and change path if necessary
 	const [gameState, setState] = useState("");
@@ -84,6 +116,8 @@ const Lobby = () => {
 		fetchEnvironment();
 	}, []);
 
+
+
 	// Get story (almost real-time)
 	const [story, setStory] = useState([]);
 	useEffect(() => {
@@ -100,6 +134,8 @@ const Lobby = () => {
 		// Cleaner unmount
 		return () => clearInterval(interval);
 	}, []);
+
+
 
 	// Get number of drawings
 	const [drawings, setDrawings] = useState([]);
@@ -118,6 +154,8 @@ const Lobby = () => {
 		return () => clearInterval(interval);
 	}, [gameID]);
 
+
+
 	// Get number of players
 	const [players, setPlayers] = useState([]);
 	useEffect(() => {
@@ -135,24 +173,35 @@ const Lobby = () => {
 		return () => clearInterval(interval);
 	}, []);
 
+
+
 	// Set generate story button state
 	// Get number of players
 	useEffect(() => {
 		const checkAndSetButtonState = async () => {
+			// If story is writing
+			if (story.length > 0)
+			{
+				console.log("HIIIIIDE");
+				document.getElementById("generateStoryButton").style.visibility = "hidden";
+				document.getElementById("generateStoryButton").style.height = "0px";
+				return;
+			}
+				
+			// If players are still drawing, then display in red, not clickable
 			if (drawings.length < players.length)
 			{
 				document.getElementById("generateStoryButton").style.backgroundColor = "#ff8787";
 				document.getElementById("generateStoryButton").style.color = "#FFFADE";
 				document.getElementById("generateStoryButton").style.boxShadow = "2px 4px 3px #000000b5";
 			}
+			// Else display with green text, clickable
 			else
 			{
 				document.getElementById("generateStoryButton").style.backgroundColor = "#58508D";
 				document.getElementById("generateStoryButton").style.color = "#87ff97";
 				document.getElementById("generateStoryButton").style.boxShadow = "#491A65";
 			}
-
-			console.log("heyyyyy");
 		}
 
 		// Fetch
@@ -162,6 +211,16 @@ const Lobby = () => {
 		// Cleaner unmount
 		return () => clearInterval(interval);
 	}, [drawings, players]);
+
+
+
+	// Generate story button clicked
+	const generateStoryButtonAction = () => {
+		if (drawings.length == players.length)
+		{
+			generateStory(gameID);
+		}
+	}
 
 	return (
 		<>
@@ -183,7 +242,7 @@ const Lobby = () => {
 							</div>
 							<div className="CombatStory">
 								<h1 className="CombatStoryText">Fight</h1>
-								<button id="generateStoryButton" className="generateStoryButton">Generate story ({drawings.length}/{players.length})</button>
+								<button onClick={generateStoryButtonAction} id="generateStoryButton" className="generateStoryButton">Generate story ({drawings.length}/{players.length})</button>
 								<h1>{story}</h1>
 							</div>
 						</div>

@@ -30,15 +30,34 @@ const Matchmaking = () => {
 
 	}, []);
 
-	// When player leave the page (except lobby that is the next game page)
+	// When player change website page (except lobby that is the next game page)
+	// When player quit the website or close the page, then display a warning page to confirm
 	const location = useLocation();
 	useEffect(() => {
+		const handlePageHide = () => {
+			const blob = new Blob(
+				[JSON.stringify({ id: gameID, name: playerName })],
+				{ type: "application/json" }
+			);
+			navigator.sendBeacon("/gameroute/removeplayer", blob);
+		};
+
+		const handleBeforeUnload = (e) => {
+			e.preventDefault();
+			e.returnValue = "";
+		};
+
+		window.addEventListener("beforeunload", handleBeforeUnload);
+		window.addEventListener("pagehide", handlePageHide);
+
 		return () => {
+			window.removeEventListener("beforeunload", handleBeforeUnload);
+			window.removeEventListener("pagehide", handlePageHide);
 			if (window.location.pathname !== `/lobby/${gameID}`) {
 				removePlayer(gameID, playerName);
 			}
 		};
-	}, [location]);
+	}, []);
 
 	// Launch the game
 	function launchFunction() {
