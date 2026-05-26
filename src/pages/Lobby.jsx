@@ -11,6 +11,7 @@ import havePlayerDrawn from "../game/havePlayerDrawn"
 import removePlayer from "../game/removePlayer";
 import removeDrawing from "../game/removeDrawing";
 import isPlayerInGame from "../game/isPlayerInGame";
+import Chat from "../components/Chat";
 
 const Lobby = () => {
 	const { gameID } = useParams();
@@ -19,7 +20,8 @@ const Lobby = () => {
 
 	const navigate = useNavigate();
 
-	// If no playerName, then kick player because he didn't joined using the game page
+	// If player not in this game, then kick player because he didn't joined using the game page
+	// Then if didn't drawn, then redirect to drawing page
 	useEffect(() => {
 		const checkIsHere = async () => {
 			const isHeHere = await isPlayerInGame(gameID, playerName)
@@ -27,9 +29,16 @@ const Lobby = () => {
 				navigate('/game');
 		}
 		checkIsHere();
+
+		const checkDrawn = async () => {
+			const doIHvaeToDraw = await havePlayerDrawn(gameID, playerName);
+			if (doIHvaeToDraw == false)
+				navigate(`/drawing/${gameID}`, { state: { name: playerName } });
+		}
+		checkDrawn();
 	}, []);
 
-	// When player leave the page (except lobby that is the next game page)
+	// When player leave the page (except drawing that is the next game page)
 	const location = useLocation();
 	useEffect(() => {
 		return () => {
@@ -39,17 +48,6 @@ const Lobby = () => {
 			}
 		};
 	}, [location]);
-
-	// Check and redirect to drawing interface
-	useEffect(() => {
-		const checkDrawn = async () => {
-			const doIHvaeToDraw = await havePlayerDrawn(gameID, playerName);
-			if (doIHvaeToDraw == false)
-				navigate(`/drawing/${gameID}`, { state: { name: playerName } });
-		}
-
-		checkDrawn();
-	}, []);
 
 	// Get game state and change path if necessary
 	const [gameState, setState] = useState("");
@@ -114,15 +112,19 @@ const Lobby = () => {
 							<div className="Carousel">
 								<h1 className="CarouselText">Drawings</h1>
 								<DrawingCarousel gameID={gameID} />
+								<div className="ChatDivLobby">
+									<Chat
+										clientName={playerName}
+										gameID={gameID}
+									/>
+								</div>
 							</div>
 							<div className="CombatStory">
 								<h1 className="CombatStoryText">Fight</h1>
 								<h1>{story}</h1>
 							</div>
-							
 						</div>
 					</div>
-					
 				</div>
 			</main>
 		</>

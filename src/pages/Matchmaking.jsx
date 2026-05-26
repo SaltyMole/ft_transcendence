@@ -18,7 +18,7 @@ const Matchmaking = () => {
 
 	const navigate = useNavigate();
 
-	// If no playerName, then kick player because he didn't joined using the game page
+	// If player not in this game, then kick player because he didn't joined using the game page
 	useEffect(() => {
 		const checkIsHere = async () => {
 			const isHeHere = await isPlayerInGame(gameID, playerName)
@@ -26,6 +26,8 @@ const Matchmaking = () => {
 				navigate('/game');
 		}
 		checkIsHere();
+
+
 	}, []);
 
 	// When player leave the page (except lobby that is the next game page)

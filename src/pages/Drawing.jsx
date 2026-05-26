@@ -7,6 +7,7 @@ import Chat from "../components/Chat"
 import removePlayer from '../game/removePlayer';
 import addDrawing from '../game/addDrawing';
 import havePlayerDrawn from '../game/havePlayerDrawn';
+import isPlayerInGame from '../game/isPlayerInGame'
 
 
 
@@ -316,7 +317,7 @@ const DrawingInterface = () => {
 		yesNoAction: null,
 	});
 
-	// If no playerName, then kick player because he didn't joined using the game page
+	// If player not in this game, then kick player because he didn't joined using the game page
 	useEffect(() => {
 		const checkIsHere = async () => {
 			const isHeHere = await isPlayerInGame(gameID, playerName)

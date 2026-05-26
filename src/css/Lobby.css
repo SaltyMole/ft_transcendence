@@ -8,6 +8,7 @@
 	align-items: center;
 	height: 100%;
 	overflow-y: scroll;
+	overflow-x: hidden;
 	gap: 1vh;
 }
 
@@ -70,6 +71,14 @@
 	border-radius: 1vw;
 }
 
+.ChatDivLobby {
+	position: flex;
+	background-color: #0000007c;
+    border-radius: 2vh;
+    height: 40vh;
+    text-align: left;
+}
+
 .CombatStory {
 	display: flex;
 	flex-direction: column;
@@ -107,6 +116,12 @@
 	.overlay {
 		width: 100vw;
 		margin-right: 0px;
+	}
+	.Carousel {
+		width: calc(50vw - 3vh);
+	}
+	.CombatStory {
+		width: calc(50vw - 3vh);
 	}
 	.LobbyText {
 		font-size: 10vw;
