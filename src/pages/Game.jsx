@@ -25,12 +25,12 @@ const Game = () => {
 	return (
 	<>
 		<main class= "bg-cover bg-center h-screen" style={{ backgroundImage: `url(${test})` }}>
-			<h1> Page du jeu</h1>
 			<form action={handleCreateGame}
 				style={{
-					backgroundColor: 'blue',
-					width: '100px',
-					height: '100px'
+					backgroundColor: '#000000cb',
+					width: '15vw',
+					height: '25vh',
+					fontSize: 50
      			}}
 			>
 				<input name="name" placeholder='name' />
@@ -38,15 +38,27 @@ const Game = () => {
 			</form>
 			<form action={handleJoinGame}
 				style={{
-					backgroundColor: 'blue',
-					width: '100px',
-					height: '100px'
+					backgroundColor: '#000000cb',
+					width: '15vw',
+					height: '25vh',
+					fontSize: 50
      			}}
 			>
 				<input name="name" placeholder='name' />
 				<input name="id" placeholder='id' />
 				<button type="submit">JoinGame</button>
 			</form>
+
+			<h1
+				style={{
+					fontSize: 100,
+					color: "#ff0000",
+					backgroundColor: "#5f5f5f",
+					width: '30vw',
+					height: '10vh',
+			}}>
+					TEMPORAIRE /!\
+			</h1>
 		</main>
 	</>
 	)

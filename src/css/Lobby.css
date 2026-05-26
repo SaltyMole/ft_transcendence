@@ -100,6 +100,10 @@
 	border-radius: 1vw;
 }
 
+.generateStoryButton {
+	margin-top: 1vh;
+}
+
 .CombatStoryText {
 	font-size: 1.5vw;
 	color: #58508D;

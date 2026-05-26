@@ -12,6 +12,8 @@ import removePlayer from "../game/removePlayer";
 import removeDrawing from "../game/removeDrawing";
 import isPlayerInGame from "../game/isPlayerInGame";
 import Chat from "../components/Chat";
+import getDrawings from "../game/getDrawings";
+import getPlayers from "../game/getPlayers"
 
 const Lobby = () => {
 	const { gameID } = useParams();
@@ -67,6 +69,8 @@ const Lobby = () => {
 		return () => clearInterval(interval);
 	}, [gameID]);
 
+
+
 	// Get environment
 	const [environment, setEnvironment] = useState([]);
 	useEffect(() => {
@@ -78,13 +82,9 @@ const Lobby = () => {
 
 		// Fetch
 		fetchEnvironment();
-		const interval = setInterval(fetchEnvironment, 2000);
-
-		// Cleaner unmount
-		return () => clearInterval(interval);
 	}, []);
 
-	// Get story
+	// Get story (almost real-time)
 	const [story, setStory] = useState([]);
 	useEffect(() => {
 		const fetchStory = () => {
@@ -100,6 +100,68 @@ const Lobby = () => {
 		// Cleaner unmount
 		return () => clearInterval(interval);
 	}, []);
+
+	// Get number of drawings
+	const [drawings, setDrawings] = useState([]);
+	useEffect(() => {
+		const fetchDrawings = () => {
+			getDrawings(gameID)
+			.then(drawings => setDrawings(drawings))
+			.catch(error => console.error(error));
+		}
+		
+		// Fetch
+		fetchDrawings();
+		const interval = setInterval(fetchDrawings, 2000);
+
+		// Cleaner unmount
+		return () => clearInterval(interval);
+	}, [gameID]);
+
+	// Get number of players
+	const [players, setPlayers] = useState([]);
+	useEffect(() => {
+		const fetchPlayers = () => {
+			getPlayers(gameID)
+			.then(players => setPlayers(players))
+			.catch(error => console.error(error));
+		}
+
+		// Fetch
+		fetchPlayers();
+		const interval = setInterval(fetchPlayers, 2000);
+
+		// Cleaner unmount
+		return () => clearInterval(interval);
+	}, []);
+
+	// Set generate story button state
+	// Get number of players
+	useEffect(() => {
+		const checkAndSetButtonState = async () => {
+			if (drawings.length < players.length)
+			{
+				document.getElementById("generateStoryButton").style.backgroundColor = "#ff8787";
+				document.getElementById("generateStoryButton").style.color = "#FFFADE";
+				document.getElementById("generateStoryButton").style.boxShadow = "2px 4px 3px #000000b5";
+			}
+			else
+			{
+				document.getElementById("generateStoryButton").style.backgroundColor = "#58508D";
+				document.getElementById("generateStoryButton").style.color = "#87ff97";
+				document.getElementById("generateStoryButton").style.boxShadow = "#491A65";
+			}
+
+			console.log("heyyyyy");
+		}
+
+		// Fetch
+		checkAndSetButtonState();
+		const interval = setInterval(checkAndSetButtonState, 2000);
+
+		// Cleaner unmount
+		return () => clearInterval(interval);
+	}, [drawings, players]);
 
 	return (
 		<>
@@ -121,6 +183,7 @@ const Lobby = () => {
 							</div>
 							<div className="CombatStory">
 								<h1 className="CombatStoryText">Fight</h1>
+								<button id="generateStoryButton" className="generateStoryButton">Generate story ({drawings.length}/{players.length})</button>
 								<h1>{story}</h1>
 							</div>
 						</div>
