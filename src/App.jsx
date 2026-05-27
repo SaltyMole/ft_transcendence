@@ -47,7 +47,7 @@ function App() {
 					<Route path="/Drawing/:gameID" element={<Drawing />} />
 					<Route path="/Matchmaking/:gameID" element={<Matchmaking />} />
 					<Route path="/Lobby/:gameID" element={<Lobby />} />
-					<Route path="/Results" element={<Results />} />
+					<Route path="/Results/:gameID" element={<Results />} />
 					<Route path="/404" element={<E404 />} />
 				</Routes>
 			</Layout>

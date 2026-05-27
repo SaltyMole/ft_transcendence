@@ -169,6 +169,9 @@ app.post('/api/save-image', upload.single('file'), (req, res) => {
 
 
 
+
+
+
 // JSON
 import fs from 'fs';
 
@@ -179,7 +182,7 @@ app.post('/gameroute/create', (req, res) => {
   const { id } = req.body;
   const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
 
-  data.push({ id, state: "matchmaking", players: [], drawings: [], environment: "", story: "" });
+  data.push({ id, state: "matchmaking", players: [], drawings: [], environment: "", story: "", winner: "" });
 
   fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
   res.json({ success: true, id });

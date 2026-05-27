@@ -74,7 +74,8 @@ const Lobby = () => {
 		return () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			window.removeEventListener("pagehide", handlePageHide);
-			if (window.location.pathname !== `/drawing/${gameID}`) {
+			if (window.location.pathname !== `/drawing/${gameID}` && window.location.pathname !== `/results/${gameID}`)
+			{
 				removePlayer(gameID, playerName);
 				removeDrawing(gameID, playerName);
 			}
