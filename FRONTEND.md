@@ -213,9 +213,33 @@ type GameMessage = {
 ```
 POST /auth/register  →  { user, token }
 POST /auth/login     →  { user, token }
+                     →  { requiresTwoFactor: true, tempToken }  (si 2FA activé)
 ```
 
 Stocker le token. Décoder le payload pour avoir `id` / `username` / `email` sans refaire un appel réseau.
+
+---
+
+### Authentification à deux facteurs (2FA)
+
+| Étape | Appel API |
+|-------|-----------|
+| **Setup** | `POST /auth/2fa/setup` → reçoit `{ qrCode, secret }` → afficher le QR |
+| **Activer** | `POST /auth/2fa/enable` `{ code }` → confirme avec le code de l'appli (Google Authenticator, etc.) |
+| **Login normal** | `POST /auth/login` → si `requiresTwoFactor: true` → afficher input TOTP |
+| **Login 2FA** | `POST /auth/2fa/verify-login` `{ tempToken, code }` → reçoit le JWT final |
+| **Désactiver** | `POST /auth/2fa/disable` `{ code }` → vérifie puis supprime le secret |
+
+**Flux d'activation :**
+1. Appeler `POST /auth/2fa/setup` (token JWT requis) → afficher `qrCode` (data URL) dans une `<img>`
+2. L'utilisateur scanne avec son appli TOTP
+3. L'utilisateur saisit le code à 6 chiffres → `POST /auth/2fa/enable { code }`
+
+**Flux de connexion avec 2FA :**
+1. `POST /auth/login` retourne `{ requiresTwoFactor: true, tempToken }` au lieu du JWT
+2. Afficher un input pour le code TOTP
+3. `POST /auth/2fa/verify-login { tempToken, code }` → retourne `{ user, token }` (JWT final)
+4. Stocker le JWT comme d'habitude
 
 ---
 

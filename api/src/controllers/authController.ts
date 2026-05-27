@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
-import { generateToken } from '../utils/jwt.ts'
+import { generateToken, generateTempToken } from '../utils/jwt.ts'
 import { db } from '../db/connection.ts'
 import { users } from '../db/schema.ts'
 import { eq } from 'drizzle-orm'
@@ -66,6 +66,12 @@ export const login = async (req: Request, res: Response) => {
 
     if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid credentials' })
+    }
+
+    // If 2FA is enabled, issue a short-lived temp token instead of the full JWT
+    if (user.twoFactorEnabled) {
+      const tempToken = await generateTempToken(user.id)
+      return res.status(200).json({ requiresTwoFactor: true, tempToken })
     }
 
     // Generate JWT

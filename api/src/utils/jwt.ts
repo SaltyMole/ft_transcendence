@@ -35,6 +35,24 @@ export const verifyToken = async (token: string): Promise<JwtPayload> => {
   }
 }
 
+// Short-lived token issued after password check when 2FA is enabled.
+// Contains pending2fa:true so it cannot be used on protected routes.
+export const generateTempToken = async (userId: string): Promise<string> => {
+  const secretKey = createSecretKey(env.JWT_SECRET, 'utf-8')
+  return await new SignJWT({ id: userId, pending2fa: true })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('5m')
+    .sign(secretKey)
+}
+
+export const verifyTempToken = async (token: string): Promise<{ id: string }> => {
+  const secretKey = createSecretKey(env.JWT_SECRET, 'utf-8')
+  const { payload } = await jwtVerify(token, secretKey)
+  if (!payload.pending2fa) throw new Error('Not a 2FA temp token')
+  return { id: payload.id as string }
+}
+
 export const decodeToken = (token: string): JwtPayload | null => {
   try {
     const payload = decodeJwt(token)

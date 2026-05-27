@@ -1,6 +1,6 @@
 {
-  "id": "0da39970-c579-4988-a8c3-e26901a666dc",
-  "prevId": "f7c05a5d-a596-4368-bb5c-0be07be28ef1",
+  "id": "1506d3fd-5298-455e-a304-403feafae1b5",
+  "prevId": "0da39970-c579-4988-a8c3-e26901a666dc",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -449,19 +449,7 @@
           "name": "password",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false
-        },
-        "oauth_provider": {
-          "name": "oauth_provider",
-          "type": "varchar(20)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "oauth_id": {
-          "name": "oauth_id",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "first_name": {
           "name": "first_name",
@@ -481,6 +469,19 @@
           "primaryKey": false,
           "notNull": false
         },
+        "two_factor_enabled": {
+          "name": "two_factor_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "two_factor_secret": {
+          "name": "two_factor_secret",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -496,29 +497,7 @@
           "default": "now()"
         }
       },
-      "indexes": {
-        "users_oauth_provider_id_unique": {
-          "name": "users_oauth_provider_id_unique",
-          "columns": [
-            {
-              "expression": "oauth_provider",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "oauth_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
