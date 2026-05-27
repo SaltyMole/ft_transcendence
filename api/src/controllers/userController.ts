@@ -1,8 +1,8 @@
 import type { Response } from 'express'
 import type { AuthenticatedRequest } from '../middleware/auth.ts'
 import { db } from '../db/connection.ts'
-import { users } from '../db/schema.ts'
-import { eq } from 'drizzle-orm'
+import { users, gamePlayers, friendships } from '../db/schema.ts'
+import { eq, and, or, count, sum } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
 
 export const getProfile = async (req: AuthenticatedRequest, res: Response) => {
@@ -85,6 +85,54 @@ export const updateAvatar = async (req: AuthenticatedRequest, res: Response) => 
   } catch (error) {
     console.error('Update avatar error:', error)
     res.status(500).json({ error: 'Failed to update avatar' })
+  }
+}
+
+export const getUserStats = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id
+
+    const [gameStats] = await db
+      .select({
+        totalGames: count(),
+        totalScore: sum(gamePlayers.score),
+      })
+      .from(gamePlayers)
+      .where(eq(gamePlayers.userId, userId))
+
+    const [winStats] = await db
+      .select({ wins: count() })
+      .from(gamePlayers)
+      .where(and(eq(gamePlayers.userId, userId), eq(gamePlayers.isWinner, true)))
+
+    const [friendStats] = await db
+      .select({ friendCount: count() })
+      .from(friendships)
+      .where(
+        and(
+          eq(friendships.status, 'accepted'),
+          or(eq(friendships.userId, userId), eq(friendships.friendId, userId))
+        )
+      )
+
+    const total = Number(gameStats.totalGames) || 0
+    const wins = Number(winStats.wins) || 0
+    const totalScore = Number(gameStats.totalScore) || 0
+
+    res.json({
+      stats: {
+        gamesPlayed: total,
+        wins,
+        losses: total - wins,
+        winRate: total > 0 ? Math.round((wins / total) * 100) : 0,
+        totalScore,
+        averageScore: total > 0 ? Math.round(totalScore / total) : 0,
+        friendCount: Number(friendStats.friendCount) || 0,
+      },
+    })
+  } catch (error) {
+    console.error('Get user stats error:', error)
+    res.status(500).json({ error: 'Failed to fetch stats' })
   }
 }
 

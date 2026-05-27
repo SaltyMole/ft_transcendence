@@ -4,6 +4,7 @@ import {
   updateProfile,
   updateAvatar,
   changePassword,
+  getUserStats,
 } from '../controllers/userController.ts'
 import { authenticateToken } from '../middleware/auth.ts'
 import { validateBody } from '../middleware/validation.ts'
@@ -11,10 +12,10 @@ import { z } from 'zod'
 
 const router = Router()
 
-// Apply authentication to all routes
+
 router.use(authenticateToken)
 
-// Validation schemas
+
 const updateProfileSchema = z.object({
   email: z.email('Invalid email format').optional(),
   username: z
@@ -31,11 +32,12 @@ const changePasswordSchema = z.object({
   newPassword: z.string().min(8, 'New password must be at least 8 characters'),
 })
 
-// Routes
+
 const updateAvatarSchema = z.object({
   avatar: z.string().min(1, 'Avatar cannot be empty'),
 })
 
+router.get('/stats', getUserStats)
 router.get('/profile', getProfile)
 router.put('/profile', validateBody(updateProfileSchema), updateProfile)
 router.put('/avatar', validateBody(updateAvatarSchema), updateAvatar)
