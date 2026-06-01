@@ -10,14 +10,10 @@ http://localhost:3000/api
 
 ## Authentification
 
-La plupart des routes sont protégées par un JWT.  
-Ajoute le token dans le header de chaque requête :
+La plupart des routes sont protégées par un JWT stocké dans un cookie `httpOnly`.  
+Le cookie est positionné automatiquement par le serveur lors du `register` et du `login` — **aucun header manuel n'est nécessaire**, le navigateur l'envoie automatiquement avec chaque requête.
 
-```
-Authorization: Bearer <token>
-```
-
-Le token est retourné lors du `register` et du `login`. Il expire selon la valeur de `JWT_EXPIRES_IN` (défaut : `7d`).
+Le token expire au bout de **7 jours** (configurable via `JWT_EXPIRES_IN`).
 
 ---
 
@@ -80,6 +76,8 @@ Crée un nouveau compte.
 
 **Réponse** `201`
 
+Le cookie `token` (httpOnly, 7 jours) est positionné dans la réponse.
+
 ```json
 {
   "message": "User created successfully",
@@ -90,8 +88,7 @@ Crée un nouveau compte.
     "firstName": "Pauline",
     "lastName": "Giroux",
     "createdAt": "2026-05-16T10:00:00.000Z"
-  },
-  "token": "<jwt>"
+  }
 }
 ```
 
@@ -108,7 +105,9 @@ Connecte un utilisateur existant.
 | email    | string | oui    |
 | password | string | oui    |
 
-**Réponse** `200`
+**Réponse** `200` — login normal
+
+Le cookie `token` (httpOnly, 7 jours) est positionné dans la réponse.
 
 ```json
 {
@@ -119,9 +118,16 @@ Connecte un utilisateur existant.
     "username": "pauline",
     "firstName": "Pauline",
     "lastName": "Giroux"
-  },
-  "token": "<jwt>"
+  }
 }
+```
+
+**Réponse** `200` — si 2FA activé
+
+Un cookie `tempToken` (httpOnly, 5 min) est positionné. Le front doit demander le code TOTP puis appeler `/auth/2fa/verify-login`.
+
+```json
+{ "requiresTwoFactor": true }
 ```
 
 **Erreurs**
@@ -132,9 +138,157 @@ Connecte un utilisateur existant.
 
 ---
 
+### POST `/auth/logout`
+
+Déconnecte l'utilisateur en supprimant le cookie `token`. Ne requiert pas de token.
+
+**Réponse** `200`
+
+```json
+{ "message": "Logged out successfully" }
+```
+
+---
+
+## Auth 2FA
+
+> Les routes `/auth/2fa/setup`, `/auth/2fa/enable`, `/auth/2fa/disable` requièrent un token JWT (cookie).  
+> `/auth/2fa/verify-login` est publique (utilisée avant d'avoir le JWT final).
+
+### POST `/auth/2fa/setup`
+
+Génère un secret TOTP et un QR code. La 2FA reste désactivée jusqu'à confirmation via `/auth/2fa/enable`.
+
+**Réponse** `200`
+
+```json
+{
+  "secret": "BASE32SECRET...",
+  "qrCode": "data:image/png;base64,...",
+  "otpauthUrl": "otpauth://totp/Transcendance:pauline@example.com?secret=...&issuer=Transcendance"
+}
+```
+
+**Erreurs**
+
+| Code | Description              |
+|------|--------------------------|
+| 400  | 2FA déjà activée         |
+
+---
+
+### POST `/auth/2fa/enable`
+
+Vérifie le code TOTP et active la 2FA. Appeler après avoir scanné le QR code.
+
+**Body**
+
+| Champ | Type   | Requis | Contraintes               |
+|-------|--------|--------|---------------------------|
+| code  | string | oui    | 6 chiffres                |
+
+**Réponse** `200`
+
+```json
+{ "message": "2FA enabled successfully" }
+```
+
+**Erreurs**
+
+| Code | Description                            |
+|------|----------------------------------------|
+| 400  | 2FA déjà activée                       |
+| 400  | Setup non effectué (`/auth/2fa/setup`) |
+| 400  | Code invalide                          |
+
+---
+
+### POST `/auth/2fa/disable`
+
+Désactive la 2FA après vérification du code TOTP.
+
+**Body**
+
+| Champ | Type   | Requis | Contraintes |
+|-------|--------|--------|-------------|
+| code  | string | oui    | 6 chiffres  |
+
+**Réponse** `200`
+
+```json
+{ "message": "2FA disabled successfully" }
+```
+
+**Erreurs**
+
+| Code | Description         |
+|------|---------------------|
+| 400  | 2FA non activée     |
+| 400  | Code invalide       |
+
+---
+
+### POST `/auth/2fa/verify-login`
+
+Deuxième étape du login 2FA. Lit le `tempToken` depuis le cookie (positionné par `/auth/login`).
+
+**Body**
+
+| Champ | Type   | Requis | Contraintes |
+|-------|--------|--------|-------------|
+| code  | string | oui    | 6 chiffres  |
+
+**Réponse** `200`
+
+Le cookie `tempToken` est supprimé, le cookie `token` (httpOnly, 7 jours) est positionné.
+
+```json
+{
+  "message": "Login successful",
+  "user": {
+    "id": "uuid",
+    "email": "pauline@example.com",
+    "username": "pauline",
+    "firstName": "Pauline",
+    "lastName": "Giroux"
+  }
+}
+```
+
+**Erreurs**
+
+| Code | Description                          |
+|------|--------------------------------------|
+| 401  | Cookie `tempToken` absent ou expiré  |
+| 401  | Code TOTP invalide                   |
+
+---
+
 ## Users
 
 > Toutes les routes `/users` requièrent un token JWT.
+
+### GET `/users/stats`
+
+Retourne les statistiques de jeu de l'utilisateur connecté.
+
+**Réponse** `200`
+
+```json
+{
+  "stats": {
+    "gamesPlayed": 10,
+    "wins": 6,
+    "losses": 4,
+    "winRate": 60,
+    "totalScore": 1540,
+    "averageScore": 154,
+    "friendCount": 3
+  }
+}
+```
+
+---
 
 ### GET `/users/profile`
 

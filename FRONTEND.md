@@ -34,53 +34,18 @@ http://localhost:3000/api
 
 ### Principe
 
-Les routes protégées nécessitent un JWT dans le header :
+L'API utilise un cookie `httpOnly` nommé `token`. Le serveur le pose automatiquement lors du `register` et du `login` — **aucun header `Authorization` à gérer manuellement**. Le navigateur l'envoie automatiquement à chaque requête vers la même origine.
 
-```
-Authorization: Bearer <token>
-```
+Pour que les cookies fonctionnent en cross-origin (ex. front sur `localhost:5173`, API sur `localhost:3000`), il faut **`credentials: 'include'`** dans chaque fetch.
 
-Le token est retourné par `/auth/register` et `/auth/login`. Il expire au bout de **7 jours** par défaut.
-
-### Ce que contient le token
-
-Le payload décodé contient :
-
-```ts
-{
-  id: string       // UUID de l'utilisateur
-  email: string
-  username: string
-  iat: number      // issued at (timestamp)
-  exp: number      // expiration (timestamp)
-}
-```
-
-Pour décoder côté front **sans vérifier** (juste afficher l'username, par exemple) :
-
-```ts
-function decodeToken(token: string) {
-  const payload = JSON.parse(atob(token.split('.')[1]))
-  return payload as { id: string; email: string; username: string; exp: number }
-}
-```
-
-### Recommandation de stockage
-
-| Option           | Avantage           | Inconvénient                |
-|------------------|--------------------|------------------------------|
-| `localStorage`   | Simple             | Vulnérable aux XSS           |
-| `sessionStorage` | Effacé à la fermeture | Même risque XSS            |
-| Cookie `httpOnly`| Protégé XSS        | Nécessite config CORS/cookies|
-
-Pour ce projet, `localStorage` est acceptable. Si tu veux mieux, passe en cookie httpOnly (demander au back de setter le cookie).
+Le token expire au bout de **7 jours**.
 
 ### Erreurs d'auth
 
 | Code | Signification                          |
 |------|----------------------------------------|
-| 401  | Token absent → rediriger vers /login  |
-| 403  | Token invalide ou expiré → déconnecter|
+| 401  | Cookie absent → rediriger vers /login  |
+| 403  | Cookie invalide ou expiré → déconnecter|
 
 ---
 
@@ -93,13 +58,11 @@ async function apiFetch<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = localStorage.getItem('token')
-
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
+    credentials: 'include', // envoie le cookie token automatiquement
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   })
@@ -113,11 +76,11 @@ async function apiFetch<T>(
 }
 
 // Exemples
-const { user, token } = await apiFetch<{ user: User; token: string }>('/auth/login', {
+const { user } = await apiFetch<{ user: User }>('/auth/login', {
   method: 'POST',
   body: JSON.stringify({ email, password }),
 })
-localStorage.setItem('token', token)
+// Le cookie est posé automatiquement par le serveur, rien à stocker
 
 const { user } = await apiFetch<{ user: User }>('/users/profile')
 ```
@@ -173,6 +136,16 @@ type FriendRequest = {
   from: { id: string; username: string; avatar: string | null }
 }
 
+type UserStats = {
+  gamesPlayed: number
+  wins: number
+  losses: number
+  winRate: number        // 0–100
+  totalScore: number
+  averageScore: number
+  friendCount: number
+}
+
 type Game = {
   id: string
   status: 'waiting' | 'in_progress' | 'finished'
@@ -211,12 +184,13 @@ type GameMessage = {
 ### Connexion / inscription
 
 ```
-POST /auth/register  →  { user, token }
-POST /auth/login     →  { user, token }
-                     →  { requiresTwoFactor: true, tempToken }  (si 2FA activé)
+POST /auth/register  →  { user }           + cookie token (7j)
+POST /auth/login     →  { user }           + cookie token (7j)
+                     →  { requiresTwoFactor: true }  (si 2FA activé) + cookie tempToken (5min)
+POST /auth/logout    →  { message }        supprime le cookie token
 ```
 
-Stocker le token. Décoder le payload pour avoir `id` / `username` / `email` sans refaire un appel réseau.
+Le cookie est géré automatiquement par le navigateur — aucun stockage manuel nécessaire.
 
 ---
 
@@ -224,22 +198,22 @@ Stocker le token. Décoder le payload pour avoir `id` / `username` / `email` san
 
 | Étape | Appel API |
 |-------|-----------|
-| **Setup** | `POST /auth/2fa/setup` → reçoit `{ qrCode, secret }` → afficher le QR |
+| **Setup** | `POST /auth/2fa/setup` → reçoit `{ qrCode, secret, otpauthUrl }` → afficher le QR |
 | **Activer** | `POST /auth/2fa/enable` `{ code }` → confirme avec le code de l'appli (Google Authenticator, etc.) |
 | **Login normal** | `POST /auth/login` → si `requiresTwoFactor: true` → afficher input TOTP |
-| **Login 2FA** | `POST /auth/2fa/verify-login` `{ tempToken, code }` → reçoit le JWT final |
+| **Login 2FA** | `POST /auth/2fa/verify-login` `{ code }` → reçoit `{ user }` + cookie token final |
 | **Désactiver** | `POST /auth/2fa/disable` `{ code }` → vérifie puis supprime le secret |
 
 **Flux d'activation :**
-1. Appeler `POST /auth/2fa/setup` (token JWT requis) → afficher `qrCode` (data URL) dans une `<img>`
+1. Appeler `POST /auth/2fa/setup` (cookie token requis) → afficher `qrCode` (data URL) dans une `<img>`
 2. L'utilisateur scanne avec son appli TOTP
 3. L'utilisateur saisit le code à 6 chiffres → `POST /auth/2fa/enable { code }`
 
 **Flux de connexion avec 2FA :**
-1. `POST /auth/login` retourne `{ requiresTwoFactor: true, tempToken }` au lieu du JWT
+1. `POST /auth/login` retourne `{ requiresTwoFactor: true }` et pose un cookie `tempToken` (5 min)
 2. Afficher un input pour le code TOTP
-3. `POST /auth/2fa/verify-login { tempToken, code }` → retourne `{ user, token }` (JWT final)
-4. Stocker le JWT comme d'habitude
+3. `POST /auth/2fa/verify-login { code }` — le `tempToken` est lu depuis le cookie automatiquement
+4. Le serveur pose le cookie `token` final et retourne `{ user }` → connexion terminée
 
 ---
 
@@ -250,6 +224,7 @@ GET  /users/profile           →  { user }
 PUT  /users/profile           →  { message, user }   (champs optionnels)
 PUT  /users/avatar            →  { message, user }   (body: { avatar: "data:image/png;base64,..." })
 PUT  /users/password          →  { message }
+GET  /users/stats             →  { stats }
 ```
 
 **Avatar** : convertir le fichier en base64 avant d'envoyer.
