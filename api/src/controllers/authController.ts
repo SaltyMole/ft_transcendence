@@ -4,6 +4,7 @@ import { generateToken, generateTempToken } from '../utils/jwt.ts'
 import { db } from '../db/connection.ts'
 import { users } from '../db/schema.ts'
 import { eq } from 'drizzle-orm'
+import { isDev } from '../../env.ts'
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -39,10 +40,16 @@ export const register = async (req: Request, res: Response) => {
       username: newUser.username,
     })
 
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: !isDev(),
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    })
+
     res.status(201).json({
       message: 'User created successfully',
       user: newUser,
-      token,
     })
   } catch (error) {
     console.error('Registration error:', error)
@@ -68,10 +75,17 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid credentials' })
     }
 
+    const cookieOptions = {
+      httpOnly: true,
+      secure: !isDev(),
+      sameSite: 'strict' as const,
+    }
+
     // If 2FA is enabled, issue a short-lived temp token instead of the full JWT
     if (user.twoFactorEnabled) {
       const tempToken = await generateTempToken(user.id)
-      return res.status(200).json({ requiresTwoFactor: true, tempToken })
+      res.cookie('tempToken', tempToken, { ...cookieOptions, maxAge: 5 * 60 * 1000 }) // 5 min
+      return res.status(200).json({ requiresTwoFactor: true })
     }
 
     // Generate JWT
@@ -80,6 +94,8 @@ export const login = async (req: Request, res: Response) => {
       email: user.email,
       username: user.username,
     })
+
+    res.cookie('token', token, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 }) // 7 days
 
     res.json({
       message: 'Login successful',
@@ -90,10 +106,14 @@ export const login = async (req: Request, res: Response) => {
         firstName: user.firstName,
         lastName: user.lastName,
       },
-      token,
     })
   } catch (error) {
     console.error('Login error:', error)
     res.status(500).json({ error: 'Failed to login' })
   }
+}
+
+export const logout = (_req: Request, res: Response) => {
+  res.clearCookie('token')
+  res.json({ message: 'Logged out successfully' })
 }

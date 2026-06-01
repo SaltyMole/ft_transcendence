@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express'
+import { isDev } from '../../env.ts'
 import { db } from '../db/connection.ts'
 import { users } from '../db/schema.ts'
 import { eq } from 'drizzle-orm'
@@ -74,11 +75,16 @@ export const disable2FA = async (req: AuthenticatedRequest, res: Response) => {
   }
 }
 
-// POST /auth/2fa/verify-login  { tempToken, code }
-// Second step of login: validates the temp token + TOTP code, returns the full JWT.
+// POST /auth/2fa/verify-login  { code }
+// Second step of login: validates the temp token cookie + TOTP code, sets the full JWT cookie.
 export const verifyLogin2FA = async (req: Request, res: Response) => {
   try {
-    const { tempToken, code } = req.body
+    const { code } = req.body
+    const tempToken = req.cookies?.tempToken
+
+    if (!tempToken) {
+      return res.status(401).json({ error: 'Missing temp token' })
+    }
 
     const { id: userId } = await verifyTempToken(tempToken)
 
@@ -97,6 +103,14 @@ export const verifyLogin2FA = async (req: Request, res: Response) => {
       username: user.username,
     })
 
+    res.clearCookie('tempToken')
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: !isDev(),
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    })
+
     res.json({
       message: 'Login successful',
       user: {
@@ -106,7 +120,6 @@ export const verifyLogin2FA = async (req: Request, res: Response) => {
         firstName: user.firstName,
         lastName: user.lastName,
       },
-      token,
     })
   } catch (error) {
     console.error('2FA verify login error:', error)

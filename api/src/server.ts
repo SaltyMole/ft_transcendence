@@ -2,6 +2,7 @@ import { env, isDev, isTestEnv } from '../env.ts'
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
 import authRoutes from './routes/authRoutes.ts'
 import userRoutes from './routes/userRoutes.ts'
 import friendRoutes from './routes/friendRoutes.ts'
@@ -20,6 +21,7 @@ app.use(
   })
 )
 
+app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(
