@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link } from "react-router-dom";
 import Button from '../components/Button';
-import Input from '../components/Input'
+import Input from '../components/Input';
+import googleLogo from "../img/google.png";
+
 function Login()
 {
 	const [email, setEmail] = useState('');
@@ -17,12 +19,21 @@ function Login()
 				</div>
 				<div className="input_container text-start ">
 					<form action="" method="post">
-						<Input classnameI ="Input" classnameL="input_label mt-5" text='Email@email.com' type="email" value={email} set={setEmail}/>
+
+						<Input classnameI="Input" classnameL="input_label mt-5 " text='Email@email.com' type="email adress" value={email} set={setEmail}/>
 						<Input classnameI ="Input"  classnameL="input_label mt-5" text='Password' type="password" value={password} set ={setPassword}/>
-						<div className ="flex px-2 items-center justify-between mt-5">
-							<Button value="buttonP"type="submit" text="Login"/>
-							<Link className="underline  register" to="/Register"> Register </Link>
+						<p className="test p-5" > or </p>
+						<div className ="flex px-2 items-center justify-center">
+							<Button value="buttonGoogle"  immg={googleLogo} text="Sign in with Google" />
 						</div>
+						<div className ="flex px-2 items-center justify-center gap-10 mt-5">
+							<Button value="buttonP "type="submit" text="Sign in"/>
+						</div>
+						<div className ="flex px-2 items-center justify-center gap-10 mt-5">
+							<p style={{color: '#7972A3'}}> Need an account ?<Link className="underline  register" to="/Register"> Register </Link> </p>
+						
+						</div>
+
 					</form>
 				</div>
 			</div>

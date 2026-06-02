@@ -14,7 +14,7 @@ html, body, #root {
 
 .app {
 	display: flex;
-	flex-direction: column;
+	flex-direction: column;  
 	min-height: 100vh;
 }
 
@@ -285,6 +285,27 @@ transition-duration: 150ms;
 	transition-duration: 150ms;
 }
 
+.buttonGoogle{
+	/* text-align: center ; */
+	display: flex;
+	align-items: center;
+	gap:10px;
+	/* height: 50px; */
+	padding:10px 10px;
+	font-weight:1000;
+	background-color: #58508D;
+    color: #FFFADE;
+    font-family: "Public Sans";
+    border-radius: 1.5vh;
+    box-shadow: 2px 4px 3px #491A65;
+	transition-duration: 150ms;
+}
+
+.buttonGoogle:hover{
+	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #000000;
+	transition-duration: 150ms;
+}
+
 .buttonJointheGame:hover{
 	box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #000000;
 	transition-duration: 150ms;
@@ -322,9 +343,29 @@ li{
 		height: 90%;
 		max-width: 100%;
 		max-height: 100%;
-		/* align-items: center; */
 }
 
+.test{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap:12px;
+	font-weight: bold;
+	font-family: "Public Sans";
+	/* margin-block: var(--base-size-12); */
+
+	
+	/* position: relative; */
+	color: #58508D;;
+}
+
+.test::before,
+.test::after{
+	content: "";
+	flex:1;
+	background-color: #58508D;;
+	height: 1px;
+}
 @media (max-width: 768px) {
 
 	#pages {
