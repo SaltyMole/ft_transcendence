@@ -21,14 +21,15 @@ function Login()
 					<form action="" method="post">
 
 						<Input classnameI="Input" classnameL="input_label mt-5 " text='Email@email.com' type="email adress" value={email} set={setEmail}/>
-						<Input classnameI ="Input"  classnameL="input_label mt-5" text='Password' type="password" value={password} set ={setPassword}/>
+						<Input classnameI ="Input mb-2"  classnameL="input_label mt-5" text='Password' type="password" value={password} set ={setPassword}/>
+						<div className ="flex px-2 items-center justify-center gap-10 mt-5">
+							<Button value="buttonP !pl-18 !pr-18" type="submit" text="Sign in"/>
+						</div>
 						<p className="test p-5" > or </p>
 						<div className ="flex px-2 items-center justify-center">
 							<Button value="buttonGoogle"  immg={googleLogo} text="Sign in with Google" />
 						</div>
-						<div className ="flex px-2 items-center justify-center gap-10 mt-5">
-							<Button value="buttonP "type="submit" text="Sign in"/>
-						</div>
+
 						<div className ="flex px-2 items-center justify-center gap-10 mt-5">
 							<p style={{color: '#7972A3'}}> Need an account ?<Link className="underline  register" to="/Register"> Register </Link> </p>
 						
