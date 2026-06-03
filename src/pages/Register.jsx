@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Input from '../components/Input';
 import Button from '../components/Button';
 
@@ -21,14 +22,17 @@ function Register()
 					<div className="input_container text-start ">
 						<form action="" method="post">
 							<Input classnameI ="Input"  classnameL="input_label mt-5" text='Email@email.com' type="email" value={email} set={setEmail}/>
-						<div>
-							<Input classnameI ="Input"  classnameL="input_label mt-5" text='Password' type="password" value={password} set ={setPassword}/>
-						</div>
-						<div>
-							<Input classnameI ="Input"  classnameL="input_label mt-5" text="Username" type="username" value={username} set ={setUsername}/>
-						</div>
-							<div className ="flex px-2 items-center mt-5">
-							 <Button value ="buttonP" type="submit" text="Register" />
+							<div>
+								<Input classnameI ="Input"  classnameL="input_label mt-5" text='Password' type="password" value={password} set ={setPassword}/>
+							</div>
+							<div>
+								<Input classnameI ="Input"  classnameL="input_label mt-5" text="Username" type="username" value={username} set ={setUsername}/>
+							</div>
+							<div className ="flex px-2 items-center mt-5 justify-center gap-10 mt-5">
+								<Button value ="buttonP !pl-18 !pr-18" type="submit" text="Register" />
+							</div>
+							<div className ="flex px-2 items-center justify-center gap-10 mt-5">
+								<p style={{color: '#7972A3'}}>Already have an account?<Link className="underline  register" to="/Login">Login</Link> </p>
 							</div>
 						</form>
 					</div>
