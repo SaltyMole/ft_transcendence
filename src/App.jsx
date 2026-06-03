@@ -19,13 +19,13 @@ import E404 from "./pages/404";
 
 
 function App() {
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(() => { return !!localStorage.getItem("token");});
 	
   	return (
 	<div className="app">
 		<BrowserRouter>
 			<Head />
-			{isLoggedIn && <Header />}
+			{isLoggedIn && <Header setIsLoggedIn={setIsLoggedIn} />}
 			<Routes>
 				<Route path="/Login" element={<Login setIsLoggedIn={setIsLoggedIn}/>}/>
 				<Route path="/Register" element={<Register />}/>

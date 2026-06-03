@@ -1,13 +1,27 @@
 import { useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from '../components/Button';
 import Input from '../components/Input';
 import googleLogo from "../img/google.png";
 
-function Login()
+function Login( {setIsLoggedIn} )
 {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const navigate = useNavigate();
+
+	const handleSubmit = (e) => {e.preventDefault();
+		console.log(email, password);
+		if (email && password)
+		{
+			setIsLoggedIn(true);
+			localStorage.setItem("token", "connected");
+			setIsLoggedIn(true);
+			navigate("/");
+		}
+		else
+			alert("Please complete")
+	}
 	
 	return (
     <>
@@ -18,7 +32,7 @@ function Login()
 					<p></p>
 				</div>
 				<div className="input_container text-start ">
-					<form action="" method="post">
+					<form onSubmit={handleSubmit}>
 						<Input classnameI="Input" classnameL="input_label mt-5 " text='Email@email.com' type="email adress" value={email} set={setEmail}/>
 						<Input classnameI ="Input mb-2"  classnameL="input_label mt-5" text='Password' type="password" value={password} set ={setPassword}/>
 						<div className ="flex px-2 items-center justify-center gap-10 mt-5">

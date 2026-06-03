@@ -1,13 +1,18 @@
 import React from "react";
 import { useNavigate} from "react-router-dom";
 
-function Button({type, text, link, value, immg})
+function Button({type, text, link, value, immg, action})
 {
 	const navigate = useNavigate();
 
-	if(immg)
-		return <button className={value} type={type} onClick={()=>navigate(link)}> <img src={immg}/> {text}  </button>
-	return <button className={value} type={type} onClick={()=>navigate(link)}> {text}  </button>	
+	const handleClick = () => {
+		if (action)
+			action();
+		else if (link)
+			navigate(link);
+	}
+
+		return <button className={value} type={type || "button"} onClick={handleClick}> {immg && <img src={immg} alt="" />} {text}  </button>
 }
 
 export default Button;
