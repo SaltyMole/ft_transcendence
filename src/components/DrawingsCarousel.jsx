@@ -32,13 +32,13 @@ const DrawingCarousel = ({ gameID }) => {
 
 	return (
 		<div className="DrawingCarouselContent">
-		<img src={drawing.drawing} alt={`Drawing by ${drawing.player}`} />
-		<p className="PlayerName">{drawing.player}</p>
-		<div className="Buttons">
-			<button onClick={prev}>←</button>
-			<button onClick={next}>→</button>
-		</div>
-		<p>{index + 1} / {drawings.length}</p>
+			<img className="Drawing" src={drawing.drawing} alt={`Drawing by ${drawing.player}`} />
+			<p className="PlayerName">{drawing.player}</p>
+			<div className="Buttons">
+				<button className="buttonSend flex item-center justify-center w-9 h-6" onClick={prev}>←</button>
+				<button className="buttonSend flex item-center justify-center w-9 h-6" onClick={next}>→</button>
+			</div>
+			<p>{index + 1} / {drawings.length}</p>
 		</div>
 	);
 };

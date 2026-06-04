@@ -228,7 +228,7 @@ const Lobby = () => {
 			<main class="bg-cover bg-center h-screen" style={{ backgroundImage: `url(${test})` }}>
 				<div className="overlay">
 					<div className="LobbyContent">
-						<h1 className="LobbyText"> LOBBY </h1>
+						<h1 id="homeText"> LOBBY </h1>
 						<h1 className="Environment"> Environment: {environment} </h1>
 						<div className="CarouselAndStory">
 							<div className="Carousel">
@@ -243,7 +243,7 @@ const Lobby = () => {
 							</div>
 							<div className="CombatStory">
 								<h1 className="CombatStoryText">Fight</h1>
-								<button onClick={generateStoryButtonAction} id="generateStoryButton" className="generateStoryButton">Generate story ({drawings.length}/{players.length})</button>
+								<button onClick={generateStoryButtonAction} id="generateStoryButton" className="generateStoryButton buttonSend">Generate story ({drawings.length}/{players.length})</button>
 								<h1>{story}</h1>
 							</div>
 						</div>

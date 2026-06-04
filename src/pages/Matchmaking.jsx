@@ -10,6 +10,7 @@ import launchGame from "../game/launchGame"
 import joinGame from "../game/joinGame";
 import removePlayer from "../game/removePlayer";
 import isPlayerInGame from "../game/isPlayerInGame";
+import Button from "../components/Button";
 
 const Matchmaking = () => {
 	const { gameID } = useParams();
@@ -91,7 +92,7 @@ const Matchmaking = () => {
 			>
 				<div className="overlay">
 					<div className="MatchmakingContent">
-						<h1 className="MatchmakingText"> MATCHMAKING </h1>
+						<h1 id="homeText"> MATCHMAKING </h1>
 							<div className="PlayersAndCodeAndChat">
 								<div className="PlayersAndCode">
 
@@ -113,7 +114,7 @@ const Matchmaking = () => {
 								</div>
 							</div>
 
-						<button className="LaunchButton" onClick={launchFunction}>Launch game</button>
+						<button className="LaunchButton buttonSend flex item-center justify-center w-9 h-6" onClick={launchFunction}>Launch game</button>
 					</div>
 				</div>
 			</main>

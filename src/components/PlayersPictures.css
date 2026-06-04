@@ -52,3 +52,9 @@
 	font-family: "Public Sans";
 	overflow-wrap: break-word;
 }
+
+@media (max-width: 120vh)	{
+	.PlayerNamePicture {
+		font-size: 3vw;
+	}
+}

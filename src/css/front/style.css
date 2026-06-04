@@ -2,36 +2,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Jacquarda+Bastarda+9&display=swap');
-<<<<<<< HEAD
-@import "tailwindcss";
-
-html, body, #root {
-=======
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
 @import "tailwindcss";
 
 html, body, #root {
 	max-height: 100%;
->>>>>>> front-test
   	height: 100%;
 	width: 100%;
   	margin: 0;
 }
 
 .app {
-<<<<<<< HEAD
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-body{
-    /* background-color: #4D007E; */
-    color: #FFFADE;
-	margin:0;
-	
-}
-=======
 	display: flex;
 	flex-direction: column;  
 	min-height: 100vh;
@@ -51,7 +32,6 @@ img {
 	width:1vh;
  }
 
->>>>>>> front-test
 
 
 .overlay {
@@ -61,21 +41,6 @@ img {
     inset 0 1px 0 rgba(199, 189, 189, 0.5),
     inset 0 -1px 0 rgba(160, 152, 152, 0.1),
     inset 0 0 20px 7px #a8adaeb3;
-<<<<<<< HEAD
-	width: 60%; /*help todo fix*/
-	padding: 20px;
-	margin-right:20%;
-	text-align: center;
-	color:white;
-	border-radius: 10px;
-	box-sizing: border-box;
-	height: 100%;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
-
-=======
 	width: 60%;
 	padding: 2%;
 	text-align: center;
@@ -114,56 +79,16 @@ img {
 	transition-duration: 150ms;
 	
 }
->>>>>>> front-test
 
 .input_container {
 	max-width: 400px;
 	border:black solid 2px;
 	margin:auto;
-<<<<<<< HEAD
-  	font-family:"Public Sans";
-
-	/* gap: 6px; */
-=======
->>>>>>> front-test
 	background: rgb(255, 255, 255);
 	padding: 15px;
 	border-radius: 20px;
 	background-color: #D7C9FF;
 	background-image: radial-gradient(at 47% 69%, rgb(110, 214, 221) 0px, transparent 50%),
-<<<<<<< HEAD
-	/* radial-gradient(at 9% 32%, rgb(76, 230, 222) 0px, transparent 50%); */
-
-}
-
-
-
-.input_label {
-	
-  display: block;
-  margin-left: 0.4em;
-  font-family:"Public Sans";
-  color: #4D007E;;
-  text-transform: uppercase;
-  font-weight: 1000;
-  font-weight: bold;
-}
-
-
-.input {
-  border: none;
-  outline: none;
-  width: 100%;
-  padding: 0.6em;
-  padding-left: 0.9em;
-  border-radius: 20px;
-  background: #FFFADE;
-  transition: background 300ms, color 300ms;
-}
-
-.input:focus {
-  background: #f2e59f;
-=======
 }
 
 h2 {
@@ -197,7 +122,6 @@ h2 {
 
 .Input:focus {
   	background: #f2e59f;
->>>>>>> front-test
 }
 
 .register {
@@ -211,34 +135,16 @@ h2 {
 }
 
 #homeText{
-<<<<<<< HEAD
-	font-size: clamp(1.5rem, 5vw, 3rem);
-	font-family: "Jacquarda Bastarda 9", serif;
-=======
 	font-size: 6vw;
 	-webkit-text-stroke: #000000;
 	/* padding-bottom: 3%; */
 	/* text-size-adjust: 300%; */
 	font-family:"Pixelify Sans";
->>>>>>> front-test
  	background-image: linear-gradient(90deg, #D7C9FF, #7d21d2, #d4a5dd, #00B0C9);
 	background-repeat: no-repeat;
 	background-size: 200% auto;
 	animation: animate 10s linear infinite;
 	background-clip: text; 
-<<<<<<< HEAD
-	text-shadow: 2px 2px 2px black;
-	/* -webkit-text-fill-color: rgba(250, 250, 250, 0.5); */
-}
-
-@keyframes animate {
-	0%   { background-color: red; color: cyan; }
-	33%  { background-color: rgb(46, 215, 220); color: magenta; }
-	66%  { background-color: blue; color: rgb(128, 49, 225); }
-	100% { background-color: red; color: cyan; }
-	/* 0%   { background-position: 0% 50%; }
-	100% { background-position: 100% 50%; } */
-=======
 	text-shadow: 4px 4px 0px rgb(13, 13, 14);
 	-webkit-text-stroke: 0.5px #000000;
 }
@@ -258,23 +164,11 @@ h2 {
 	33%  {color: rgb(46, 215, 220); color: magenta; }
 	66%  { color: blue; color: rgb(128, 49, 225); }
 	100% { color: red; color: cyan; }
->>>>>>> front-test
 }
 a{
 	margin-left: 10px;
 }
 
-<<<<<<< HEAD
-@media (max-width: 768px) {
-	a {
-		margin-left: 0;
-		display: block;
-		margin-bottom: 10px;
-	}
-}
-=======
-
->>>>>>> front-test
 
 header{
 	
@@ -309,11 +203,7 @@ main {
 	padding:20px;
 }
 
-<<<<<<< HEAD
-footer{
-=======
 footer {
->>>>>>> front-test
 
     width: 100%;
 	text-align: center;
@@ -324,11 +214,7 @@ footer {
 
 
 
-<<<<<<< HEAD
-.not-underline{
-=======
 .not-underline {
->>>>>>> front-test
 	text-decoration: none;
 	margin-left: 0px;
 	color: #4D007E
@@ -345,11 +231,7 @@ footer {
 	align-items: center; */
 	width:100%
 }
-<<<<<<< HEAD
-#connect{
-=======
 #connect {
->>>>>>> front-test
 	display :flex;
 	align-items: center;
 	justify-content: center;
@@ -357,9 +239,6 @@ footer {
 	margin:50em
 }
 
-<<<<<<< HEAD
-button{
-=======
 .buttonSend{
 	padding: 0.8%;
 	background-color: #58508D;
@@ -374,7 +253,6 @@ transition-duration: 150ms;
 }
 
 .buttonP{
->>>>>>> front-test
 
 	text-align: center ;
 	padding:10px 10px;
@@ -386,27 +264,6 @@ transition-duration: 150ms;
     box-shadow: 2px 4px 3px #491A65;
 	transition-duration: 150ms;
 }
-<<<<<<< HEAD
-
-button:hover{
-box-shadow: 0 0 transparent, inset 2px 2px 3px 1px #000000;
-transition-duration: 150ms;
-}
-
-
-@media (max-width: 768px) {
-	header {
-		height: auto;
-	}
-
-	main {
-		flex-direction: column;
-	}
-
-	.overlay {
-		padding: 20px;
-	}
-=======
 .buttonJointheGame
 {
 	text-align: center;
@@ -509,13 +366,10 @@ li{
 	height: 1px;
 }
 @media (max-width: 768px) {
->>>>>>> front-test
 
 	#pages {
 		flex-direction: column;
 	}
-<<<<<<< HEAD
-=======
 
 	.overlayGames{
 		height :300px
@@ -546,8 +400,16 @@ li{
 
 }
 
+@media (max-width: 120vh)
+{
+	#homeText{
+		font-size: 18vw;
+	}
+
+}
+
+
 @theme {
   --color-FFFADE: #FFFADE; 
   --color-Purple :#4D007E;
->>>>>>> front-test
 }

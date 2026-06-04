@@ -1,30 +1,17 @@
-<<<<<<< HEAD
-=======
 import { StrictMode } from 'react'
->>>>>>> front-test
 import { createRoot } from 'react-dom/client'
 
 import App from '../App.jsx'
 
 
 createRoot(document.getElementById('root')).render(
-<<<<<<< HEAD
   <App />
-=======
-<StrictMode>
-  <App />
-</StrictMode>,
->>>>>>> front-test
 )
 
 function Home() {
   return (
     <>
     	<main>
-<<<<<<< HEAD
-			<div class= 'overlay'>
-				<h1 id="homeText">Welcome to Transcendance</h1>
-=======
 			<div className= 'overlay flex flex-col  '>
 				<h1 id="homeText">Game Name</h1>
 				<div className='input_container'>
@@ -51,7 +38,6 @@ function Home() {
 					</p>
 
 				</div>
->>>>>>> front-test
 			</div>
       	</main>
     </>

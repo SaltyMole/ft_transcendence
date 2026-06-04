@@ -28,11 +28,7 @@ function LinkUser()
 		<>
 			{	
 				users.map((user, index) => (
-<<<<<<< HEAD
-						<a key={user.username} href={user.link} class ="not-underline"> {user.username}</a> 
-=======
 						<a key={user.username} href={user.link} className ="not-underline"> {user.username}</a> 
->>>>>>> front-test
 				))
 			}
 		</>
