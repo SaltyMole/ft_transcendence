@@ -6,10 +6,10 @@ install:
 	npm install
 
 frontend-run:
-	npm run dev -- --host
+	cd frontend && npm run dev -- --host
 
 backend-run:
-	node server.js
+	cd backend && node server.js
 
 clean:
 	npm ci
