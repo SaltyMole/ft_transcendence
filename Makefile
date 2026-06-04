@@ -3,7 +3,8 @@
 # all: frontend backend
 
 install:
-	npm install
+	cd frontend && npm install
+	cd backend && npm install
 
 frontend-run:
 	cd frontend && npm run dev -- --host

@@ -2,13 +2,13 @@ import http from 'http';
 import { WebSocket, WebSocketServer } from 'ws';
 import multer from 'multer';
 import path from 'path';
+import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-
 
 
 
@@ -173,97 +173,146 @@ app.post('/api/save-image', upload.single('file'), (req, res) => {
 
 
 // JSON
-import fs from 'fs';
-
 app.use(express.json());
+
+// Helper function to get game by ID
+function getGameById(id) {
+  const data = JSON.parse(fs.readFileSync('bdd.json', 'utf-8'));
+  return data.find(game => game.id === id);
+}
+
+// Helper function to load all games
+function loadAllGames() {
+  return JSON.parse(fs.readFileSync('bdd.json', 'utf-8'));
+}
+
+// Helper function to save all games
+function saveAllGames(data) {
+  fs.writeFileSync('bdd.json', JSON.stringify(data, null, 2));
+}
+
+// Get game info route
+app.get('/gameroute/game/:id', (req, res) => {
+  const game = getGameById(req.params.id);
+  if (!game) {
+    return res.status(404).json({ success: false, error: `Game ${req.params.id} not found` });
+  }
+  res.json({ success: true, game });
+});
 
 // Create game route
 app.post('/gameroute/create', (req, res) => {
   const { id } = req.body;
-  const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
+  const data = loadAllGames();
 
   data.push({ id, state: "matchmaking", players: [], drawings: [], environment: "", story: "", winner: "" });
 
-  fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
+  saveAllGames(data);
   res.json({ success: true, id });
 });
 
 // Add player route
 app.post('/gameroute/addplayer', (req, res) => {
   const { id, name, picture } = req.body;
-  const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
+  const data = loadAllGames();
 
-  const game = data.find(game => game.id === id);
+  const game = data.find(g => g.id === id);
   if (!game) {
     return res.status(404).json({ success: false, error: `Game ${id} not found` });
   }
 
   game.players.push({ name, picture});
 
-  fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
+  saveAllGames(data);
   res.json({ success: true, id });
 });
 
 // Remove player route
 app.post('/gameroute/removeplayer', (req, res) => {
   const { id, name, picture } = req.body;
-  const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
+  const data = loadAllGames();
 
-  const game = data.find(game => game.id === id);
+  const game = data.find(g => g.id === id);
   if (!game) {
     return res.status(404).json({ success: false, error: `Game ${id} not found` });
   }
 
   game.players = game.players.filter(player => player.name !== name);
 
-  fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
+  saveAllGames(data);
   res.json({ success: true, id });
 });
 
 // Add drawing route
 app.post('/gameroute/adddrawing', (req, res) => {
   const { id, player, drawing } = req.body;
-  const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
+  const data = loadAllGames();
 
-  const game = data.find(game => game.id === id);
+  const game = data.find(g => g.id === id);
   if (!game) {
     return res.status(404).json({ success: false, error: `Game ${id} not found` });
   }
 
   game.drawings.push({ player, drawing});
 
-  fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
+  saveAllGames(data);
   res.json({ success: true, id });
 });
 
 // Remove drawing route
 app.post('/gameroute/removedrawing', (req, res) => {
   const { id, name } = req.body;
-  const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
+  const data = loadAllGames();
 
-  const game = data.find(game => game.id === id);
+  const game = data.find(g => g.id === id);
   if (!game) {
     return res.status(404).json({ success: false, error: `Game ${id} not found` });
   }
 
   game.drawings = game.drawings.filter(drawing => drawing.player !== name);
 
-  fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
+  saveAllGames(data);
   res.json({ success: true, id });
+});
+
+// Get a drawing
+app.get('/gameroute/getdrawingfile', (req, res) => {
+  const { id, name } = req.query;
+
+  const game = getGameById(id);
+  if (!game) {
+    return res.status(404).json({ success: false, error: `Game ${id} not found` });
+  }
+
+  const drawing = game.drawings.find(d => d.player === name);
+  if (!drawing) {
+    return res.status(404).json({ success: false, error: `No drawing found for ${name}` });
+  }
+
+  const filename = path.basename(drawing.drawing);
+  const filePath = path.join(__dirname, 'uploads', filename);
+
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ success: false, error: `File not found: ${filename}` });
+  }
+
+  const fileData = fs.readFileSync(filePath);
+  const base64 = fileData.toString('base64');
+  res.json({ success: true, image: base64, mimeType: 'image/png' });
 });
 
 // Change state route
 app.post('/gameroute/changestate', (req, res) => {
   const { id, state } = req.body;
-  const data = JSON.parse(fs.readFileSync('src/game/bdd.json', 'utf-8'));
+  const data = loadAllGames();
 
-  const game = data.find(game => game.id === id);
+  const game = data.find(g => g.id === id);
   if (!game) {
     return res.status(404).json({ success: false, error: `Game ${id} not found` });
   }
 
   game.state = state;
 
-  fs.writeFileSync('src/game/bdd.json', JSON.stringify(data, null, 2));
+  saveAllGames(data);
   res.json({ success: true, id });
 });

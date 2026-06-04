@@ -1,3 +1,5 @@
+import getPlayers from "./getPlayers";
+
 const addPlayer = async ( gameID, playerName, playerPicture ) => {
 	// Fetch data
 	const response = await fetch('/gameroute/addplayer', {
@@ -5,6 +7,9 @@ const addPlayer = async ( gameID, playerName, playerPicture ) => {
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ id: gameID, name: playerName, picture: playerPicture })
 	});
+
+	const players = await getPlayers(gameID);
+	console.log(players);
 
 	// Check if no error
 	if (!response.ok) {

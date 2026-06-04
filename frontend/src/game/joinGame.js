@@ -3,9 +3,9 @@ import isPlayerInGame from "./isPlayerInGame";
 import getState from "./getState";
 
 const joinGame = async ( gameID, name ) => {
-    const response = await fetch('/src/game/bdd.json');
+    const response = await fetch('/gameroute/game/' + gameID);
 	const data = await response.json();
-	const game = data.find(game => game.id === gameID);
+    const game = data.game;
 
     // Check if it's in matchmaking state
     if (game.state != "matchmaking")
