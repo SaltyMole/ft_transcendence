@@ -33,8 +33,8 @@ function Login( {setIsLoggedIn} )
 				</div>
 				<div className="input_container text-start ">
 					<form onSubmit={handleSubmit}>
-						<Input classnameI="Input" classnameL="input_label mt-5 " text='Email@email.com' type="email adress" value={email} set={setEmail}/>
-						<Input classnameI ="Input mb-2"  classnameL="input_label mt-5" text='Password' type="password" value={password} set ={setPassword}/>
+						<Input classnameI="Input" classnameL="input_label mt-5 " text='Email@email.com' type="email"  label="email adress" value={email} set={setEmail}/>
+						<Input classnameI ="Input mb-2"  classnameL="input_label mt-5" text='Password' type="password" label="password" value={password} set ={setPassword}/>
 						<div className ="flex px-2 items-center justify-center gap-10 mt-5">
 							<Button value="buttonP !pl-18 !pr-18" type="submit" text="Sign in"/>
 						</div>
