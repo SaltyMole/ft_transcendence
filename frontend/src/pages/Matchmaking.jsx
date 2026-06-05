@@ -92,7 +92,7 @@ const Matchmaking = () => {
 			>
 				<div className="overlay">
 					<div className="MatchmakingContent">
-						<h1 id="homeText"> MATCHMAKING </h1>
+						<h1 id="homeText"> Matchamaking </h1>
 							<div className="PlayersAndCodeAndChat">
 								<div className="PlayersAndCode">
 

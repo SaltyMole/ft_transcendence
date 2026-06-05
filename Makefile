@@ -4,13 +4,13 @@
 
 install:
 	cd frontend && npm install
-	cd backend && npm install
+	cd api && npm install
 
 frontend-run:
 	cd frontend && npm run dev -- --host
 
 backend-run:
-	cd backend && node server.js
+	cd api && node server.js
 
 clean:
 	npm ci

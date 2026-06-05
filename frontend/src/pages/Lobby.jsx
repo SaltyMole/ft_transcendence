@@ -228,7 +228,7 @@ const Lobby = () => {
 			<main class="bg-cover bg-center h-screen" style={{ backgroundImage: `url(${test})` }}>
 				<div className="overlay">
 					<div className="LobbyContent">
-						<h1 id="homeText"> LOBBY </h1>
+						<h1 id="homeText"> Lobby </h1>
 						<h1 className="Environment"> Environment: {environment} </h1>
 						<div className="CarouselAndStory">
 							<div className="Carousel">

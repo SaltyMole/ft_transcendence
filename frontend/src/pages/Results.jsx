@@ -53,7 +53,7 @@ const Loading = () => {
 			<div className="DarkenBackground"/>
 			<div className="OverlayResults">
 				<div className="ResultsContent">
-					<h1 id="homeText"> RESULTS </h1>
+					<h1 id="homeText"> Results </h1>
 					<div className="WinnerDiv">
 						<div className="WinnerPicture">
 							<PlayerPicture gameID={gameID} playerName={winner}/>
