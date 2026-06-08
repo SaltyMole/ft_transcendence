@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: docker.io/library/postgres:16-alpine
+    container_name: transcendance_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-transcendance}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  drizzle-studio:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.studio
+    container_name: transcendance_studio
+    ports:
+      - "4983:4983"
+    env_file:
+      - ./api/.env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-transcendance}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./api/src/db:/app/src/db
+      - ./api/drizzle.config.ts:/app/drizzle.config.ts
+
+volumes:
+  postgres_data:
