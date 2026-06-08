@@ -2,16 +2,23 @@
 
 # all: frontend backend
 
-install:
+frontend-setup:
 	cd frontend && npm install
-	cd api && npm install
 
 frontend-run:
 	cd frontend && npm run dev -- --host
 
+backend-setup:
+	cd api && cp .env.example .env
+	docker compose up -d
+	cd api && npm install
+
 backend-run:
+	cd api && npm run dev
+
+tmp-backend-run:
 	cd api && node server.js
 
-clean:
-	npm ci
-	rm -rf node_modules
+backend-stop:
+	docker compose down
+	cd api && rm .env
