@@ -23,6 +23,3 @@ tmp-backend-run:
 backend-stop:
 	docker compose down
 	cd api && rm .env
-
-backend-migrate:
-	
