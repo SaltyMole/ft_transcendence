@@ -1,18 +1,19 @@
-import { authenticator } from 'otplib'
-import QRCode from 'qrcode'
+import { generateSecret, generate, verify, generateURI } from "otplib";
 
-export const generateTotpSecret = (): string => authenticator.generateSecret()
+// Generate a secret
+const secret = generateSecret();
 
-export const generateOtpauthUrl = (email: string, secret: string): string =>
-  authenticator.keyuri(email, 'ft_transcendence', secret)
+// Generate a TOTP token
+const token = await generate({ secret });
 
-export const generateQrCode = async (otpauthUrl: string): Promise<string> =>
-  QRCode.toDataURL(otpauthUrl)
+// Verify a token — returns VerifyResult, not a boolean
+const result = await verify({ secret, token });
+console.log(result.valid); // true or false
 
-export const verifyTotpCode = (token: string, secret: string): boolean => {
-  try {
-    return authenticator.verify({ token, secret })
-  } catch {
-    return false
-  }
-}
+// Generate QR code URI for authenticator apps
+
+const uri = (email: string, secret: string): string => generateURI({
+  issuer: "ft_transcendence",
+  label: email,
+  secret,
+});
