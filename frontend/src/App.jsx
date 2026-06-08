@@ -1,6 +1,7 @@
 
 import {BrowserRouter, Routes, Route, Link, Navigate, useParams, generatePath} from "react-router-dom";
 import { useState } from 'react';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import Header from "./components/Header";
 import Head from "./components/Head";
 import Footer from "./components/Footer";
@@ -25,8 +26,9 @@ function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(() => { return !!localStorage.getItem("token");});
 	
   	return (
-	<div className="app">
-		<BrowserRouter>
+	<GoogleOAuthProvider clientId="496213748350-bq85hc6fl5i2msfvq4817r9939010tqh.apps.googleusercontent.com">
+		<div className="app">
+			<BrowserRouter>
 			<Head />
 			<Layout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}>
 				<Routes>
@@ -45,7 +47,7 @@ function App() {
 			</Layout>
 		</BrowserRouter>
 	</div>
+	</GoogleOAuthProvider>
 	);
 }
-
 export default App;
