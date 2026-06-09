@@ -1,22 +1,12 @@
-function makeid(length) {
-	var result           = '';
-	var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	var charactersLength = characters.length;
-	for ( var i = 0; i < length; i++ ) {
-		result += characters.charAt(Math.floor(Math.random() * charactersLength));
-	}
-	return result;
-}
-
 const createGame = async () => {
-	// Create random game ID
-	const gameID = makeid(8);
 
-	// Fetch data
-	const response = await fetch('/gameroute/create', {
+	const token = localStorage.getItem("token");
+	const response = await fetch('/api/games', {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ id: gameID })
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${token}`
+		}
 	});
 
 	// Check if no error
@@ -24,9 +14,11 @@ const createGame = async () => {
 		throw new Error(`HTTP error: ${response.status}`);
 	}
 
+	const data = await response.json();
+
 	// Return game ID
-	console.log('Game created:', gameID);
-	return gameID;
+	console.log('Game created:', data.game.code);
+	return data.game.code;
 };
 
 export default createGame;
