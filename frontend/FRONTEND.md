@@ -113,8 +113,6 @@ type User = {
   id: string
   email: string
   username: string
-  firstName: string | null
-  lastName: string | null
   avatar: string | null   // data URL base64 ou null
   createdAt: string       // ISO 8601
   updatedAt: string
@@ -125,8 +123,6 @@ type Friendship = {
   since: string
   id: string             // id de l'ami
   username: string
-  firstName: string | null
-  lastName: string | null
   avatar: string | null
 }
 

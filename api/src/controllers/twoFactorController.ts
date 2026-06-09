@@ -117,8 +117,6 @@ export const verifyLogin2FA = async (req: Request, res: Response) => {
         id: user.id,
         email: user.email,
         username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
       },
     })
   } catch (error) {

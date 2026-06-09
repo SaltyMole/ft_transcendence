@@ -25,8 +25,6 @@ async function seed() {
         email: 'pauline@transcendance.com',
         username: 'pauline',
         password: hashedPassword,
-        firstName: 'Pauline',
-        lastName: 'Giroux',
       })
       .returning()
 
@@ -36,8 +34,6 @@ async function seed() {
         email: 'paul@transcendance.com',
         username: 'paul',
         password: hashedPassword,
-        firstName: 'Paul',
-        lastName: 'Franke',
       })
       .returning()
 
@@ -47,8 +43,6 @@ async function seed() {
         email: 'nathan@transcendance.com',
         username: 'Nathan',
         password: hashedPassword,
-        firstName: 'Nathan',
-        lastName: 'Sauret',
       })
       .returning()
 
@@ -58,8 +52,6 @@ async function seed() {
         email: 'lucas@transcendance.com',
         username: 'lucas',
         password: hashedPassword,
-        firstName: 'Lucas',
-        lastName: 'Berné',
       })
       .returning()
 

@@ -15,6 +15,13 @@
       "when": 1779867008541,
       "tag": "0001_flat_triton",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781017480416,
+      "tag": "0002_modern_bastion",
+      "breakpoints": true
     }
   ]
 }

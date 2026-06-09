@@ -71,8 +71,6 @@ Crée un nouveau compte.
 | email       | string | oui    | format email valide      |
 | username    | string | oui    | 3–50 caractères          |
 | password    | string | oui    | min. 8 caractères        |
-| firstName   | string | non    |                          |
-| lastName    | string | non    |                          |
 
 **Réponse** `201`
 
@@ -85,8 +83,6 @@ Le cookie `token` (httpOnly, 7 jours) est positionné dans la réponse.
     "id": "uuid",
     "email": "pauline@example.com",
     "username": "pauline",
-    "firstName": "Pauline",
-    "lastName": "Giroux",
     "createdAt": "2026-05-16T10:00:00.000Z"
   }
 }
@@ -116,8 +112,6 @@ Le cookie `token` (httpOnly, 7 jours) est positionné dans la réponse.
     "id": "uuid",
     "email": "pauline@example.com",
     "username": "pauline",
-    "firstName": "Pauline",
-    "lastName": "Giroux"
   }
 }
 ```
@@ -249,8 +243,6 @@ Le cookie `tempToken` est supprimé, le cookie `token` (httpOnly, 7 jours) est p
     "id": "uuid",
     "email": "pauline@example.com",
     "username": "pauline",
-    "firstName": "Pauline",
-    "lastName": "Giroux"
   }
 }
 ```
@@ -302,8 +294,6 @@ Retourne le profil de l'utilisateur connecté.
     "id": "uuid",
     "email": "pauline@example.com",
     "username": "pauline",
-    "firstName": "Pauline",
-    "lastName": "Giroux",
     "createdAt": "2026-05-16T10:00:00.000Z",
     "updatedAt": "2026-05-16T10:00:00.000Z"
   }
@@ -322,8 +312,6 @@ Met à jour le profil de l'utilisateur connecté. Tous les champs sont optionnel
 |-----------|--------|-----------------|
 | email     | string | format email    |
 | username  | string | 3–50 caractères |
-| firstName | string | max 50 car.     |
-| lastName  | string | max 50 car.     |
 
 **Réponse** `200`
 
@@ -409,8 +397,6 @@ Retourne la liste des amis acceptés de l'utilisateur connecté.
       "since": "2026-05-16T10:00:00.000Z",
       "id": "uuid",
       "username": "paul",
-      "firstName": "Paul",
-      "lastName": "Franke",
       "avatar": null
     }
   ]

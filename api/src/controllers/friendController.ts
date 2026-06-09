@@ -87,8 +87,6 @@ export const getFriends = async (req: AuthenticatedRequest, res: Response) => {
         since: friendships.createdAt,
         id: users.id,
         username: users.username,
-        firstName: users.firstName,
-        lastName: users.lastName,
         avatar: users.avatar,
         // which side the current user is on
         initiatorId: friendships.userId,
