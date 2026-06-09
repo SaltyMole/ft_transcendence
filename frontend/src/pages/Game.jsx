@@ -26,7 +26,7 @@ function Game()
 		console.log("Creating game");
 		var gameID = await createGame();
 		var playerName = makename(8);
-		await joinGame(gameID, playerName);
+		// await joinGame(gameID, playerName);
 		navigate(`/matchmaking/${gameID}`, { state: { name: playerName } });
 	}
 
@@ -34,10 +34,10 @@ function Game()
 		console.log("Joining game");
 		var playerName = makename(8);
 		const canIJoin = await joinGame(code, playerName);
-		if (canIJoin == true)
-			navigate(`/matchmaking/${code}`, { state: { name: playerName } });
-		else
-			throw "Can't join";
+		// if (canIJoin == true)
+		// 	navigate(`/matchmaking/${code}`, { state: { name: playerName } });
+		// else
+		// 	throw "Can't join";
 	}
 
 	return (

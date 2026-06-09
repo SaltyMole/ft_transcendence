@@ -16,7 +16,8 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id
 
-    const [game] = await db.insert(games).values({ status: 'waiting' }).returning()
+    const code = Math.random().toString(36).substring(2, 10).toUpperCase()
+	const [game] = await db.insert(games).values({ status: 'waiting', code }).returning()
     await db.insert(gamePlayers).values({ gameId: game.id, userId })
 
     res.status(201).json({ game })
@@ -29,13 +30,15 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
 export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id 
-    const gameId = req.params.gameId as string
+    const gameCode = req.params.gameId as string
 
-    const [game] = await db.select().from(games).where(eq(games.id, gameId))
+    const [game] = await db.select().from(games).where(eq(games.code, gameCode))
 
     if (!game) {
       return res.status(404).json({ error: 'Game not found' })
     }
+	const gameId = game.id;
+
     if (game.status !== 'waiting') {
       return res.status(400).json({ error: 'Game is not open for joining' })
     }
@@ -60,13 +63,14 @@ export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
 
 export const getGame = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const gameId = req.params.gameId as string
+    const gameCode = req.params.gameId as string
 
-    const [game] = await db.select().from(games).where(eq(games.id, gameId))
+    const [game] = await db.select().from(games).where(eq(games.code, gameCode))
 
     if (!game) {
       return res.status(404).json({ error: 'Game not found' })
     }
+	const gameId = game.id
 
     const players = await db
       .select({
