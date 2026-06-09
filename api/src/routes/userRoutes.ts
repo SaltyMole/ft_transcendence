@@ -24,8 +24,6 @@ const updateProfileSchema = z.object({
     .min(3, 'Username must be at least 3 characters')
     .max(50, 'Username too long')
     .optional(),
-  firstName: z.string().max(50, 'First name too long').optional(),
-  lastName: z.string().max(50, 'Last name too long').optional(),
 })
 
 const changePasswordSchema = z.object({

@@ -10,7 +10,7 @@ import { comparePasswords, hashPassword } from '../utils/password.ts'
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, username, password, firstName, lastName } = req.body
+    const { email, username, password } = req.body
 
     // Hash password
     const hashedPassword = await hashPassword(req.body.password)
@@ -22,15 +22,11 @@ export const register = async (req: Request, res: Response) => {
         email,
         username,
         password: hashedPassword,
-        firstName,
-        lastName,
       })
       .returning({
         id: users.id,
         email: users.email,
         username: users.username,
-        firstName: users.firstName,
-        lastName: users.lastName,
         createdAt: users.createdAt,
       })
 
@@ -104,8 +100,6 @@ export const login = async (req: Request, res: Response) => {
         id: user.id,
         email: user.email,
         username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
       },
     })
   } catch (error) {

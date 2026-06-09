@@ -22,9 +22,6 @@ const registerSchema = z.object({
             .refine((password) => /[a-z]/.test(password), 'Password must have at least 1 lowercase')
             .refine((password) => /[0-9]/.test(password), 'Password must have at least 1 digit')
             .refine((password) => /[!@#$%^&*]/.test(password), 'Password must have at least 1 special character'),
-
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
 })
 
 const loginSchema = z.object({
