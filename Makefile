@@ -12,6 +12,7 @@ backend-setup:
 	cd api && cp .env.example .env
 	docker compose up -d
 	cd api && npm install
+	cd api && npx drizzle-kit push --force
 
 backend-run:
 	cd api && npm run dev
