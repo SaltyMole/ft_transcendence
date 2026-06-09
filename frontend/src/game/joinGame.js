@@ -1,4 +1,4 @@
-const joinGame = async ( gameID, name ) => {
+const joinGame = async ( gameID ) => {
 	const token = localStorage.getItem("token");
 	const response = await fetch(`/api/games/${gameID}/join`, {
 		method: 'POST',

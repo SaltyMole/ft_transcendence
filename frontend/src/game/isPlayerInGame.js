@@ -11,7 +11,6 @@ const isPlayerInGame = async ( gameID, searchedId ) => {
 	}
 
 	const data = await response.json();
-	console.log("AAAAAAAAAAAAAAAAAAAAAAA: ", data.isInGame);
 
 	return data.isInGame;
 };

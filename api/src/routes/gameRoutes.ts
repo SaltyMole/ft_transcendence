@@ -9,6 +9,7 @@ import {
   sendGameMessage,
   getGameMessages,
   checkIsPlayerInGame,
+  removePlayer,
 } from '../controllers/gameController.ts'
 import { authenticateToken } from '../middleware/auth.ts'
 import { validateBody, validateParams } from '../middleware/validation.ts'
@@ -33,6 +34,7 @@ router.post('/', createGame)
 router.get('/:gameId', validateParams(gameIdParamSchema), getGame)
 router.get('/:gameId/:playerId', validateParams(gameIdParamSchema), checkIsPlayerInGame)
 router.post('/:gameId/join', validateParams(gameIdParamSchema), joinGame)
+router.post('/removePlayer/:gameId/:playerId', authenticateToken, validateParams(gameIdParamSchema), removePlayer)
 router.put(
   '/:gameId/status',
   validateParams(gameIdParamSchema),

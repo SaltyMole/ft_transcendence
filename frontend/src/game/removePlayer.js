@@ -1,9 +1,9 @@
-const removePlayer = async ( gameID, playerName ) => {
-	// Fetch data
-	const response = await fetch('/gameroute/removeplayer', {
+const removePlayer = async ( gameId, playerId ) => {
+	
+	const token = localStorage.getItem("token");
+	const response = await fetch(`/api/games/removePlayer/${gameId}/${playerId}`, {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ id: gameID, name: playerName })
+		credentials: 'include'
 	});
 
 	// Check if no error
@@ -12,7 +12,7 @@ const removePlayer = async ( gameID, playerName ) => {
 	}
 
 	// Return game ID
-	console.log('Player removed:', playerName);
+	console.log('Player removed:', playerId);
 };
 
 export default removePlayer;

@@ -22,11 +22,11 @@ function PlayersPictures({ gameID }) {
 	return (
 		<div className="PlayersWrapper">
 			{players.map((player) => (
-				<div key={player.name} className="PlayerDiv">
+				<div key={player.userId} className="PlayerDiv">
 					<div className="PlayerPictureWrapper">
-						<img className="PlayerPicture" src={player.picture} alt={player.name}/>
+					<img className="PlayerPicture" src={player.avatar} alt={player.username}/>
 					</div>
-					<p className="PlayerNamePicture">{player.name}</p>
+					<p className="PlayerNamePicture">{player.username}</p>
 				</div>
 			))}
 		</div>

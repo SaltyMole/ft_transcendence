@@ -49,7 +49,7 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
 	const [game] = await db.insert(games).values({ status: 'waiting', code }).returning()
     await db.insert(gamePlayers).values({ gameId: game.id, userId })
 
-    res.status(201).json({ game })
+    res.status(200).json({ game })
   } catch (error) {
     console.error('Create game error:', error)
     res.status(500).json({ error: 'Failed to create game' })
@@ -83,10 +83,42 @@ export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
 
     await db.insert(gamePlayers).values({ gameId, userId })
 
-    res.status(201).json({ message: 'Joined game successfully' })
+    res.status(200).json({ message: 'Joined game successfully' })
   } catch (error) {
     console.error('Join game error:', error)
     res.status(500).json({ error: 'Failed to join game' })
+  }
+}
+
+export const removePlayer = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id 
+    const gameCode = req.params.gameId as string
+	const playerId = req.params.playerId as UUID
+
+    const [game] = await db.select().from(games).where(eq(games.code, gameCode))
+
+    if (!game) {
+      return res.status(404).json({ error: 'Game not found' })
+    }
+	const gameId = game.id;
+
+    const [existing] = await db
+      .select()
+      .from(gamePlayers)
+      .where(and(eq(gamePlayers.gameId, gameId), eq(gamePlayers.userId, playerId)))
+    if (!existing) {
+      return res.status(400).json({ error: 'Player not in this game' })
+    }
+
+	await db.delete(gamePlayers).where(
+		and(eq(gamePlayers.gameId, gameId), eq(gamePlayers.userId, playerId))
+	)
+
+    res.status(200).json({ message: 'Removed player successfully' })
+  } catch (error) {
+    console.error('Join game error:', error)
+    res.status(500).json({ error: 'Failed to remove player' })
   }
 }
 
