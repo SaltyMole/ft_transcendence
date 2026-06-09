@@ -3,6 +3,7 @@ import type { AuthenticatedRequest } from '../middleware/auth.ts'
 import { db } from '../db/connection.ts'
 import { games, gamePlayers, gameMessages, users } from '../db/schema.ts'
 import { eq, and } from 'drizzle-orm'
+import type { UUID } from 'crypto'
 
 const isPlayerInGame = async (gameId: string, userId: string): Promise<boolean> => {
   const [player] = await db
@@ -10,6 +11,34 @@ const isPlayerInGame = async (gameId: string, userId: string): Promise<boolean> 
     .from(gamePlayers)
     .where(and(eq(gamePlayers.gameId, gameId), eq(gamePlayers.userId, userId)))
   return !!player
+}
+
+export const checkIsPlayerInGame = async (req: AuthenticatedRequest, res: Response) => {
+	try {
+		const gameCode = req.params.gameId as string
+		const playerId = req.params.playerId as UUID
+
+		const [game] = await db.select().from(games).where(eq(games.code, gameCode))
+
+		if (!game) {
+			return res.status(404).json({ error: 'Game not found' })
+		}
+		const gameId = game.id;
+
+		const [existing] = await db
+		.select()
+		.from(gamePlayers)
+		.where(and(eq(gamePlayers.gameId, gameId), eq(gamePlayers.userId, playerId)))
+
+		if (existing) {
+			return res.status(200).json({ isInGame: true })
+		}
+		return res.status(200).json({ isInGame: false })
+
+	} catch (error) {
+		console.error('CheckIsPlayerInGame game error:', error)
+		res.status(500).json({ error: 'Failed to check if player in game' })
+	}
 }
 
 export const createGame = async (req: AuthenticatedRequest, res: Response) => {

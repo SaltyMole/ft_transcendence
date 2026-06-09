@@ -22,7 +22,8 @@ const Matchmaking = () => {
 	// If player not in this game, then kick player because he didn't joined using the game page
 	useEffect(() => {
 		const checkIsHere = async () => {
-			const isHeHere = await isPlayerInGame(gameID, playerName)
+
+			const isHeHere = await isPlayerInGame(gameID, "74f72441-1393-4743-855f-d79c26e5396d")
 			if (isHeHere == false)
 				navigate('/game');
 		}
