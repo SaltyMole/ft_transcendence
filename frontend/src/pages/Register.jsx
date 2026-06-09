@@ -34,6 +34,7 @@ function Register()
                 {
                     const data = await response.json();
                     setErrors(data.details);
+
                 }
         }
     }
@@ -48,26 +49,22 @@ function Register()
                             <Input classnameI ="Input"  classnameL="input_label mt-5" text='Email@email.com' type="email" label="email adress" value={email} set={setEmail}/>
                                {errors?.filter(error => error.field === "email")
                                 .map((error,index) =>(
-                                    <p key={index} style={{ color: 'red' }}>
-                                        {error.message}
-                                    </p>
+                                    <p key={index} className='text-center text-red-500'> {error.message} </p>
                                 ))}
                             <div>
                                 <Input classnameI ="Input"  classnameL="input_label mt-5" text='Password' type="password" label="password" value={password} set ={setPassword}/>
                                 {errors?.filter(error => error.field === "password")
                                 .map((error,index) =>(
-                                    <p key={index} style={{ color: 'red' }}>
-                                        {error.message}
-                                    </p>
+                                     <p key={index} className='text-center text-red-500'> {error.message} </p>
+                              
                                 ))}
                             </div>
                             <div>
                                 <Input classnameI ="Input"  classnameL="input_label mt-5" text="Username" type="text" label="Username" value={username} set ={setUsername}/>
                                 {errors?.filter(error => error.field === "username")
                                 .map((error,index) =>(
-                                    <p key={index} style={{ color: 'red' }}>
-                                        {error.message}
-                                    </p>
+                                     <p key={index} className='text-center text-red-500'> {error.message} </p>
+                              
                                 ))}    
                             </div>
                             <div className ="flex px-2 items-center mt-5 justify-center gap-10 mt-5">
