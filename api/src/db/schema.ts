@@ -51,6 +51,7 @@ export const privateMessages = pgTable('private_messages', {
 // Games table
 export const games = pgTable('games', {
   id: uuid('id').primaryKey().defaultRandom(),
+  code: text('code'),
   status: gameStatusEnum('status').notNull().default('waiting'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   finishedAt: timestamp('finished_at'),

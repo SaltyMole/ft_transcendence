@@ -17,7 +17,7 @@ const router = Router()
 
 router.use(authenticateToken)
 
-const gameIdParamSchema = z.object({ gameId: z.string().uuid() })
+const gameIdParamSchema = z.object({ gameId: z.string().length(8) })
 
 const updateStatusSchema = z.object({
   status: z.enum(['in_progress', 'finished']),
