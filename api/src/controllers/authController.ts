@@ -19,7 +19,7 @@ export const register = async (req: Request, res: Response) => {
     const [newUser] = await db
       .insert(users)
       .values({
-        email,
+        email: email.toLowerCase(),
         username,
         password: hashedPassword,
       })
@@ -59,7 +59,7 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body
 
     // Find user
-    const [user] = await db.select().from(users).where(eq(users.email, email))
+    const [user] = await db.select().from(users).where(eq(users.email, email.toLowerCase()))
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' })
