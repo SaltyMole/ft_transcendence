@@ -12,17 +12,18 @@ import removePlayer from "../game/removePlayer";
 import isPlayerInGame from "../game/isPlayerInGame";
 import Button from "../components/Button";
 
+const playerID = "9eadf287-7532-4759-9206-fbf5b396e4b1";
+
 const Matchmaking = () => {
 	const { gameID } = useParams();
-	const { state } = useLocation();
-	const playerName = state?.name;
 
 	const navigate = useNavigate();
 
 	// If player not in this game, then kick player because he didn't joined using the game page
 	useEffect(() => {
 		const checkIsHere = async () => {
-			const isHeHere = await isPlayerInGame(gameID, playerName)
+
+			const isHeHere = await isPlayerInGame(gameID, playerID)
 			if (isHeHere == false)
 				navigate('/game');
 		}
@@ -54,9 +55,9 @@ const Matchmaking = () => {
 		return () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			window.removeEventListener("pagehide", handlePageHide);
-			if (window.location.pathname !== `/lobby/${gameID}`) {
-				removePlayer(gameID, playerName);
-			}
+			// if (window.location.pathname !== `/lobby/${gameID}`) {
+			// 	removePlayer(gameID, playerID);
+			// }
 		};
 	}, []);
 
@@ -74,7 +75,7 @@ const Matchmaking = () => {
 				setState(fetchedState);
 				// If playing -> go to /lobby if have a name, else go back to /game
 				if (fetchedState == "playing")
-					navigate(`/lobby/${gameID}`, { state: { name: playerName } });
+					navigate(`/lobby/${gameID}`);
 			})
 			.catch(error => console.error(error));
 		};
@@ -108,7 +109,7 @@ const Matchmaking = () => {
 
 								<div className="ChatDiv">
 									<Chat
-										clientName={playerName}
+										clientName={playerID}
 										gameID={gameID}
 									/>
 								</div>

@@ -1,5 +1,4 @@
 const createGame = async () => {
-
 	const token = localStorage.getItem("token");
 	const response = await fetch('/api/games', {
 		method: 'POST',
