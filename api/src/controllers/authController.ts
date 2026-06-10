@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import { generateToken, generateTempToken } from '../utils/jwt.ts'
 import { db } from '../db/connection.ts'
 import { users } from '../db/schema.ts'
-import { eq } from 'drizzle-orm'
+import { eq, or } from 'drizzle-orm'
 import { isDev } from '../../env.ts'
 import { comparePasswords, hashPassword } from '../utils/password.ts'
 
@@ -12,17 +12,24 @@ export const register = async (req: Request, res: Response) => {
   try {
     const { email, username, password } = req.body
 
-    const [existingUser] = await db.select().from(users).where(eq(users.email, email))
+    // Check if email or username already exists
+    const [existingUser] = await db
+      .select()
+      .from(users)
+      .where(
+        or(
+          eq(users.email, email.toLowerCase()),
+          eq(users.username, username)
+        )
+      )
+
     if (existingUser) {
-      return res.status(400).json({
-        error: 'Validation failed',
-        details: [
-          {
-            field: 'email',
-            message: 'Email already exists',
-          },
-        ],
-      })
+      if (existingUser.email === email.toLowerCase()) {
+        return res.status(400).json({ error: 'Email already exists' })
+      }
+      if (existingUser.username === username) {
+        return res.status(400).json({ error: 'Username already exists' })
+      }
     }
 
     // Hash password
@@ -32,7 +39,7 @@ export const register = async (req: Request, res: Response) => {
     const [newUser] = await db
       .insert(users)
       .values({
-        email,
+        email: email.toLowerCase(),
         username,
         password: hashedPassword,
       })
@@ -72,7 +79,7 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body
 
     // Find user
-    const [user] = await db.select().from(users).where(eq(users.email, email))
+    const [user] = await db.select().from(users).where(eq(users.email, email.toLowerCase()))
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' })
