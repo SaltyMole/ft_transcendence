@@ -132,3 +132,65 @@ export const logout = (_req: Request, res: Response) => {
   res.clearCookie('token')
   res.json({ message: 'Logged out successfully' })
 }
+
+export const googleAuth = async (req: Request, res: Response) => {
+  try {
+    const { email, username, googleId } = req.body
+
+    // 1. Check if user exists by email
+    let [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email.toLowerCase()))
+
+    if (!user) {
+      // 2. Create user if doesn't exist
+      // Using googleId as a base for password, hashed of course
+      const hashedPassword = await hashPassword(googleId)
+      
+      const [newUser] = await db
+        .insert(users)
+        .values({
+          email: email.toLowerCase(),
+          username: username || email.split('@')[0],
+          password: hashedPassword,
+        })
+        .returning()
+      
+      user = newUser
+    }
+
+    // 3. Login user (similar to regular login but without password check)
+    const cookieOptions = {
+      httpOnly: true,
+      secure: !isDev(),
+      sameSite: 'strict' as const,
+    }
+
+    if (user.twoFactorEnabled) {
+      const tempToken = await generateTempToken(user.id)
+      res.cookie('tempToken', tempToken, { ...cookieOptions, maxAge: 5 * 60 * 1000 })
+      return res.status(200).json({ requiresTwoFactor: true })
+    }
+
+    const token = await generateToken({
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    })
+
+    res.cookie('token', token, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
+
+    res.json({
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+      },
+    })
+  } catch (error) {
+    console.error('Google auth error:', error)
+    res.status(500).json({ error: 'Failed to authenticate with Google' })
+  }
+}

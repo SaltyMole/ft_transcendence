@@ -14,20 +14,36 @@ function Login( {setIsLoggedIn} )
 
 	const loginWithGoogle = useGoogleLogin({
 		onSuccess: async (tokenResponse) => {
-			console.log("Connexion réussie !", tokenResponse);
-			
-			const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-				headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-			}).then(res => res.json());
+			try {
+				const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+					headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+				}).then(res => res.json());
 
-			console.log("Email de l'utilisateur Google :", userInfo.email);
-			
-			setIsLoggedIn(true);
-			localStorage.setItem("token", "connected");
-			navigate("/");
+				const response = await fetch("/api/auth/google", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						email: userInfo.email,
+						username: userInfo.name,
+						googleId: userInfo.sub,
+					}),
+				});
+
+				const data = await response.json();
+				if (response.ok) {
+					localStorage.setItem("token", "connected");
+					setIsLoggedIn(true);
+					navigate("/");
+				} else {
+					setErrors(data.error || "Google connection failed");
+				}
+			} catch (error) {
+				console.error(error);
+				setErrors("Server error");
+			}
 		},
 		onError: () => {
-			console.log('Échec de la connexion');
+			setErrors('Google connection failed');
 		}
 	});
 
@@ -52,7 +68,7 @@ function Login( {setIsLoggedIn} )
 
 			const data = await response.json();
 			if(response.ok){
-				localStorage.setItem("token", data.token);
+				localStorage.setItem("token", "connected");
 				setIsLoggedIn(true);
 				navigate("/");
 			}	

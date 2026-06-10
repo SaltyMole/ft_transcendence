@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { register, login, logout } from '../controllers/authController.ts'
+import { register, login, logout, googleAuth } from '../controllers/authController.ts'
 import { setup2FA, enable2FA, disable2FA, verifyLogin2FA } from '../controllers/twoFactorController.ts'
 import { validateBody } from '../middleware/validation.ts'
 import { authenticateToken } from '../middleware/auth.ts'
@@ -8,6 +8,12 @@ import { z } from 'zod'
 const router = Router()
 
 // Validation schemas
+const googleAuthSchema = z.object({
+  email: z.email('Invalid email format'),
+  username: z.string().min(1, 'Username is required'),
+  googleId: z.string().min(1, 'Google ID is required'),
+})
+
 const registerSchema = z.object({
   email: z.email('Invalid email format'),
   username: z
@@ -40,6 +46,7 @@ const verifyLoginSchema = z.object({
 // Auth routes
 router.post('/register', validateBody(registerSchema), register)
 router.post('/login', validateBody(loginSchema), login)
+router.post('/google', validateBody(googleAuthSchema), googleAuth)
 router.post('/logout', logout)
 
 // 2FA routes
