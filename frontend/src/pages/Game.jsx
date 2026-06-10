@@ -7,16 +7,6 @@ import Input from "../components/Input";
 import createGame from "../game/createGame"
 import joinGame from "../game/joinGame";
 
-function makename(length) {
-	var result           = '';
-	var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	var charactersLength = characters.length;
-	for ( var i = 0; i < length; i++ ) {
-		result += characters.charAt(Math.floor(Math.random() * charactersLength));
-	}
-	return result;
-}
-
 function Game()
 {
 	const [code, setCode] = useState('');
@@ -25,17 +15,14 @@ function Game()
 	const handleCreateGame = async () => {
 		console.log("Creating game");
 		var gameID = await createGame();
-		var playerName = makename(8);
-		await joinGame(gameID, playerName);
-		navigate(`/matchmaking/${gameID}`, { state: { name: playerName } });
+		navigate(`/matchmaking/${gameID}`);
 	}
 
 	const handleJoinGame = async () => {
 		console.log("Joining game");
-		var playerName = makename(8);
-		const canIJoin = await joinGame(code, playerName);
+		const canIJoin = await joinGame(code);
 		if (canIJoin == true)
-			navigate(`/matchmaking/${code}`, { state: { name: playerName } });
+			navigate(`/matchmaking/${code}`);
 		else
 			throw "Can't join";
 	}

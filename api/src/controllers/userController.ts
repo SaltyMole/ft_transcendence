@@ -14,8 +14,6 @@ export const getProfile = async (req: AuthenticatedRequest, res: Response) => {
         id: users.id,
         email: users.email,
         username: users.username,
-        firstName: users.firstName,
-        lastName: users.lastName,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
       })
@@ -39,15 +37,13 @@ export const updateProfile = async (
 ) => {
   try {
     const userId = req.user!.id
-    const { email, username, firstName, lastName } = req.body
+    const { email, username } = req.body
 
     const [updatedUser] = await db
       .update(users)
       .set({
         email,
         username,
-        firstName,
-        lastName,
         updatedAt: new Date(),
       })
       .where(eq(users.id, userId))
@@ -55,8 +51,6 @@ export const updateProfile = async (
         id: users.id,
         email: users.email,
         username: users.username,
-        firstName: users.firstName,
-        lastName: users.lastName,
         updatedAt: users.updatedAt,
       })
 

@@ -8,6 +8,8 @@ import {
   updateScore,
   sendGameMessage,
   getGameMessages,
+  checkIsPlayerInGame,
+  removePlayer,
 } from '../controllers/gameController.ts'
 import { authenticateToken } from '../middleware/auth.ts'
 import { validateBody, validateParams } from '../middleware/validation.ts'
@@ -17,7 +19,7 @@ const router = Router()
 
 router.use(authenticateToken)
 
-const gameIdParamSchema = z.object({ gameId: z.string().uuid() })
+const gameIdParamSchema = z.object({ gameId: z.string().length(8) })
 
 const updateStatusSchema = z.object({
   status: z.enum(['in_progress', 'finished']),
@@ -30,7 +32,9 @@ const updateScoreSchema = z.object({
 router.get('/', listGames)
 router.post('/', createGame)
 router.get('/:gameId', validateParams(gameIdParamSchema), getGame)
+router.get('/:gameId/:playerId', validateParams(gameIdParamSchema), checkIsPlayerInGame)
 router.post('/:gameId/join', validateParams(gameIdParamSchema), joinGame)
+router.post('/removePlayer/:gameId/:playerId', authenticateToken, validateParams(gameIdParamSchema), removePlayer)
 router.put(
   '/:gameId/status',
   validateParams(gameIdParamSchema),

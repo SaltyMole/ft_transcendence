@@ -14,9 +14,14 @@ const registerSchema = z.object({
     .string()
     .min(3, 'Username must be at least 3 characters')
     .max(50, 'Username too long'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
+  password: z
+            .string()
+            .min(8, 'Password must be at least 8 characters')
+            .max(50, 'Password must be at max 50 characters')
+            .refine((password) => /[A-Z]/.test(password), 'Password must have at least 1 uppercase')
+            .refine((password) => /[a-z]/.test(password), 'Password must have at least 1 lowercase')
+            .refine((password) => /[0-9]/.test(password), 'Password must have at least 1 digit')
+            .refine((password) => /[!@#$%^&*]/.test(password), 'Password must have at least 1 special character'),
 })
 
 const loginSchema = z.object({

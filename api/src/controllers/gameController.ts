@@ -3,6 +3,7 @@ import type { AuthenticatedRequest } from '../middleware/auth.ts'
 import { db } from '../db/connection.ts'
 import { games, gamePlayers, gameMessages, users } from '../db/schema.ts'
 import { eq, and } from 'drizzle-orm'
+import type { UUID } from 'crypto'
 
 const isPlayerInGame = async (gameId: string, userId: string): Promise<boolean> => {
   const [player] = await db
@@ -12,14 +13,43 @@ const isPlayerInGame = async (gameId: string, userId: string): Promise<boolean> 
   return !!player
 }
 
+export const checkIsPlayerInGame = async (req: AuthenticatedRequest, res: Response) => {
+	try {
+		const gameCode = req.params.gameId as string
+		const playerId = req.params.playerId as UUID
+
+		const [game] = await db.select().from(games).where(eq(games.code, gameCode))
+
+		if (!game) {
+			return res.status(404).json({ error: 'Game not found' })
+		}
+		const gameId = game.id;
+
+		const [existing] = await db
+		.select()
+		.from(gamePlayers)
+		.where(and(eq(gamePlayers.gameId, gameId), eq(gamePlayers.userId, playerId)))
+
+		if (existing) {
+			return res.status(200).json({ isInGame: true })
+		}
+		return res.status(200).json({ isInGame: false })
+
+	} catch (error) {
+		console.error('CheckIsPlayerInGame game error:', error)
+		res.status(500).json({ error: 'Failed to check if player in game' })
+	}
+}
+
 export const createGame = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id
 
-    const [game] = await db.insert(games).values({ status: 'waiting' }).returning()
+    const code = Math.random().toString(36).substring(2, 10).toUpperCase()
+	const [game] = await db.insert(games).values({ status: 'waiting', code }).returning()
     await db.insert(gamePlayers).values({ gameId: game.id, userId })
 
-    res.status(201).json({ game })
+    res.status(200).json({ game })
   } catch (error) {
     console.error('Create game error:', error)
     res.status(500).json({ error: 'Failed to create game' })
@@ -29,13 +59,15 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
 export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id 
-    const gameId = req.params.gameId as string
+    const gameCode = req.params.gameId as string
 
-    const [game] = await db.select().from(games).where(eq(games.id, gameId))
+    const [game] = await db.select().from(games).where(eq(games.code, gameCode))
 
     if (!game) {
       return res.status(404).json({ error: 'Game not found' })
     }
+	const gameId = game.id;
+
     if (game.status !== 'waiting') {
       return res.status(400).json({ error: 'Game is not open for joining' })
     }
@@ -51,22 +83,55 @@ export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
 
     await db.insert(gamePlayers).values({ gameId, userId })
 
-    res.status(201).json({ message: 'Joined game successfully' })
+    res.status(200).json({ message: 'Joined game successfully' })
   } catch (error) {
     console.error('Join game error:', error)
     res.status(500).json({ error: 'Failed to join game' })
   }
 }
 
-export const getGame = async (req: AuthenticatedRequest, res: Response) => {
+export const removePlayer = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const gameId = req.params.gameId as string
+    const userId = req.user!.id 
+    const gameCode = req.params.gameId as string
+	const playerId = req.params.playerId as UUID
 
-    const [game] = await db.select().from(games).where(eq(games.id, gameId))
+    const [game] = await db.select().from(games).where(eq(games.code, gameCode))
 
     if (!game) {
       return res.status(404).json({ error: 'Game not found' })
     }
+	const gameId = game.id;
+
+    const [existing] = await db
+      .select()
+      .from(gamePlayers)
+      .where(and(eq(gamePlayers.gameId, gameId), eq(gamePlayers.userId, playerId)))
+    if (!existing) {
+      return res.status(400).json({ error: 'Player not in this game' })
+    }
+
+	await db.delete(gamePlayers).where(
+		and(eq(gamePlayers.gameId, gameId), eq(gamePlayers.userId, playerId))
+	)
+
+    res.status(200).json({ message: 'Removed player successfully' })
+  } catch (error) {
+    console.error('Join game error:', error)
+    res.status(500).json({ error: 'Failed to remove player' })
+  }
+}
+
+export const getGame = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const gameCode = req.params.gameId as string
+
+    const [game] = await db.select().from(games).where(eq(games.code, gameCode))
+
+    if (!game) {
+      return res.status(404).json({ error: 'Game not found' })
+    }
+	const gameId = game.id
 
     const players = await db
       .select({

@@ -5,14 +5,15 @@ import { db } from '../db/connection.ts'
 import { users } from '../db/schema.ts'
 import { eq } from 'drizzle-orm'
 import { isDev } from '../../env.ts'
+import { comparePasswords, hashPassword } from '../utils/password.ts'
+
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, username, password, firstName, lastName } = req.body
+    const { email, username, password } = req.body
 
     // Hash password
-    const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '12')
-    const hashedPassword = await bcrypt.hash(password, saltRounds)
+    const hashedPassword = await hashPassword(req.body.password)
 
     // Create user
     const [newUser] = await db
@@ -21,15 +22,11 @@ export const register = async (req: Request, res: Response) => {
         email,
         username,
         password: hashedPassword,
-        firstName,
-        lastName,
       })
       .returning({
         id: users.id,
         email: users.email,
         username: users.username,
-        firstName: users.firstName,
-        lastName: users.lastName,
         createdAt: users.createdAt,
       })
 
@@ -69,9 +66,9 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // Verify password
-    const isValidPassword = await bcrypt.compare(password, user.password)
+    const isValidatedPassword = await comparePasswords(password, user.password)
 
-    if (!isValidPassword) {
+    if (!isValidatedPassword) {
       return res.status(401).json({ error: 'Invalid credentials' })
     }
 
@@ -103,8 +100,6 @@ export const login = async (req: Request, res: Response) => {
         id: user.id,
         email: user.email,
         username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
       },
     })
   } catch (error) {

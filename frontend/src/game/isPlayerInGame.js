@@ -1,17 +1,18 @@
-const isPlayerInGame = async ( gameID, searchedName ) => {
-	const response = await fetch('/gameroute/game/' + gameID);
-	const data = await response.json();
-    const game = data.game;
+const isPlayerInGame = async ( gameID, searchedId ) => {
+	const token = localStorage.getItem("token");
+	const response = await fetch(`/api/games/${gameID}/${searchedId}`, {
+		method: 'GET',
+		credentials: 'include'
+	});
 
-	if (!game || !game.players) {
-		throw new Error(`Game ${gameID} not found`);
-	}
-	
-	const player = game.players.find(player => player.name === searchedName);
-	if (!player)
+	if (!response.ok) {
+		throw new Error(`HTTP error: ${response.status}`);
 		return (false);
+	}
 
-	return (true);
+	const data = await response.json();
+
+	return data.isInGame;
 };
 
 export default isPlayerInGame;
