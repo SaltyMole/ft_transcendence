@@ -53,6 +53,7 @@ export const games = pgTable('games', {
   status: gameStatusEnum('status').notNull().default('waiting'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   finishedAt: timestamp('finished_at'),
+  environment: text('environment'),
 })
 
 // Game players junction table

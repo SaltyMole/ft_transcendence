@@ -1,13 +1,17 @@
 const getEnvironment = async ( gameID ) => {
-	const response = await fetch('/gameroute/game/' + gameID);
-	const data = await response.json();
-    const game = data.game;
+	const token = localStorage.getItem("token");
+	const response = await fetch(`/api/games/${gameID}`, {
+		method: 'GET',
+		credentials: 'include'
+	});
 
-	if (!game) {
-		throw new Error(`Game ${gameID} not found`);
+	if (!response.ok) {
+		throw new Error(`HTTP error: ${response.status}`);
 	}
 
-	return game.environment;
+	const data = await response.json();
+
+	return data.game.environment;
 };
 
 export default getEnvironment;

@@ -11,7 +11,6 @@ const getPlayers = async ( gameID ) => {
 	}
 
 	const data = await response.json();
-	console.log(data.players);
 
 	return data.players;
 };

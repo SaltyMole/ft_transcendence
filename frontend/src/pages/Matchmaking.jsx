@@ -65,9 +65,9 @@ const Matchmaking = () => {
 		return () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			window.removeEventListener("pagehide", handlePageHide);
-			if (playerID && gameID && location.pathname !== `/lobby/${gameID}`) {
-				removePlayer(gameID, playerID);
-			}
+			// if (playerID && gameID && location.pathname !== `/lobby/${gameID}`) {
+			// 	removePlayer(gameID, playerID);
+			// }
 		};
 	}, [playerID, gameID]);
 
@@ -84,7 +84,7 @@ const Matchmaking = () => {
 			.then(fetchedState => {
 				setState(fetchedState);
 				// If playing -> go to /lobby if have a name, else go back to /game
-				if (fetchedState == "playing")
+				if (fetchedState == "in_progress")
 					navigate(`/lobby/${gameID}`);
 			})
 			.catch(error => console.error(error));

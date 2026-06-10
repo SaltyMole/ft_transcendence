@@ -1,13 +1,17 @@
 const getDrawings = async ( gameID ) => {
-	const response = await fetch('/gameroute/game/' + gameID);
-	const data = await response.json();
-    const game = data.game;
+	const response = await fetch(`/api/games/${gameID}/drawings`, {
+		method: 'GET',
+		credentials: 'include' 
+	});
 
-	if (!game) {
-		throw new Error(`Game ${gameID} not found`);
+	// Check if no error
+	if (!response.ok) {
+		throw new Error(`HTTP error: ${response.status}`);
 	}
+	
+	const data = await response.json();
 
-	return game.drawings;
+	return data.drawings;
 };
 
 export default getDrawings;

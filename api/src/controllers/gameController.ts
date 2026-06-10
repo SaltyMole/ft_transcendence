@@ -1,7 +1,7 @@
 import type { Response } from 'express'
 import type { AuthenticatedRequest } from '../middleware/auth.ts'
 import { db } from '../db/connection.ts'
-import { games, gamePlayers, gameMessages, users } from '../db/schema.ts'
+import { games, gamePlayers, gameMessages, users, weaponDrawings, gameStories } from '../db/schema.ts'
 import { eq, and } from 'drizzle-orm'
 import type { UUID } from 'crypto'
 
@@ -152,6 +152,55 @@ export const getGame = async (req: AuthenticatedRequest, res: Response) => {
   }
 }
 
+export const getGameDrawings = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const gameCode = req.params.gameId as string
+
+    const [game] = await db.select().from(games).where(eq(games.code, gameCode))
+    if (!game) return res.status(404).json({ error: 'Game not found' })
+
+    const drawings = await db
+      .select({
+        id: weaponDrawings.id,
+        userId: weaponDrawings.userId,
+        username: users.username,
+        drawingData: weaponDrawings.drawingData,
+        aiGuessedWeapon: weaponDrawings.aiGuessedWeapon,
+        submittedAt: weaponDrawings.submittedAt,
+      })
+      .from(weaponDrawings)
+      .innerJoin(users, eq(weaponDrawings.userId, users.id))
+      .where(eq(weaponDrawings.gameId, game.id))
+
+    res.json({ drawings })
+  } catch (error) {
+    console.error('Get drawings error:', error)
+    res.status(500).json({ error: 'Failed to fetch drawings' })
+  }
+}
+
+export const getGameStory = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const gameCode = req.params.gameId as string
+
+    const [game] = await db.select().from(games).where(eq(games.code, gameCode))
+    if (!game) return res.status(404).json({ error: 'Game not found' })
+
+    const [story] = await db
+      .select()
+      .from(gameStories)
+      .where(eq(gameStories.gameId, game.id))
+
+    if (!story)
+		return res.status(304).json({ error: 'Story not found' })
+
+    res.json({ story })
+  } catch (error) {
+    console.error('Get story error:', error)
+    res.status(500).json({ error: 'Failed to fetch story' })
+  }
+}
+
 export const listGames = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const waitingGames = await db.select().from(games).where(eq(games.status, 'waiting'))
@@ -163,28 +212,28 @@ export const listGames = async (req: AuthenticatedRequest, res: Response) => {
 }
 
 export const updateGameStatus = async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const gameId = req.params.gameId as string
-    const { status } = req.body
+	try {
+		const gameCode = req.params.gameId as string
+		const { status } = req.body
 
-    const [updated] = await db
-      .update(games)
-      .set({
-        status,
-        ...(status === 'finished' ? { finishedAt: new Date() } : {}),
-      })
-      .where(eq(games.id, gameId))
-      .returning()
+		const [updated] = await db
+		.update(games)
+		.set({
+			status,
+			...(status === 'finished' ? { finishedAt: new Date() } : {}),
+		})
+		.where(eq(games.code, gameCode))
+		.returning()
 
-    if (!updated) {
-      return res.status(404).json({ error: 'Game not found' })
-    }
+		if (!updated) {
+		return res.status(404).json({ error: 'Game not found' })
+		}
 
-    res.json({ game: updated })
-  } catch (error) {
-    console.error('Update game status error:', error)
-    res.status(500).json({ error: 'Failed to update game status' })
-  }
+		res.json({ game: updated })
+	} catch (error) {
+		console.error('Update game status error:', error)
+		res.status(500).json({ error: 'Failed to update game status' })
+	}
 }
 
 export const updateScore = async (req: AuthenticatedRequest, res: Response) => {

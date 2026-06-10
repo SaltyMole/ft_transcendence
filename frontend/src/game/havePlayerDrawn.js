@@ -1,15 +1,13 @@
 import getDrawings from "./getDrawings"
 
-const havePlayerDrawn = async ( gameID, searchedName ) => {
-	const response = await fetch('/gameroute/game/' + gameID);
-	const data = await response.json();
-    const game = data.game;
+const havePlayerDrawn = async ( gameID, searchedId ) => {
 
-	if (!game) {
-		throw new Error(`Game ${gameID} not found`);
-	}
+	const drawings = await getDrawings(gameID);
 
-	const drawing = game.drawings.find(drawing => drawing.player === searchedName);
+	if (!drawings)
+		return (false);
+	
+	const drawing = drawings.find(drawing => drawing.userId === searchedId);
 	if (drawing == undefined)
 		return (false);
 

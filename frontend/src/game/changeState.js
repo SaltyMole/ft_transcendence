@@ -1,9 +1,11 @@
 const changeState = async ( gameID, state ) => {
 	// Fetch data
-	const response = await fetch('/gameroute/changestate', {
-		method: 'POST',
+	const token = localStorage.getItem("token");
+	const response = await fetch(`/api/games/${gameID}/status`, {
+		method: 'PUT',
+		credentials: 'include',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ id: gameID, state: state })
+		body: JSON.stringify({ status: state })
 	});
 
 	// Check if no error

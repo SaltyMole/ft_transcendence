@@ -15,33 +15,44 @@ import Chat from "../components/Chat";
 import getDrawings from "../game/getDrawings";
 import getPlayers from "../game/getPlayers"
 import generateStory from "../game/generateStory";
+import getCurrentUser from "../game/getCurrentUser"
 
 const Lobby = () => {
 	const { gameID } = useParams();
-	const { state } = useLocation();
-	const playerName = state?.name;
 
 	const navigate = useNavigate();
 
-
+	// Get player ID
+	const [playerID, setPlayerID] = useState(null);
+	useEffect(() => {
+		const getUserID = async () => {
+			const user = await getCurrentUser();
+			setPlayerID(user.id);
+		};
+		getUserID();
+	}, []);
 
 	// If player not in this game, then kick player because he didn't joined using the game page
 	// Then if didn't drawn, then redirect to drawing page
 	useEffect(() => {
 		const checkIsHere = async () => {
-			const isHeHere = await isPlayerInGame(gameID, playerName)
+			if (!playerID || !gameID) return;
+			const isHeHere = await isPlayerInGame(gameID, playerID)
 			if (isHeHere == false)
 				navigate('/game');
 		}
 		checkIsHere();
 
 		const checkDrawn = async () => {
-			const doIHvaeToDraw = await havePlayerDrawn(gameID, playerName);
-			if (doIHvaeToDraw == false)
-				navigate(`/drawing/${gameID}`, { state: { name: playerName } });
+			if (!playerID || !gameID) return;
+			const doIHvaeDrawn = await havePlayerDrawn(gameID, playerID);
+			
+			if (doIHvaeDrawn == false)
+				console.log("GO TO DRAWING");
+				// navigate(`/drawing/${gameID}`);
 		}
 		checkDrawn();
-	}, []);
+	}, [playerID, gameID]);
 
 
 
@@ -50,17 +61,14 @@ const Lobby = () => {
 	const location = useLocation();
 	useEffect(() => {
 		const handlePageHide = () => {
-			const blobPlayer = new Blob(
-				[JSON.stringify({ id: gameID, name: playerName })],
-				{ type: "application/json" }
-			);
-			navigator.sendBeacon("/gameroute/removeplayer", blobPlayer);
-
-			const blobDrawing = new Blob(
-				[JSON.stringify({ id: gameID, name: playerName })],
-				{ type: "application/json" }
-			);
-			navigator.sendBeacon("/gameroute/removedrawing", blobDrawing);
+			if (!playerID || !gameID) return;
+			if (location.pathname !== `/drawing/${gameID}`) {
+				fetch(`/api/games/removePlayer/${gameID}/${playerID}`, {
+					method: 'POST',
+					credentials: 'include',
+					keepalive: true
+				});
+			}
 		};
 
 		const handleBeforeUnload = (e) => {
@@ -74,13 +82,11 @@ const Lobby = () => {
 		return () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			window.removeEventListener("pagehide", handlePageHide);
-			if (window.location.pathname !== `/drawing/${gameID}` && window.location.pathname !== `/results/${gameID}`)
-			{
-				removePlayer(gameID, playerName);
-				removeDrawing(gameID, playerName);
-			}
+			// if (playerID && gameID && location.pathname !== `/drawing/${gameID}`) {
+			// 	removePlayer(gameID, playerID);
+			// }
 		};
-	}, []);
+	}, [playerID, gameID]);
 
 
 
@@ -92,7 +98,7 @@ const Lobby = () => {
 			.then(fetchedState => {
 				setState(fetchedState);
 				if (fetchedState == "finished")
-					navigate(`/results/${gameID}`, { state: { name: playerName } });
+					navigate(`/results/${gameID}`);
 			})
 			.catch(error => console.error(error));
 		};
@@ -115,7 +121,7 @@ const Lobby = () => {
 
 		// Fetch
 		fetchEnvironment();
-	}, []);
+	}, [gameID]);
 
 
 
@@ -134,7 +140,7 @@ const Lobby = () => {
 
 		// Cleaner unmount
 		return () => clearInterval(interval);
-	}, []);
+	}, [gameID]);
 
 
 
@@ -160,8 +166,8 @@ const Lobby = () => {
 	// Get number of players
 	const [players, setPlayers] = useState([]);
 	useEffect(() => {
-		const fetchPlayers = () => {
-			getPlayers(gameID)
+		const fetchPlayers = async () => {
+			await getPlayers(gameID)
 			.then(players => setPlayers(players))
 			.catch(error => console.error(error));
 		}
@@ -172,7 +178,7 @@ const Lobby = () => {
 
 		// Cleaner unmount
 		return () => clearInterval(interval);
-	}, []);
+	}, [gameID]);
 
 
 
@@ -183,7 +189,6 @@ const Lobby = () => {
 			// If story is writing
 			if (story.length > 0)
 			{
-				console.log("HIIIIIDE");
 				document.getElementById("generateStoryButton").style.visibility = "hidden";
 				document.getElementById("generateStoryButton").style.height = "0px";
 				return;
@@ -223,6 +228,8 @@ const Lobby = () => {
 		}
 	}
 
+	if (!playerID && !players) return null;
+
 	return (
 		<>
 			<main class="bg-cover bg-center h-screen" style={{ backgroundImage: `url(${test})` }}>
@@ -236,7 +243,7 @@ const Lobby = () => {
 								<DrawingCarousel gameID={gameID} />
 								<div className="ChatDivLobby">
 									<Chat
-										clientName={playerName}
+										clientName={playerID}
 										gameID={gameID}
 									/>
 								</div>

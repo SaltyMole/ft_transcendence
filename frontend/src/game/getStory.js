@@ -1,13 +1,17 @@
 const getStory = async ( gameID ) => {
-	const response = await fetch('/gameroute/game/' + gameID);
-	const data = await response.json();
-    const game = data.game;
+	const response = await fetch(`/api/games/${gameID}/story`, {
+		method: 'GET',
+		credentials: 'include' 
+	});
 
-	if (!game) {
-		throw new Error(`Game ${gameID} not found`);
+	// Check if no error
+	if (!response.ok) {
+		return ("");
 	}
+	
+	const data = await response.json();
 
-	return game.story;
+	return data.story.story;
 };
 
 export default getStory;
