@@ -1,6 +1,6 @@
-const getPlayers = async ( gameID ) => {
+const getCurrentUser = async ( ) => {
 	const token = localStorage.getItem("token");
-	const response = await fetch(`/api/games/${gameID}`, {
+	const response = await fetch("/api/users/profile", {
 		method: 'GET',
 		credentials: 'include'
 	});
@@ -11,9 +11,8 @@ const getPlayers = async ( gameID ) => {
 	}
 
 	const data = await response.json();
-	console.log(data.players);
 
-	return data.players;
+	return data.user;
 };
 
-export default getPlayers;
+export default getCurrentUser;

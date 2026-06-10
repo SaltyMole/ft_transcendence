@@ -11,37 +11,47 @@ import joinGame from "../game/joinGame";
 import removePlayer from "../game/removePlayer";
 import isPlayerInGame from "../game/isPlayerInGame";
 import Button from "../components/Button";
+import getCurrentUser from "../game/getCurrentUser";
 
-const playerID = "9eadf287-7532-4759-9206-fbf5b396e4b1";
 
 const Matchmaking = () => {
 	const { gameID } = useParams();
-
 	const navigate = useNavigate();
+
+	// Get player ID
+	const [playerID, setPlayerID] = useState(null);
+	useEffect(() => {
+		const getUserID = async () => {
+			const user = await getCurrentUser();
+			setPlayerID(user.id);
+		};
+		getUserID();
+	}, []);
 
 	// If player not in this game, then kick player because he didn't joined using the game page
 	useEffect(() => {
 		const checkIsHere = async () => {
-
 			const isHeHere = await isPlayerInGame(gameID, playerID)
 			if (isHeHere == false)
 				navigate('/game');
 		}
-		checkIsHere();
-
-
-	}, []);
+		if (playerID)
+			checkIsHere();
+	}, [playerID]);
 
 	// When player change website page (except lobby that is the next game page)
 	// When player quit the website or close the page, then display a warning page to confirm
 	const location = useLocation();
 	useEffect(() => {
 		const handlePageHide = () => {
-			const blob = new Blob(
-				[JSON.stringify({ id: gameID, name: playerName })],
-				{ type: "application/json" }
-			);
-			navigator.sendBeacon("/gameroute/removeplayer", blob);
+			if (!playerID || !gameID) return;
+			if (location.pathname !== `/lobby/${gameID}`) {
+				fetch(`/api/games/removePlayer/${gameID}/${playerID}`, {
+					method: 'POST',
+					credentials: 'include',
+					keepalive: true
+				});
+			}
 		};
 
 		const handleBeforeUnload = (e) => {
@@ -55,11 +65,11 @@ const Matchmaking = () => {
 		return () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			window.removeEventListener("pagehide", handlePageHide);
-			// if (window.location.pathname !== `/lobby/${gameID}`) {
-			// 	removePlayer(gameID, playerID);
-			// }
+			if (playerID && gameID && location.pathname !== `/lobby/${gameID}`) {
+				removePlayer(gameID, playerID);
+			}
 		};
-	}, []);
+	}, [playerID, gameID]);
 
 	// Launch the game
 	function launchFunction() {
@@ -84,6 +94,8 @@ const Matchmaking = () => {
 		const interval = setInterval(fetchState, 2000);
 		return () => clearInterval(interval);
 	}, [gameID]);
+
+	if (!playerID) return null;
 
 	return (
 		<>
