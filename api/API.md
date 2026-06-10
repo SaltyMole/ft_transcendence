@@ -116,19 +116,30 @@ Le cookie `token` (httpOnly, 7 jours) est positionné dans la réponse.
 }
 ```
 
-**Réponse** `200` — si 2FA activé
+---
 
-Un cookie `tempToken` (httpOnly, 5 min) est positionné. Le front doit demander le code TOTP puis appeler `/auth/2fa/verify-login`.
+### POST `/auth/google`
+
+Connecte ou enregistre un utilisateur via Google OAuth.
+
+**Body**
+
+| Champ    | Type   | Requis | Description |
+|----------|--------|--------|-------------|
+| email    | string | oui    | Email Google |
+| username | string | oui    | Nom d'utilisateur (Google) |
+| googleId | string | oui    | ID unique Google (sub) |
+
+**Réponse** `200`
+
+Le cookie `token` (httpOnly, 7 jours) est positionné. Si l'utilisateur n'existe pas, il est créé.
 
 ```json
-{ "requiresTwoFactor": true }
+{
+  "message": "Login successful",
+  "user": { "id": "uuid", "email": "...", "username": "..." }
+}
 ```
-
-**Erreurs**
-
-| Code | Description               |
-|------|---------------------------|
-| 401  | Identifiants incorrects   |
 
 ---
 
@@ -294,6 +305,7 @@ Retourne le profil de l'utilisateur connecté.
     "id": "uuid",
     "email": "pauline@example.com",
     "username": "pauline",
+    "avatar": "data:image/png;base64,...",
     "createdAt": "2026-05-16T10:00:00.000Z",
     "updatedAt": "2026-05-16T10:00:00.000Z"
   }
@@ -378,7 +390,19 @@ Change le mot de passe de l'utilisateur connecté.
 | 400  | Mot de passe actuel incorrect    |
 
 ---
+### DELETE `/users`
 
+Supprime le compte de l'utilisateur connecté.
+
+**Réponse** `200`
+
+Le cookie `token` est supprimé.
+
+```json
+{ "message": "Account deleted successfully" }
+```
+
+---
 ## Friends
 
 > Toutes les routes `/friends` requièrent un token JWT.

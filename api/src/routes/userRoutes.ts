@@ -4,6 +4,7 @@ import {
   updateProfile,
   updateAvatar,
   changePassword,
+  deleteAccount,
   getUserStats,
 } from '../controllers/userController.ts'
 import { authenticateToken } from '../middleware/auth.ts'
@@ -48,5 +49,6 @@ router.get('/profile', getProfile)
 router.put('/profile', validateBody(updateProfileSchema), updateProfile)
 router.put('/avatar', validateBody(updateAvatarSchema), updateAvatar)
 router.put('/password', validateBody(changePasswordSchema), changePassword)
+router.delete('/', deleteAccount)
 
 export default router

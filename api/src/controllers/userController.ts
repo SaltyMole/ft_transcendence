@@ -14,6 +14,7 @@ export const getProfile = async (req: AuthenticatedRequest, res: Response) => {
         id: users.id,
         email: users.email,
         username: users.username,
+        avatar: users.avatar,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
       })
@@ -186,5 +187,17 @@ export const changePassword = async (
   } catch (error) {
     console.error('Change password error:', error)
     res.status(500).json({ error: 'Failed to change password' })
+  }
+}
+
+export const deleteAccount = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id
+    await db.delete(users).where(eq(users.id, userId))
+    res.clearCookie('token')
+    res.json({ message: 'Account deleted successfully' })
+  } catch (error) {
+    console.error('Delete account error:', error)
+    res.status(500).json({ error: 'Failed to delete account' })
   }
 }

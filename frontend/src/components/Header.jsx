@@ -6,7 +6,15 @@ import Button  from "./Button";
 function Header({setIsLoggedIn}) {
 	const navigate = useNavigate();
 
-	const handleLogout = () =>{
+	const handleLogout = async () =>{
+		try {
+			await fetch("/api/auth/logout", {
+				method: "POST",
+				credentials: 'include'
+			});
+		} catch (error) {
+			console.error("Logout error:", error);
+		}
 		localStorage.removeItem("token");
 		setIsLoggedIn(false)
 		navigate("/Login");
