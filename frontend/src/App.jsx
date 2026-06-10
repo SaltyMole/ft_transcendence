@@ -20,6 +20,7 @@ import Results from "./pages/Results";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import E404 from "./pages/404";
 import Settings from "./pages/Settings";
+import Friends from "./pages/Friends"
 //import About from "./pages/About";
 
 
@@ -44,6 +45,7 @@ function App() {
 					<Route path="/Lobby/:gameID" element={<Lobby />} />
 					<Route path="/Results/:gameID" element={<Results />} />
 					<Route path="/Settings" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Settings /> </ProtectedRoute>} />
+					<Route path="/Friends" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Friends /> </ProtectedRoute>} />
 					<Route path="*" element={<E404 />} />
 				</Routes>
 			</Layout>

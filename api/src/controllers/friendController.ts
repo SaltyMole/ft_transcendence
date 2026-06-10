@@ -2,7 +2,71 @@ import type { Response } from 'express'
 import type { AuthenticatedRequest } from '../middleware/auth.ts'
 import { db } from '../db/connection.ts'
 import { friendships, users } from '../db/schema.ts'
-import { eq, and, or } from 'drizzle-orm'
+import { eq, and, or, ilike, ne, inArray } from 'drizzle-orm'
+
+export const searchUsersByUsername = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id
+    const username = (req.query.username as string | undefined)?.trim()
+
+    if (!username || username.length < 2) {
+      return res.json({ users: [] })
+    }
+
+    const foundUsers = await db
+      .select({
+        id: users.id,
+        username: users.username,
+        avatar: users.avatar,
+      })
+      .from(users)
+      .where(and(ilike(users.username, `%${username}%`), ne(users.id, userId)))
+      .limit(20)
+
+    if (foundUsers.length === 0) {
+      return res.json({ users: [] })
+    }
+
+    const candidateIds = foundUsers.map((user) => user.id)
+    const existingFriendships = await db
+      .select({
+        id: friendships.id,
+        userId: friendships.userId,
+        friendId: friendships.friendId,
+        status: friendships.status,
+      })
+      .from(friendships)
+      .where(
+        and(
+          or(eq(friendships.userId, userId), eq(friendships.friendId, userId)),
+          or(inArray(friendships.userId, candidateIds), inArray(friendships.friendId, candidateIds))
+        )
+      )
+
+    const usersWithRelationship = foundUsers.map((user) => {
+      const relationship = existingFriendships.find((friendship) => {
+        const otherUserId = friendship.userId === userId ? friendship.friendId : friendship.userId
+        return otherUserId === user.id
+      })
+
+      return {
+        ...user,
+        friendshipId: relationship?.id ?? null,
+        status: relationship?.status ?? 'none',
+        requestDirection: relationship
+          ? relationship.userId === userId
+            ? 'outgoing'
+            : 'incoming'
+          : null,
+      }
+    })
+
+    res.json({ users: usersWithRelationship })
+  } catch (error) {
+    console.error('Search users error:', error)
+    res.status(500).json({ error: 'Failed to search users' })
+  }
+}
 
 export const sendFriendRequest = async (req: AuthenticatedRequest, res: Response) => {
   try {

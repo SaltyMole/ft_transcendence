@@ -26,8 +26,9 @@ function Header({setIsLoggedIn}) {
 			<div id = "pages" > 
 				<p><Link to="/">Accueil</Link>
         		<Link to="/Game">Game</Link>
-				 <Link to="/Settings" value="⚙">Settings</Link>
-				 <Button value=" buttonP ml-5" text="Logout" action={handleLogout}/> </p>
+				<Link to="/Friends">Friends</Link>
+				<Link to="/Settings">Settings</Link>
+				<Button value=" buttonP ml-5" text="Logout" action={handleLogout}/> </p>
 
 			</div>  
 		</div>

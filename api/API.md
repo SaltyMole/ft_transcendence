@@ -453,6 +453,38 @@ Retourne les demandes d'amis reçues en attente.
 
 ---
 
+### GET `/friends/search?username=<query>`
+
+Recherche des utilisateurs par pseudo (insensible à la casse, minimum 2 caractères), en excluant l'utilisateur connecté.
+
+**Query params**
+
+| Paramètre | Type   | Requis | Contraintes                  |
+|-----------|--------|--------|------------------------------|
+| username  | string | oui    | min 2 caractères             |
+
+**Réponse** `200`
+
+```json
+{
+  "users": [
+    {
+      "id": "uuid",
+      "username": "lucas",
+      "avatar": null,
+      "friendshipId": "uuid",
+      "status": "pending",
+      "requestDirection": "incoming"
+    }
+  ]
+}
+```
+
+`status` peut valoir : `none`, `pending`, `accepted`, `rejected`.
+`requestDirection` vaut `incoming` ou `outgoing` quand une relation existe, sinon `null`.
+
+---
+
 ### POST `/friends/request`
 
 Envoie une demande d'ami.

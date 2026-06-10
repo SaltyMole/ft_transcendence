@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import {
+  searchUsersByUsername,
   sendFriendRequest,
   respondToFriendRequest,
   getFriends,
@@ -20,6 +21,7 @@ const friendshipIdParamSchema = z.object({ friendshipId: z.string().uuid() })
 
 router.get('/', getFriends)
 router.get('/requests', getPendingRequests)
+router.get('/search', searchUsersByUsername)
 router.post('/request', validateBody(friendIdSchema), sendFriendRequest)
 router.put(
   '/:friendshipId/respond',
