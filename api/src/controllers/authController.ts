@@ -12,6 +12,19 @@ export const register = async (req: Request, res: Response) => {
   try {
     const { email, username, password } = req.body
 
+    const [existingUser] = await db.select().from(users).where(eq(users.email, email))
+    if (existingUser) {
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: [
+          {
+            field: 'email',
+            message: 'Email already exists',
+          },
+        ],
+      })
+    }
+
     // Hash password
     const hashedPassword = await hashPassword(req.body.password)
 

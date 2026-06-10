@@ -39,6 +39,21 @@ export const updateProfile = async (
     const userId = req.user!.id
     const { email, username } = req.body
 
+    if (email) {
+      const [existingUser] = await db.select().from(users).where(eq(users.email, email))
+      if (existingUser && existingUser.id !== userId) {
+        return res.status(400).json({
+          error: 'Validation failed',
+          details: [
+            {
+              field: 'email',
+              message: 'Email already exists',
+            },
+          ],
+        })
+      }
+    }
+
     const [updatedUser] = await db
       .update(users)
       .set({

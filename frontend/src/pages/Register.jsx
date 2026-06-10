@@ -29,11 +29,14 @@ function Register()
                 {
                     localStorage.setItem('token', 'connected');
                     navigate('/');
+                    console.log("la");
                 }
                 else
                 {
                     const data = await response.json();
                     setErrors(data.details);
+                    console.log(data);
+                    
 
                 }
         }
