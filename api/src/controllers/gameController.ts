@@ -111,6 +111,15 @@ export const removePlayer = async (req: AuthenticatedRequest, res: Response) => 
       return res.status(400).json({ error: 'Player not in this game' })
     }
 
+	// Delete his weapon
+	await db.delete(weaponDrawings).where(
+  		and(eq(weaponDrawings.gameId, gameId), eq(weaponDrawings.userId, playerId))
+	)
+	await db.delete(gamePlayers).where(
+		and(eq(gamePlayers.gameId, gameId), eq(gamePlayers.userId, playerId))
+	)
+
+	// Delete the player
 	await db.delete(gamePlayers).where(
 		and(eq(gamePlayers.gameId, gameId), eq(gamePlayers.userId, playerId))
 	)
@@ -315,5 +324,26 @@ export const getGameMessages = async (req: AuthenticatedRequest, res: Response) 
   } catch (error) {
     console.error('Get game messages error:', error)
     res.status(500).json({ error: 'Failed to fetch game messages' })
+  }
+}
+
+export const sendDrawing = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id
+    const gameCode = req.params.gameId as string
+    const { drawingData } = req.body
+
+    const [game] = await db.select().from(games).where(eq(games.code, gameCode))
+    if (!game) return res.status(404).json({ error: 'Game not found' })
+
+    const [drawing] = await db
+      .insert(weaponDrawings)
+      .values({ gameId: game.id, userId, drawingData })
+      .returning()
+
+    res.status(201).json({ drawing })
+  } catch (error) {
+    console.error('Submit drawing error:', error)
+    res.status(500).json({ error: 'Failed to submit drawing' })
   }
 }
