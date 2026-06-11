@@ -1,4 +1,4 @@
-import { generateSecret, generate, verify, generateURI } from "otplib";
+import { generateSecret, generate, verify, generateURI} from "otplib";
 import QRCode from 'qrcode'
 
 
@@ -19,11 +19,12 @@ export const generateOtpauthUrl = (email: string, secret: string): string => gen
   secret,
 });
 
-export const verifyTotpCode = (token: string, secret: string): boolean => {
+
+export const verifyTotpCode = async (token: string, secret: string): Promise<boolean> => {
   try {
-      const result =  verify({ secret, token });
-    return (true)
+    const result = await verify({ secret, token });
+    return (result.valid);
   } catch {
-    return false
+    return false;
   }
-}
+};
