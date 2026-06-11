@@ -55,6 +55,21 @@ export const updateProfile = async (
       }
     }
 
+    if (username) {
+    const [existingUser] = await db.select().from(users).where(eq(users.username, username))
+    if (existingUser && existingUser.id !== userId) {
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: [
+          {
+            field: 'username',
+            message: 'Username already exists',
+          },
+        ],
+      })
+    }
+  }
+
     const [updatedUser] = await db
       .update(users)
       .set({
