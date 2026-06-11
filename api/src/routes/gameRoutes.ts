@@ -3,6 +3,7 @@ import {
   createGame,
   joinGame,
   getGame,
+  sendDrawing,
   getGameDrawings,
   getGameStory,
   listGames,
@@ -34,6 +35,7 @@ const updateScoreSchema = z.object({
 router.get('/', listGames)
 router.post('/', createGame)
 router.get('/:gameId', validateParams(gameIdParamSchema), getGame)
+router.post('/:gameId/drawings', authenticateToken, validateParams(gameIdParamSchema), sendDrawing)
 router.get('/:gameId/drawings', authenticateToken, validateParams(gameIdParamSchema), getGameDrawings)
 router.get('/:gameId/story', authenticateToken, validateParams(gameIdParamSchema), getGameStory)
 router.get('/:gameId/:playerId', validateParams(gameIdParamSchema), checkIsPlayerInGame)

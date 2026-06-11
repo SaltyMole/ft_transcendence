@@ -48,8 +48,8 @@ const Lobby = () => {
 			const doIHvaeDrawn = await havePlayerDrawn(gameID, playerID);
 			
 			if (doIHvaeDrawn == false)
-				console.log("GO TO DRAWING");
-				// navigate(`/drawing/${gameID}`);
+				// console.log("GO TO DRAWING");
+				navigate(`/drawing/${gameID}`);
 		}
 		checkDrawn();
 	}, [playerID, gameID]);

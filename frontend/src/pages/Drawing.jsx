@@ -5,9 +5,10 @@ import { Stage, Layer, Line } from 'react-konva';
 import Konva from 'konva';
 import Chat from "../components/Chat"
 import removePlayer from '../game/removePlayer';
-import addDrawing from '../game/addDrawing';
+import sendDrawing from '../game/sendDrawing';
 import havePlayerDrawn from '../game/havePlayerDrawn';
 import isPlayerInGame from '../game/isPlayerInGame'
+import getCurrentUser from '../game/getCurrentUser';
 
 
 
@@ -223,7 +224,7 @@ function Board() {
 		isDrawing.current = false;
 	};
 
-	const handleExport = (gameID, playerName) => {
+	const handleExport = (gameID) => {
 
 		const stage = stageRef.current;
 		if (!stage) return;
@@ -250,20 +251,18 @@ function Board() {
 		backg.destroy();
 		stage.draw();
 
-		const fileName = "drawing-" + gameID + "-" + playerName + ".png";
-		downloadURI(dataURL, fileName);
+		downloadURI(dataURL, gameID);
 	};
 
-	const downloadURI = async (uri, name) => {
-		const blob = await (await fetch(uri)).blob();	// Convert dataURL to blob
-
-		// Send to server
-		const formData = new FormData();
-		formData.append('file', blob, name);
-		await fetch('/api/save-image', {
+	const downloadURI = async (uri, gameID) => {
+		const response = await fetch(`/api/games/${gameID}/drawings`, {
 			method: 'POST',
-			body: formData,
+			credentials: 'include',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ drawingData: uri })
 		});
+		if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+			console.log('Drawing submitted!');
 	};
 
 	const handleExportRef = React.useRef(handleExport);
@@ -306,10 +305,20 @@ function Board() {
 
 const DrawingInterface = () => {
 	const { gameID } = useParams();
-	const { state } = useLocation();
-	const playerName = state?.name;
 
 	const navigate = useNavigate();
+
+	// Get player ID
+	const [playerID, setPlayerID] = useState(null);
+	useEffect(() => {
+		const getUserID = async () => {
+			const user = await getCurrentUser();
+			setPlayerID(user.id);
+		};
+		getUserID();
+	}, []);
+	
+
 
 	const [yesNoState, setYesNoState] = useState({
 		data: null,
@@ -317,37 +326,49 @@ const DrawingInterface = () => {
 		yesNoAction: null,
 	});
 
+
+
 	// If player not in this game, then kick player because he didn't joined using the game page
 	useEffect(() => {
+		if (!playerID) return;
 		const checkIsHere = async () => {
-			const isHeHere = await isPlayerInGame(gameID, playerName)
+			const isHeHere = await isPlayerInGame(gameID, playerID)
 			if (isHeHere == false)
 				navigate('/game');
 		}
 		checkIsHere();
-	}, []);
+	}, [playerID]);
+
+
 
 	// Check and redirect to matchmaking interface if already done drawing
 	useEffect(() => {
+		if (!playerID) return;
 		const checkDrawn = async () => {
-			const doIHvaeToDraw = await havePlayerDrawn(gameID, playerName);
+			const doIHvaeToDraw = await havePlayerDrawn(gameID, playerID);
 			if (doIHvaeToDraw == true)
-				navigate(`/lobby/${gameID}`, { state: { name: playerName } });
+				navigate(`/lobby/${gameID}`);
 		}
 
 		checkDrawn();
-	}, []);
+	}, [playerID]);
+
+
 
 	// When player change website page (except lobby that is the next game page)
 	// When player quit the website or close the page, then display a warning page to confirm
 	const location = useLocation();
 	useEffect(() => {
+		if (!playerID) return;
 		const handlePageHide = () => {
-			const blob = new Blob(
-				[JSON.stringify({ id: gameID, name: playerName })],
-				{ type: "application/json" }
-			);
-			navigator.sendBeacon("/gameroute/removeplayer", blob);
+			if (!playerID || !gameID) return;
+			if (location.pathname !== `/drawing/${gameID}`) {
+				fetch(`/api/games/removePlayer/${gameID}/${playerID}`, {
+					method: 'POST',
+					credentials: 'include',
+					keepalive: true
+				});
+			}
 		};
 
 		const handleBeforeUnload = (e) => {
@@ -361,35 +382,42 @@ const DrawingInterface = () => {
 		return () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			window.removeEventListener("pagehide", handlePageHide);
-			if (window.location.pathname !== `/lobby/${gameID}`) {
-				removePlayer(gameID, playerName);
-			}
+			// if (playerID && gameID && location.pathname !== `/drawing/${gameID}`) {
+			// 	removePlayer(gameID, playerID);
+			// }
 		};
-	}, []);
+	}, [playerID, gameID]);
+
+
 
 	// Set tools and API
 	useEffect(() => {
+		if (!playerID) return;
 		set_select_tool(selected_tool);
 		set_select_thickness(selected_thickness);
 		set_select_color(selected_color, "Black");
 
-		callBackendAPI()
-		.then(res => setYesNoState(prev => ({ ...prev, data: res.express })))
-		.catch(err => console.log(err));
-	}, []);
+		// callBackendAPI()
+		// .then(res => setYesNoState(prev => ({ ...prev, data: res.express })))
+		// .catch(err => console.log(err));
+	}, [playerID]);
 
-	// Wait for API call backend
-	const callBackendAPI = async () => {
-		const response = await fetch('/express_backend');
-		const body = await response.json();
 
-		if (response.status !== 200) {
-		throw Error(body.message);
-		} else {
-		console.log("Express connected");
-		}
-		return body;
-	};
+
+	// // Wait for API call backend
+	// const callBackendAPI = async () => {
+	// 	const response = await fetch('/express_backend');
+	// 	const body = await response.json();
+
+	// 	if (response.status !== 200) {
+	// 	throw Error(body.message);
+	// 	} else {
+	// 	console.log("Express connected");
+	// 	}
+	// 	return body;
+	// };
+
+
 
 	// Change visibility if need to display yesNoPopup
 	const displayYesNoPopup = (action, question) => {
@@ -397,17 +425,18 @@ const DrawingInterface = () => {
 		document.getElementById("YesNo").style.visibility = "visible";
 	};
 
+
+
 	// Export drawing
 	async function export_drawing() {
-		boardRef.current?.handleExport(gameID, playerName);
-		const drawingPath = "/uploads/drawing-" + gameID + "-" + playerName + ".png";
-		await addDrawing(gameID, playerName, drawingPath);
-		console.log("drawing sent!");
+		boardRef.current?.handleExport(gameID);
 		document.getElementById("ZaWorldooo").style = "animation: 0.75s ease-in-out flip forwards";
-		setTimeout(function() {
-			navigate(`/lobby/${gameID}`, { state: { name: playerName } });
-		}, 2000);
+		setTimeout(() => navigate(`/lobby/${gameID}`), 2000);
 	}
+
+
+
+	if (!playerID) return null;
 
 	return (
 		<div className='BlackBG'>
@@ -428,7 +457,7 @@ const DrawingInterface = () => {
 						</div>
 						<div className="ChatDivDrawing">
 							<Chat
-								clientName={playerName}
+								clientName={playerID}
 								gameID={gameID}
 							/>
 						</div>
