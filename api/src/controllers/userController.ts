@@ -15,6 +15,7 @@ export const getProfile = async (req: AuthenticatedRequest, res: Response) => {
         email: users.email,
         username: users.username,
         avatar: users.avatar,
+        twoFactorEnabled: users.twoFactorEnabled,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
       })

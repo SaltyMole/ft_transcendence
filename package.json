@@ -7,6 +7,8 @@
     "@react-oauth/google": "^0.13.5",
     "@tailwindcss/vite": "^4.3.0",
     "@vitejs/plugin-react": "^6.0.2",
+    "authenticator": "^1.1.5",
+    "otplib": "^13.4.1",
     "tailwindcss": "^4.3.0",
     "vite": "^8.0.16"
   }
