@@ -9,6 +9,7 @@ import sendDrawing from '../game/sendDrawing';
 import havePlayerDrawn from '../game/havePlayerDrawn';
 import isPlayerInGame from '../game/isPlayerInGame'
 import getCurrentUser from '../game/getCurrentUser';
+import getEnvironment from '../game/getEnvironment';
 
 
 
@@ -359,10 +360,9 @@ const DrawingInterface = () => {
 	// When player quit the website or close the page, then display a warning page to confirm
 	const location = useLocation();
 	useEffect(() => {
-		if (!playerID) return;
 		const handlePageHide = () => {
 			if (!playerID || !gameID) return;
-			if (location.pathname !== `/drawing/${gameID}`) {
+			if (location.pathname !== `/lobby/${gameID}`) {
 				fetch(`/api/games/removePlayer/${gameID}/${playerID}`, {
 					method: 'POST',
 					credentials: 'include',
@@ -396,26 +396,7 @@ const DrawingInterface = () => {
 		set_select_tool(selected_tool);
 		set_select_thickness(selected_thickness);
 		set_select_color(selected_color, "Black");
-
-		// callBackendAPI()
-		// .then(res => setYesNoState(prev => ({ ...prev, data: res.express })))
-		// .catch(err => console.log(err));
 	}, [playerID]);
-
-
-
-	// // Wait for API call backend
-	// const callBackendAPI = async () => {
-	// 	const response = await fetch('/express_backend');
-	// 	const body = await response.json();
-
-	// 	if (response.status !== 200) {
-	// 	throw Error(body.message);
-	// 	} else {
-	// 	console.log("Express connected");
-	// 	}
-	// 	return body;
-	// };
 
 
 
@@ -433,6 +414,21 @@ const DrawingInterface = () => {
 		document.getElementById("ZaWorldooo").style = "animation: 0.75s ease-in-out flip forwards";
 		setTimeout(() => navigate(`/lobby/${gameID}`), 2000);
 	}
+
+
+
+	// Get environment
+	const [environment, setEnvironment] = useState([]);
+	useEffect(() => {
+		const fetchEnvironment = () => {
+			getEnvironment(gameID)
+			.then(environment => setEnvironment(environment))
+			.catch(error => console.error(error));
+		}
+
+		// Fetch
+		fetchEnvironment();
+	}, [gameID]);
 
 
 
@@ -456,6 +452,7 @@ const DrawingInterface = () => {
 							<Board className="KonvaBoard"/>
 						</div>
 						<div className="ChatDivDrawing">
+							<h1 className="EnvironmentDrawing"> Environment: {environment} </h1>
 							<Chat
 								clientName={playerID}
 								gameID={gameID}

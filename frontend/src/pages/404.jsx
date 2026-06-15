@@ -13,7 +13,7 @@ function E404()
 					<h1 className="E404UpText"> page not found</h1>
 
 					<div className="E404Gif">
-						<div class="tenor-gif-embed" data-postid="2665852330586468567" data-share-method="host" data-aspect-ratio="1" data-width="100%">
+						<div className="tenor-gif-embed" data-postid="2665852330586468567" data-share-method="host" data-aspect-ratio="1" data-width="100%">
 							<a href="https://tenor.com/view/fox-spinning-low-poly-spin-blender-gif-2665852330586468567">
 								Fox Spinning GIF
 							</a>

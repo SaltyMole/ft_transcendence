@@ -262,7 +262,7 @@ const Lobby = () => {
 
 	return (
 		<>
-			<main class="bg-cover bg-center h-screen" style={{ backgroundImage: `url(${test})` }}>
+			<main className="bg-cover bg-center h-screen" style={{ backgroundImage: `url(${test})` }}>
 				<div className="overlay">
 					<div className="LobbyContent">
 						<h1 id="homeText"> Lobby </h1>

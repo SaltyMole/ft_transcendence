@@ -46,7 +46,7 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
     const userId = req.user!.id
 
     const code = Math.random().toString(36).substring(2, 10).toUpperCase()
-	const [game] = await db.insert(games).values({ status: 'waiting', code }).returning()
+	const [game] = await db.insert(games).values({ status: 'waiting', code, environment: "a city" }).returning()
     await db.insert(gamePlayers).values({ gameId: game.id, userId })
 
     res.status(200).json({ game })
