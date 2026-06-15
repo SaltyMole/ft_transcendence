@@ -20,10 +20,12 @@ const Matchmaking = () => {
 
 	// Get player ID
 	const [playerID, setPlayerID] = useState(null);
+	const [username, setUsername] = useState(null);
 	useEffect(() => {
 		const getUserID = async () => {
 			const user = await getCurrentUser();
 			setPlayerID(user.id);
+			setUsername(user.username);
 		};
 		getUserID();
 	}, []);
@@ -121,7 +123,7 @@ const Matchmaking = () => {
 
 								<div className="ChatDiv">
 									<Chat
-										clientName={playerID}
+										clientName={username}
 										gameID={gameID}
 									/>
 								</div>

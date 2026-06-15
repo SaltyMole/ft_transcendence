@@ -311,10 +311,12 @@ const DrawingInterface = () => {
 
 	// Get player ID
 	const [playerID, setPlayerID] = useState(null);
+	const [username, setUsername] = useState(null);
 	useEffect(() => {
 		const getUserID = async () => {
 			const user = await getCurrentUser();
 			setPlayerID(user.id);
+			setUsername(user.username);
 		};
 		getUserID();
 	}, []);
@@ -454,7 +456,7 @@ const DrawingInterface = () => {
 						<div className="ChatDivDrawing">
 							<h1 className="EnvironmentDrawing"> Environment: {environment} </h1>
 							<Chat
-								clientName={playerID}
+								clientName={username}
 								gameID={gameID}
 							/>
 						</div>

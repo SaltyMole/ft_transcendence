@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import { WS_URL } from "../config/api.js";
 import "./Chat.css";
 
 function Chat({
@@ -18,7 +19,7 @@ function Chat({
 	const [connected, setConnected] = useState(false);
 
 	useEffect(() => {
-		const ws = new WebSocket("ws://localhost:8080");
+		const ws = new WebSocket(WS_URL);
 		wsRef.current = ws;
 
 		ws.onopen = () => {

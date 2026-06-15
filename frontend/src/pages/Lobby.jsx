@@ -24,10 +24,12 @@ const Lobby = () => {
 
 	// Get player ID
 	const [playerID, setPlayerID] = useState(null);
+	const [username, setUsername] = useState(null);
 	useEffect(() => {
 		const getUserID = async () => {
 			const user = await getCurrentUser();
 			setPlayerID(user.id);
+			setUsername(user.username);
 		};
 		getUserID();
 	}, []);
@@ -273,7 +275,7 @@ const Lobby = () => {
 								<DrawingCarousel gameID={gameID} />
 								<div className="ChatDivLobby">
 									<Chat
-										clientName={playerID}
+										clientName={username}
 										gameID={gameID}
 									/>
 								</div>
