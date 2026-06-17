@@ -1,13 +1,17 @@
 const getWinner = async ( gameID ) => {
-	const response = await fetch('/gameroute/game/' + gameID);
-	const data = await response.json();
-    const game = data.game;
+		const response = await fetch(`/api/games/${gameID}/winner`, {
+		method: 'GET',
+		credentials: 'include' 
+	});
 
-	if (!game) {
-		throw new Error(`Game ${gameID} not found`);
+	// Check if no error
+	if (!response.ok) {
+		return ("");
 	}
+	
+	const data = await response.json();
 
-	return game.winner;
+	return data.winner;
 };
 
 export default getWinner;

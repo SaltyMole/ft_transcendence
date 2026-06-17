@@ -9,30 +9,59 @@ import PlayerPicture from "../components/PlayerPicture";
 import DrawingCarousel from "../components/DrawingsCarousel"
 import Chat from "../components/Chat";
 import getStory from "../game/getStory";
+import getCurrentUser from "../game/getCurrentUser"
+import getPlayer from "../game/getPlayer";
 
 
 
 const Loading = () => {
 	const { gameID } = useParams();
 	const { state } = useLocation();
-	const playerName = state?.name;
 
 	const navigate = useNavigate();
+
+	// Get player ID
+	const [playerID, setPlayerID] = useState(null);
+	const [username, setUsername] = useState(null);
+	useEffect(() => {
+		const getUserID = async () => {
+			const user = await getCurrentUser();
+			setPlayerID(user.id);
+			setUsername(user.username);
+		};
+		getUserID();
+	}, []);
 
 	// Get winner
 	let [winner, setWinner] = useState([]);
 	useEffect(() => {
-		const fetchWinner = () => {
-			getWinner(gameID)
+		const fetchWinner = async () => {
+			await getWinner(gameID)
 			.then(winner => setWinner(winner))
 			.catch(error => console.error(error));
 		}
 
 		// Fetch
 		fetchWinner();
-	}, []);
+	}, [gameID]);
 
-	// winner = "nath"
+	// Get winner player
+	const [player, setPlayer] = useState([]);
+	useEffect(() => {
+        if (!gameID || !winner.id) return; // wait until props are ready
+
+        const fetchPlayer = async () => {
+            try {
+                const p = await getPlayer(gameID, winner.userId);
+                setPlayer(p);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchPlayer();
+    }, [gameID, winner]); // re-run when props change
+
 
 	// Get story
 	const [story, setStory] = useState([]);
@@ -47,6 +76,8 @@ const Loading = () => {
 		fetchStory();
 	}, []);
 
+	if (!playerID || !winner.id || !player.id) return null;
+
 	return (
 	<>
 		<main className="bg-cover bg-center min-h-screen relative" style={{ backgroundImage: `url(${test})` }}>
@@ -56,20 +87,20 @@ const Loading = () => {
 					<h1 id="homeText"> Results </h1>
 					<div className="WinnerDiv">
 						<div className="WinnerPicture">
-							<PlayerPicture gameID={gameID} playerName={winner}/>
+							<PlayerPicture gameID={gameID} playerId={player.userId}/>
 						</div>
 						<img className="WinnerLight" src={spotlight} />
 					</div>
-					<h1 className="WinnerText">WINNER: {winner} !</h1>
+					<h1 className="WinnerText">WINNER: {player.username} !</h1>
 					
 					
 					<div className="CarouselAndStory">
 						<div className="Carousel">
 							<h1 className="CarouselText">Drawings</h1>
 							<DrawingCarousel gameID={gameID} />
-							<div className="ChatDivLobby">
+							<div className="ChatDivResults">
 								<Chat
-									clientName={playerName}
+									clientName={username}
 									gameID={gameID}
 								/>
 							</div>

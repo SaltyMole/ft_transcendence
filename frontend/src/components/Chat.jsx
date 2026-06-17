@@ -38,7 +38,7 @@ function Chat({
 			console.log("Disconnected from WebSocket server");
 			setConnected(false);
 		};
-
+		
 		ws.onerror = (err) => console.error("WebSocket error:", err);
 
 		return () => ws.close();

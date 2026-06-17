@@ -2,16 +2,17 @@ import React, { useState, useEffect } from "react";
 import "./PlayerPicture.css";
 import getPlayer from "../game/getPlayer";
 
-function PlayerPicture({ gameID, playerName }) {
+function PlayerPicture({ gameID, playerId }) {
 
 	// Get player
 	const [player, setPlayer] = useState([]);
 	useEffect(() => {
-        if (!gameID || !playerName) return; // wait until props are ready
+
+        if (!gameID || !playerId) return; // wait until props are ready
 
         const fetchPlayer = async () => {
             try {
-                const p = await getPlayer(gameID, playerName);
+                const p = await getPlayer(gameID, playerId);
                 setPlayer(p);
             } catch (error) {
                 console.error(error);
@@ -19,17 +20,19 @@ function PlayerPicture({ gameID, playerName }) {
         };
 
         fetchPlayer();
-    }, [gameID, playerName]); // re-run when props change
+    }, [gameID, playerId]); // re-run when props change
 
-	console.log(player.name);
+	console.log(playerId);
+
+	if (!gameID) return null;
 
 	return (
 		<div className="PlayersWrapper">
 			<div className="PlayerDiv">
 				<div className="PlayerPictureWrapper">
-					<img className="PlayerPicture" src={player.picture} alt={player.name}/>
+					<img className="PlayerPicture" src={player.avatar} alt={player.username}/>
 				</div>
-				<p className="PlayerNamePicture">{player.name}</p>
+				<p className="PlayerNamePicture">{player.username}</p>
 			</div>
 		</div>
 	);

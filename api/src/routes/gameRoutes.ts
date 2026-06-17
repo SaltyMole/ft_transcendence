@@ -11,6 +11,8 @@ import {
   updateScore,
   sendGameMessage,
   getGameMessages,
+  getWinner,
+  getPlayer,
   checkIsPlayerInGame,
   removePlayer,
 } from '../controllers/gameController.ts'
@@ -38,7 +40,9 @@ router.get('/:gameId', validateParams(gameIdParamSchema), getGame)
 router.post('/:gameId/drawings', authenticateToken, validateParams(gameIdParamSchema), sendDrawing)
 router.get('/:gameId/drawings', authenticateToken, validateParams(gameIdParamSchema), getGameDrawings)
 router.get('/:gameId/story', authenticateToken, validateParams(gameIdParamSchema), getGameStory)
-router.get('/:gameId/:playerId', validateParams(gameIdParamSchema), checkIsPlayerInGame)
+router.get('/:gameId/winner', validateParams(gameIdParamSchema), getWinner)
+router.get('/:gameId/:playerId', validateParams(gameIdParamSchema), getPlayer)
+router.get('/check/:gameId/:playerId', validateParams(gameIdParamSchema), checkIsPlayerInGame)
 router.post('/:gameId/join', validateParams(gameIdParamSchema), joinGame)
 router.post('/removePlayer/:gameId/:playerId', authenticateToken, validateParams(gameIdParamSchema), removePlayer)
 router.put(

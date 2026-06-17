@@ -1,6 +1,6 @@
 const isPlayerInGame = async ( gameID, searchedId ) => {
 	const token = localStorage.getItem("token");
-	const response = await fetch(`/api/games/${gameID}/${searchedId}`, {
+	const response = await fetch(`/api/games/check/${gameID}/${searchedId}`, {
 		method: 'GET',
 		credentials: 'include'
 	});

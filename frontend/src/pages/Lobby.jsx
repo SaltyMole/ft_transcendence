@@ -88,13 +88,13 @@ const Lobby = () => {
 		return () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			window.removeEventListener("pagehide", handlePageHide);
-			if (playerID && gameID && !playerContinuingGame.current) {
-				(async () => {
-					const isHeHere = await isPlayerInGame(gameID, playerID)
-					if (isHeHere)
-						removePlayer(gameID, playerID);
-				})();
-			}
+			// if (playerID && gameID && !playerContinuingGame.current) {
+			// 	(async () => {
+			// 		const isHeHere = await isPlayerInGame(gameID, playerID)
+			// 		if (isHeHere)
+			// 			removePlayer(gameID, playerID);
+			// 	})();
+			// }
 		};
 	}, [playerID, gameID]);
 

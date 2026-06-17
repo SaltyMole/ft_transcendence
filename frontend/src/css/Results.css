@@ -101,6 +101,15 @@
 	20%, 40%, 60%, 80% {transform: translateX(10px);}
 }
 
+.ChatDivResults {
+	display: flex;
+	position: flex;
+	background-color: #0000007c;
+    border-radius: 2vh;
+    height: 40vh;
+    text-align: left;
+}
+
 @media (max-width: 120vh) {
 	.OverlayResults {
 		width: 100vw;

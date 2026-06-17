@@ -161,6 +161,45 @@ export const getGame = async (req: AuthenticatedRequest, res: Response) => {
   }
 }
 
+export const getPlayer = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const gameCode = req.params.gameId as string
+		const playerId = req.params.playerId as UUID
+
+    const [game] = await db.select().from(games).where(eq(games.code, gameCode))
+
+    if (!game) {
+      return res.status(404).json({ error: 'Game not found' })
+    }
+	  const gameId = game.id
+
+    const [player] = await db
+      .select({
+        id: gamePlayers.id,
+        gameId: gamePlayers.gameId,
+        userId: gamePlayers.userId,
+        score: gamePlayers.score,
+        isWinner: gamePlayers.isWinner,
+        joinedAt: gamePlayers.joinedAt,
+        username: users.username,
+        avatar: users.avatar,
+      })
+      .from(gamePlayers)
+      .innerJoin(users, eq(gamePlayers.userId, users.id))
+      .where(
+        and(
+          eq(gamePlayers.gameId, gameId),
+          eq(gamePlayers.userId, playerId)
+        )
+      )
+
+    res.json({ player })
+  } catch (error) {
+    console.error('Get game error:', error)
+    res.status(500).json({ error: 'Failed to fetch game' })
+  }
+}
+
 export const getGameDrawings = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const gameCode = req.params.gameId as string
@@ -346,4 +385,31 @@ export const sendDrawing = async (req: AuthenticatedRequest, res: Response) => {
     console.error('Submit drawing error:', error)
     res.status(500).json({ error: 'Failed to submit drawing' })
   }
+}
+
+export const getWinner = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const gameCode = req.params.gameId as string
+
+      const [game] = await db.select().from(games).where(eq(games.code, gameCode))
+
+      if (!game) {
+        return res.status(404).json({ error: 'Game not found' })
+      }
+      const gameId = game.id;
+
+
+      const [winner] = await db
+        .select()
+        .from(gamePlayers)
+        .where(and(eq(gamePlayers.gameId, gameId), eq(gamePlayers.isWinner, true)))
+      if (!winner) {
+        return res.status(400).json({ error: 'No winner in game' })
+      }
+
+      res.json({ winner })
+    } catch (error) {
+      console.error('Join game error:', error)
+      res.status(500).json({ error: 'Failed to get winner' })
+    }
 }
