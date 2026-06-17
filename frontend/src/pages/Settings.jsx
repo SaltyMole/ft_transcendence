@@ -35,6 +35,7 @@ function Settings() {
                     setAvatar(data.user.avatar);
                     setIs2FAEnabled(data.user.twoFactorEnabled || false);
                 } else if (response.status === 401) {
+                    console.log(response);
                     localStorage.removeItem("token");
                     window.location.href = '/Login';
                 }
