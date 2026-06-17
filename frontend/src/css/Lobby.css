@@ -72,6 +72,7 @@
 }
 
 .ChatDivLobby {
+	display: flex;
 	position: flex;
 	background-color: #0000007c;
     border-radius: 2vh;

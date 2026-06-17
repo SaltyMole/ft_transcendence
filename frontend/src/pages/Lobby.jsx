@@ -260,7 +260,8 @@ const Lobby = () => {
 		}
 	}
 
-	if (!playerID && !players) return null;
+	// if (!playerID && !players) return null;
+	if (!playerID) return null;
 
 	return (
 		<>
