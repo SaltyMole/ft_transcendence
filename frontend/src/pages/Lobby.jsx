@@ -19,8 +19,8 @@ import getCurrentUser from "../game/getCurrentUser"
 
 const Lobby = () => {
 	const { gameID } = useParams();
-
 	const navigate = useNavigate();
+	const playerContinuingGame = useRef(false);
 
 	// Get player ID
 	const [playerID, setPlayerID] = useState(null);
@@ -47,11 +47,15 @@ const Lobby = () => {
 
 		const checkDrawn = async () => {
 			if (!playerID || !gameID) return;
+			const isHeHere = await isPlayerInGame(gameID, playerID)
 			const doIHvaeDrawn = await havePlayerDrawn(gameID, playerID);
 			
-			if (doIHvaeDrawn == false)
-				// console.log("GO TO DRAWING");
+			if (isHeHere == true && doIHvaeDrawn == false)
+			{
+				playerContinuingGame.current = true
 				navigate(`/drawing/${gameID}`);
+			}
+				
 		}
 		checkDrawn();
 	}, [playerID, gameID]);
@@ -61,7 +65,7 @@ const Lobby = () => {
 	// When player change website page (except lobby that is the next game page)
 	// When player quit the website or close the page, then display a warning page to confirm
 	const location = useLocation();
-	useEffect(() => {
+	useEffect( () => {
 		const handlePageHide = () => {
 			if (!playerID || !gameID) return;
 			if (location.pathname !== `/drawing/${gameID}`) {
@@ -84,9 +88,13 @@ const Lobby = () => {
 		return () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			window.removeEventListener("pagehide", handlePageHide);
-			// if (playerID && gameID && location.pathname !== `/drawing/${gameID}`) {
-			// 	removePlayer(gameID, playerID);
-			// }
+			if (playerID && gameID && !playerContinuingGame.current) {
+				(async () => {
+					const isHeHere = await isPlayerInGame(gameID, playerID)
+					if (isHeHere)
+						removePlayer(gameID, playerID);
+				})();
+			}
 		};
 	}, [playerID, gameID]);
 
@@ -100,7 +108,11 @@ const Lobby = () => {
 			.then(fetchedState => {
 				setState(fetchedState);
 				if (fetchedState == "finished")
+				{
+					playerContinuingGame.current = true
 					navigate(`/results/${gameID}`);
+				}
+					
 			})
 			.catch(error => console.error(error));
 		};
@@ -236,9 +248,9 @@ const Lobby = () => {
 			// Else display with green text, clickable
 			else
 			{
-				document.getElementById("generateStoryButton").style.backgroundColor = "#58508D";
-				document.getElementById("generateStoryButton").style.color = "#87ff97";
-				document.getElementById("generateStoryButton").style.boxShadow = "#491A65";
+				// document.getElementById("generateStoryButton").style.backgroundColor = "#58508D";
+				// document.getElementById("generateStoryButton").style.color = "#87ff97";
+				// document.getElementById("generateStoryButton").style.boxShadow = "#491A65";
 			}
 		}
 

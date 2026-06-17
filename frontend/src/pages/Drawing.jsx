@@ -306,8 +306,8 @@ function Board() {
 
 const DrawingInterface = () => {
 	const { gameID } = useParams();
-
 	const navigate = useNavigate();
+	const playerContinuingGame = useRef(false);
 
 	// Get player ID
 	const [playerID, setPlayerID] = useState(null);
@@ -350,7 +350,11 @@ const DrawingInterface = () => {
 		const checkDrawn = async () => {
 			const doIHvaeToDraw = await havePlayerDrawn(gameID, playerID);
 			if (doIHvaeToDraw == true)
+			{
+				playerContinuingGame.current = true;
 				navigate(`/lobby/${gameID}`);
+			}
+				
 		}
 
 		checkDrawn();
@@ -384,9 +388,9 @@ const DrawingInterface = () => {
 		return () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			window.removeEventListener("pagehide", handlePageHide);
-			// if (playerID && gameID && location.pathname !== `/drawing/${gameID}`) {
-			// 	removePlayer(gameID, playerID);
-			// }
+			if (playerID && gameID && !playerContinuingGame.current) {
+				removePlayer(gameID, playerID);
+			}
 		};
 	}, [playerID, gameID]);
 
@@ -414,6 +418,7 @@ const DrawingInterface = () => {
 	async function export_drawing() {
 		boardRef.current?.handleExport(gameID);
 		document.getElementById("ZaWorldooo").style = "animation: 0.75s ease-in-out flip forwards";
+		playerContinuingGame.current = true
 		setTimeout(() => navigate(`/lobby/${gameID}`), 2000);
 	}
 

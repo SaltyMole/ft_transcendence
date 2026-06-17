@@ -17,6 +17,7 @@ import getCurrentUser from "../game/getCurrentUser";
 const Matchmaking = () => {
 	const { gameID } = useParams();
 	const navigate = useNavigate();
+	var playerContinuingGame = useRef(false);
 
 	// Get player ID
 	const [playerID, setPlayerID] = useState(null);
@@ -36,6 +37,7 @@ const Matchmaking = () => {
 			const isHeHere = await isPlayerInGame(gameID, playerID)
 			if (isHeHere == false)
 				navigate('/game');
+				
 		}
 		if (playerID)
 			checkIsHere();
@@ -67,11 +69,11 @@ const Matchmaking = () => {
 		return () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			window.removeEventListener("pagehide", handlePageHide);
-			// if (playerID && gameID && location.pathname !== `/lobby/${gameID}`) {
-			// 	removePlayer(gameID, playerID);
-			// }
+			if (playerID && gameID && !playerContinuingGame.current) {
+				removePlayer(gameID, playerID);
+			}
 		};
-	}, [playerID, gameID]);
+	}, [playerID, gameID, playerContinuingGame]);
 
 	// Launch the game
 	function launchFunction() {
@@ -87,7 +89,11 @@ const Matchmaking = () => {
 				setState(fetchedState);
 				// If playing -> go to /lobby if have a name, else go back to /game
 				if (fetchedState == "in_progress")
+				{
+					playerContinuingGame.current = true;
 					navigate(`/lobby/${gameID}`);
+				}
+					
 			})
 			.catch(error => console.error(error));
 		};
@@ -95,7 +101,7 @@ const Matchmaking = () => {
 		fetchState();
 		const interval = setInterval(fetchState, 2000);
 		return () => clearInterval(interval);
-	}, [gameID]);
+	}, [gameID, playerContinuingGame]);
 
 	if (!playerID) return null;
 
