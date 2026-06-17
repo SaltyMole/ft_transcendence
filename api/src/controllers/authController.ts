@@ -25,10 +25,26 @@ export const register = async (req: Request, res: Response) => {
 
     if (existingUser) {
       if (existingUser.email === email.toLowerCase()) {
-        return res.status(400).json({ error: 'Email already exists' })
+        return res.status(400).json({
+        error: 'Validation failed',
+        details: [
+          {
+            field: 'email',
+            message: 'Email already exists',
+          },
+        ],
+      })
       }
       if (existingUser.username === username) {
-        return res.status(400).json({ error: 'Username already exists' })
+        return res.status(400).json({
+        error: 'Validation failed',
+        details: [
+          {
+            field: 'username',
+            message: 'Username already exists',
+          },
+        ],
+      })
       }
     }
 
