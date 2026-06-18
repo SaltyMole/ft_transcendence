@@ -1,21 +1,15 @@
-const joinGame = async ( gameID ) => {
-	const token = localStorage.getItem("token");
+const joinGame = async (gameID) => {
 	const response = await fetch(`/api/games/${gameID}/join`, {
 		method: 'POST',
 		credentials: 'include'
 	});
 
 	if (!response.ok) {
-		throw new Error(`HTTP error: ${response.status}`);
-		return (false);
+		const data = await response.json();
+		return [{ field: "code", message: data.error }];
 	}
 
-	return (true);
+	return true;
 };
 
 export default joinGame;
-
-
-
-
-

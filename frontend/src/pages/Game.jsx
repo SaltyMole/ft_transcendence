@@ -10,6 +10,7 @@ import joinGame from "../game/joinGame";
 function Game()
 {
 	const [code, setCode] = useState('');
+	const [errors, setErrors] = useState([]);
 	const navigate = useNavigate();
 
 	const handleCreateGame = async () => {
@@ -24,7 +25,7 @@ function Game()
 		if (canIJoin == true)
 			navigate(`/matchmaking/${code}`);
 		else
-			throw "Can't join";
+			setErrors(canIJoin);
 	}
 
 	return (
@@ -39,6 +40,10 @@ function Game()
 							<Input classnameI="code text-black " classnameL="flex flex-col gap-3 text-FFFADE" type="code" label="Code :" id="id" text='xxxx' value={code} set={setCode} /> 
 							<button onClick={handleJoinGame} className = "buttonSend !mt-8 w-9 h-6"> <svg xmlns="http://www.w3.org/2000/svg" className="bam" height="100%" viewBox="0 -960 960 960" width="100%" fill="#FFFADE"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg> </button>
 						</div>
+						{errors?.filter(error => error.field === "code")
+							.map((error,index) =>(
+								<p key={index} className='text-center text-red-500'> {error.message} </p>
+						))}
 					</div>
 					<div className = "overlayGames flex-col flex  " >
 						<div className="bim flex flex-col justify-between">
