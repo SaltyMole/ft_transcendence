@@ -365,6 +365,14 @@ li{
 	background-color: #58508D;;
 	height: 1px;
 }
+
+
+.back:hover {
+
+	color:#491A65;
+	font-weight: 600;
+	
+}
 @media (max-width: 768px) {
 
 	#pages {

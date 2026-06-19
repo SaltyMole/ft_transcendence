@@ -19,6 +19,10 @@ const users = [
 		username: "pgiroux",
 		link: "https://github.com/Fusaachi"
 	},
+	{
+		username:"lberne",
+		link:"https://github.com/B-Moth"
+	}
 ]
 
 function LinkUser()
