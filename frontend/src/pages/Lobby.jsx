@@ -1,309 +1,209 @@
 import test from "../img/test.jpeg"
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Navigate, useParams, generatePath, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import '../css/Lobby.css';
 import "../css/front/style.css";
 import DrawingCarousel from "../components/DrawingsCarousel"
 import getEnvironment from "../game/getEnvironment";
-import getStory from "../game/getStory";
 import getState from "../game/getState"
 import havePlayerDrawn from "../game/havePlayerDrawn"
-import removePlayer from "../game/removePlayer";
-import removeDrawing from "../game/removeDrawing";
 import isPlayerInGame from "../game/isPlayerInGame";
 import Chat from "../components/Chat";
 import getDrawings from "../game/getDrawings";
 import getPlayers from "../game/getPlayers"
-import generateStory from "../game/generateStory";
 import getCurrentUser from "../game/getCurrentUser"
 
 const Lobby = () => {
-	const { gameID } = useParams();
-	const navigate = useNavigate();
-	const playerContinuingGame = useRef(false);
+    const { gameID } = useParams();
+    const navigate = useNavigate();
+    const playerContinuingGame = useRef(false);
+    const hasTriggeredStory = useRef(false); 
+    const wsRef = useRef(null);
 
-	// Get player ID
-	const [playerID, setPlayerID] = useState(null);
-	const [username, setUsername] = useState(null);
-	useEffect(() => {
-		const getUserID = async () => {
-			const user = await getCurrentUser();
-			setPlayerID(user.id);
-			setUsername(user.username);
-		};
-		getUserID();
-	}, []);
+    const [playerID, setPlayerID] = useState(null);
+    const [username, setUsername] = useState(null);
+    const [gameState, setState] = useState("");
+    const [environment, setEnvironment] = useState("");
+    const [story, setStory] = useState("");
+    const [drawings, setDrawings] = useState([]);
+    const [players, setPlayers] = useState([]);
 
-	// If player not in this game, then kick player because he didn't joined using the game page
-	// Then if didn't drawn, then redirect to drawing page
-	useEffect(() => {
-		const checkIsHere = async () => {
-			if (!playerID || !gameID) return;
-			const isHeHere = await isPlayerInGame(gameID, playerID)
-			if (isHeHere == false)
-				navigate('/game');
-		}
-		checkIsHere();
+    // 1. Get player ID
+    useEffect(() => {
+        const getUserID = async () => {
+            const user = await getCurrentUser();
+            setPlayerID(user.id);
+            setUsername(user.username);
+        };
+        getUserID();
+    }, []);
 
-		const checkDrawn = async () => {
-			if (!playerID || !gameID) return;
-			const isHeHere = await isPlayerInGame(gameID, playerID)
-			const doIHvaeDrawn = await havePlayerDrawn(gameID, playerID);
-			
-			if (isHeHere == true && doIHvaeDrawn == false)
-			{
-				playerContinuingGame.current = true
-				navigate(`/drawing/${gameID}`);
-			}
-				
-		}
-		checkDrawn();
-	}, [playerID, gameID]);
+    // 2. Check if player is in game & has drawn
+    useEffect(() => {
+        const checkIsHere = async () => {
+            if (!playerID || !gameID) return;
+            const isHeHere = await isPlayerInGame(gameID, playerID);
+            if (isHeHere === false) navigate('/game');
+        }
+        checkIsHere();
 
+        const checkDrawn = async () => {
+            if (!playerID || !gameID) return;
+            const isHeHere = await isPlayerInGame(gameID, playerID);
+            const doIHvaeDrawn = await havePlayerDrawn(gameID, playerID);
+            
+            if (isHeHere === true && doIHvaeDrawn === false) {
+                playerContinuingGame.current = true;
+                navigate(`/drawing/${gameID}`);
+            }
+        }
+        checkDrawn();
+    }, [playerID, gameID, navigate]);
 
+    // 3. Handle page hide / unload
+    const location = useLocation();
+    useEffect( () => {
+        const handlePageHide = () => {
+            if (!playerID || !gameID) return;
+            if (location.pathname !== `/drawing/${gameID}`) {
+                fetch(`/api/games/removePlayer/${gameID}/${playerID}`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    keepalive: true
+                });
+            }
+        };
 
-	// When player change website page (except lobby that is the next game page)
-	// When player quit the website or close the page, then display a warning page to confirm
-	const location = useLocation();
-	useEffect( () => {
-		const handlePageHide = () => {
-			if (!playerID || !gameID) return;
-			if (location.pathname !== `/drawing/${gameID}`) {
-				fetch(`/api/games/removePlayer/${gameID}/${playerID}`, {
-					method: 'POST',
-					credentials: 'include',
-					keepalive: true
-				});
-			}
-		};
+        const handleBeforeUnload = (e) => {
+            e.preventDefault();
+            e.returnValue = "";
+        };
 
-		const handleBeforeUnload = (e) => {
-			e.preventDefault();
-			e.returnValue = "";
-		};
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        window.addEventListener("pagehide", handlePageHide);
 
-		window.addEventListener("beforeunload", handleBeforeUnload);
-		window.addEventListener("pagehide", handlePageHide);
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+            window.removeEventListener("pagehide", handlePageHide);
+        };
+    }, [playerID, gameID, location.pathname]);
 
-		return () => {
-			window.removeEventListener("beforeunload", handleBeforeUnload);
-			window.removeEventListener("pagehide", handlePageHide);
-			// if (playerID && gameID && !playerContinuingGame.current) {
-			// 	(async () => {
-			// 		const isHeHere = await isPlayerInGame(gameID, playerID)
-			// 		if (isHeHere)
-			// 			removePlayer(gameID, playerID);
-			// 	})();
-			// }
-		};
-	}, [playerID, gameID]);
+    // 4. Get game state
+    useEffect(() => {
+        const fetchState = () => {
+            getState(gameID)
+            .then(fetchedState => {
+                setState(fetchedState);
+                if (fetchedState === "finished") {
+                    playerContinuingGame.current = true;
+                    navigate(`/results/${gameID}`);
+                }
+            })
+            .catch(error => console.error(error));
+        };
+        fetchState();
+        const interval = setInterval(fetchState, 2000);
+        return () => clearInterval(interval);
+    }, [gameID, navigate]);
 
+    // 5. Get environment
+    useEffect(() => {
+        getEnvironment(gameID)
+            .then(env => setEnvironment(env))
+            .catch(error => console.error(error));
+    }, [gameID]);
 
+    // 6. Get Drawings & Players
+    useEffect(() => {
+        const fetchDrawings = () => {
+            getDrawings(gameID).then(res => setDrawings(res)).catch(console.error);
+        }
+        fetchDrawings();
+        const interval = setInterval(fetchDrawings, 2000);
+        return () => clearInterval(interval);
+    }, [gameID]);
 
-	// Get game state and change path if necessary
-	const [gameState, setState] = useState("");
-	useEffect(() => {
-		const fetchState = () => {
-			getState(gameID)
-			.then(fetchedState => {
-				setState(fetchedState);
-				if (fetchedState == "finished")
-				{
-					playerContinuingGame.current = true
-					navigate(`/results/${gameID}`);
-				}
-					
-			})
-			.catch(error => console.error(error));
-		};
+    useEffect(() => {
+        const fetchPlayers = async () => {
+            await getPlayers(gameID).then(res => setPlayers(res)).catch(console.error);
+        }
+        fetchPlayers();
+        const interval = setInterval(fetchPlayers, 2000);
+        return () => clearInterval(interval);
+    }, [gameID]);
 
-		fetchState();
-		const interval = setInterval(fetchState, 2000);
-		return () => clearInterval(interval);
-	}, [gameID]);
+    // 7. WEBSOCKET CONNECTION
+    useEffect(() => {
+        const ws = new WebSocket(`ws://localhost:8000/ws/story/${gameID}`);
+        
+        ws.onopen = () => console.log("Connected to AI Story Server");
+        ws.onmessage = (event) => setStory((prev) => prev + event.data);
+        ws.onerror = (error) => console.error("WebSocket Error:", error);
+        ws.onclose = () => console.log("WebSocket connection closed");
 
+        wsRef.current = ws;
 
+        return () => {
+            if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+                ws.close();
+            }
+        };
+    }, [gameID]);
 
-	// Get environment
-	const [environment, setEnvironment] = useState([]);
-	useEffect(() => {
-		const fetchEnvironment = () => {
-			getEnvironment(gameID)
-			.then(environment => setEnvironment(environment))
-			.catch(error => console.error(error));
-		}
+    // 8. AUTO-TRIGGER STORY GENERATION
+    useEffect(() => {
+        if (players.length === 0 || drawings.length === 0 || !wsRef.current || !environment) return;
+        if (wsRef.current.readyState !== WebSocket.OPEN) return;
 
-		// Fetch
-		fetchEnvironment();
-	}, [gameID]);
+        if (drawings.length === players.length && !hasTriggeredStory.current) {
+            hasTriggeredStory.current = true;
 
-
-
-	// Get story (almost real-time)
-	const [story, setStory] = useState([]);
-	useEffect(() => {
-		const fetchStory = () => {
-			getStory(gameID)
-			.then(story => setStory(story))
-			.catch(error => console.error(error));
-		}
-
-		// Fetch
-		fetchStory();
-		const interval = setInterval(fetchStory, 10);
-
-		// Cleaner unmount
-		return () => clearInterval(interval);
-	}, [gameID]);
-
-
-
-
-
-	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-
-	// ~~~~~~~~~~~~~~~~~~~~~~ WEBSOCKET FOR STORY HERE ~~~~~~~~~~~~~~~~~~~~~~
-
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            // Python will now handle digging into the objects to find 'drawingData'
+            wsRef.current.send(JSON.stringify({ 
+                action: "generate", 
+                drawings: drawings,
+                environment: environment
+            }));
+        }
+    }, [drawings, players, environment]);
 
 
+    if (!playerID) return null;
 
-
-
-	// Get number of drawings
-	const [drawings, setDrawings] = useState([]);
-	useEffect(() => {
-		const fetchDrawings = () => {
-			getDrawings(gameID)
-			.then(drawings => setDrawings(drawings))
-			.catch(error => console.error(error));
-		}
-		
-		// Fetch
-		fetchDrawings();
-		const interval = setInterval(fetchDrawings, 2000);
-
-		// Cleaner unmount
-		return () => clearInterval(interval);
-	}, [gameID]);
-
-
-
-	// Get number of players
-	const [players, setPlayers] = useState([]);
-	useEffect(() => {
-		const fetchPlayers = async () => {
-			await getPlayers(gameID)
-			.then(players => setPlayers(players))
-			.catch(error => console.error(error));
-		}
-
-		// Fetch
-		fetchPlayers();
-		const interval = setInterval(fetchPlayers, 2000);
-
-		// Cleaner unmount
-		return () => clearInterval(interval);
-	}, [gameID]);
-
-
-
-	// Set generate story button state
-	// Get number of players
-	useEffect(() => {
-		const checkAndSetButtonState = async () => {
-			// If story is writing
-			if (story.length > 0)
-			{
-				document.getElementById("generateStoryButton").style.visibility = "hidden";
-				document.getElementById("generateStoryButton").style.height = "0px";
-				return;
-			}
-				
-			// If players are still drawing, then display in red, not clickable
-			if (drawings.length < players.length)
-			{
-				document.getElementById("generateStoryButton").style.backgroundColor = "#ff8787";
-				document.getElementById("generateStoryButton").style.color = "#FFFADE";
-				document.getElementById("generateStoryButton").style.boxShadow = "2px 4px 3px #000000b5";
-			}
-			// Else display with green text, clickable
-			else
-			{
-				// document.getElementById("generateStoryButton").style.backgroundColor = "#58508D";
-				// document.getElementById("generateStoryButton").style.color = "#87ff97";
-				// document.getElementById("generateStoryButton").style.boxShadow = "#491A65";
-			}
-		}
-
-		// Fetch
-		checkAndSetButtonState();
-		const interval = setInterval(checkAndSetButtonState, 2000);
-
-		// Cleaner unmount
-		return () => clearInterval(interval);
-	}, [drawings, players]);
-
-
-
-	// Generate story button clicked
-	const generateStoryButtonAction = () => {
-		if (drawings.length == players.length)
-		{
-			generateStory(gameID);
-		}
-	}
-
-	// if (!playerID && !players) return null;
-	if (!playerID) return null;
-
-	return (
-		<>
-			<main className="bg-cover bg-center h-screen" style={{ backgroundImage: `url(${test})` }}>
-				<div className="overlay">
-					<div className="LobbyContent">
-						<h1 id="homeText"> Lobby </h1>
-						<h1 className="Environment"> Environment: {environment} </h1>
-						<div className="CarouselAndStory">
-							<div className="Carousel">
-								<h1 className="CarouselText">Drawings</h1>
-								<DrawingCarousel gameID={gameID} />
-								<div className="ChatDivLobby">
-									<Chat
-										clientName={username}
-										gameID={gameID}
-									/>
-								</div>
-							</div>
-							<div className="CombatStory">
-								<h1 className="CombatStoryText">Fight</h1>
-								<button onClick={generateStoryButtonAction} id="generateStoryButton" className="generateStoryButton buttonSend">Generate story ({drawings.length}/{players.length})</button>
-								<h1>{story}</h1>
-							</div>
-						</div>
-					</div>
-				</div>
-			</main>
-		</>
-	);
+    return (
+        <main className="bg-cover bg-center h-screen" style={{ backgroundImage: `url(${test})` }}>
+            <div className="overlay">
+                <div className="LobbyContent">
+                    <h1 id="homeText"> Lobby </h1>
+                    <h1 className="Environment"> Environment: {environment} </h1>
+                    
+                    <div className="CarouselAndStory">
+                        <div className="Carousel">
+                            <h1 className="CarouselText">Drawings</h1>
+                            <DrawingCarousel gameID={gameID} />
+                            <div className="ChatDivLobby">
+                                <Chat clientName={username} gameID={gameID} />
+                            </div>
+                        </div>
+                        
+                        <div className="CombatStory">
+                            <h1 className="CombatStoryText">Fight</h1>
+                            
+                            {drawings.length < players.length ? (
+                                <h3 style={{ color: "#ff8787", textAlign: "center", marginTop: "20px" }}>
+                                    Waiting for players to finish drawing... ({drawings.length}/{players.length})
+                                </h3>
+                            ) : (
+                                <h1 style={{ whiteSpace: "pre-wrap" }}>
+                                    {story || "Analyzing drawings and preparing the arena..."}
+                                </h1>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    );
 }
 
 export default Lobby;
