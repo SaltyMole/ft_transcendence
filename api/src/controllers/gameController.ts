@@ -15,7 +15,7 @@ const isPlayerInGame = async (gameId: string, userId: string): Promise<boolean> 
 
 export const checkIsPlayerInGame = async (req: AuthenticatedRequest, res: Response) => {
 	try {
-		const gameCode = req.params.gameId as string
+		const gameCode = req.params.gameCode as string
 		const playerId = req.params.playerId as UUID
 
 		const [game] = await db.select().from(games).where(eq(games.code, gameCode))
@@ -59,7 +59,7 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
 export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id 
-    const gameCode = req.params.gameId as string
+    const gameCode = req.params.gameCode as string
 
     const [game] = await db.select().from(games).where(eq(games.code, gameCode))
 
@@ -93,7 +93,7 @@ export const joinGame = async (req: AuthenticatedRequest, res: Response) => {
 export const removePlayer = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id 
-    const gameCode = req.params.gameId as string
+    const gameCode = req.params.gameCode as string
 	const playerId = req.params.playerId as UUID
 
     const [game] = await db.select().from(games).where(eq(games.code, gameCode))
@@ -133,7 +133,7 @@ export const removePlayer = async (req: AuthenticatedRequest, res: Response) => 
 
 export const getGame = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const gameCode = req.params.gameId as string
+    const gameCode = req.params.gameCode as string
 
     const [game] = await db.select().from(games).where(eq(games.code, gameCode))
 
@@ -163,7 +163,7 @@ export const getGame = async (req: AuthenticatedRequest, res: Response) => {
 
 export const getPlayer = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const gameCode = req.params.gameId as string
+    const gameCode = req.params.gameCode as string
 		const playerId = req.params.playerId as UUID
 
     const [game] = await db.select().from(games).where(eq(games.code, gameCode))
@@ -202,7 +202,7 @@ export const getPlayer = async (req: AuthenticatedRequest, res: Response) => {
 
 export const getGameDrawings = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const gameCode = req.params.gameId as string
+    const gameCode = req.params.gameCode as string
 
     const [game] = await db.select().from(games).where(eq(games.code, gameCode))
     if (!game) return res.status(404).json({ error: 'Game not found' })
@@ -229,7 +229,7 @@ export const getGameDrawings = async (req: AuthenticatedRequest, res: Response) 
 
 export const getGameStory = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const gameCode = req.params.gameId as string
+    const gameCode = req.params.gameCode as string
 
     const [game] = await db.select().from(games).where(eq(games.code, gameCode))
     if (!game) return res.status(404).json({ error: 'Game not found' })
@@ -261,7 +261,7 @@ export const listGames = async (req: AuthenticatedRequest, res: Response) => {
 
 export const updateGameStatus = async (req: AuthenticatedRequest, res: Response) => {
 	try {
-		const gameCode = req.params.gameId as string
+		const gameCode = req.params.gameCode as string
 		const { status } = req.body
 
 		const [updated] = await db
@@ -369,7 +369,7 @@ export const getGameMessages = async (req: AuthenticatedRequest, res: Response) 
 export const sendDrawing = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id
-    const gameCode = req.params.gameId as string
+    const gameCode = req.params.gameCode as string
     const { drawingData } = req.body
 
     const [game] = await db.select().from(games).where(eq(games.code, gameCode))
@@ -389,7 +389,7 @@ export const sendDrawing = async (req: AuthenticatedRequest, res: Response) => {
 
 export const getWinner = async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const gameCode = req.params.gameId as string
+      const gameCode = req.params.gameCode as string
 
       const [game] = await db.select().from(games).where(eq(games.code, gameCode))
 

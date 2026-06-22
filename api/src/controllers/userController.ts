@@ -33,6 +33,31 @@ export const getMyProfile = async (req: AuthenticatedRequest, res: Response) => 
   }
 }
 
+export const getUserProfile = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const  userId = req.params.id as string
+
+    const [user] = await db
+      .select({
+        id: users.id,
+        username: users.username,
+        avatar: users.avatar,
+        createdAt: users.createdAt,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    res.json(user)
+  } catch (error) {
+    console.error('Get profile error:', error)
+    res.status(500).json({ error: 'Failed to fetch profile' })
+  }
+}
+
 export const updateProfile = async (
   req: AuthenticatedRequest,
   res: Response

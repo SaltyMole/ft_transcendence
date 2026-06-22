@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
   getMyProfile,
+  getUserProfile,
   updateProfile,
   updateAvatar,
   changePassword,
@@ -8,7 +9,7 @@ import {
   getUserStats,
 } from '../controllers/userController.ts'
 import { authenticateToken } from '../middleware/auth.ts'
-import { validateBody } from '../middleware/validation.ts'
+import { validateBody, validateParams } from '../middleware/validation.ts'
 import { z } from 'zod'
 
 const router = Router()
@@ -44,8 +45,14 @@ const updateAvatarSchema = z.object({
   avatar: z.string().min(1, 'Avatar cannot be empty'),
 })
 
+const userIdSchema = z.object({
+  id: z.uuid() 
+})
+
+
 router.get('/stats', getUserStats)
 router.get('/profile', getMyProfile)
+router.get('/:id/profile', validateParams(userIdSchema), getUserProfile)
 router.put('/profile', validateBody(updateProfileSchema), updateProfile)
 router.put('/avatar', validateBody(updateAvatarSchema), updateAvatar)
 router.put('/password', validateBody(changePasswordSchema), changePassword)
