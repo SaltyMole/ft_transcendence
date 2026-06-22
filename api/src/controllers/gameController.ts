@@ -148,6 +148,7 @@ export const getGame = async (req: AuthenticatedRequest, res: Response) => {
         username: users.username,
         avatar: users.avatar,
         score: gamePlayers.score,
+        isWinner: gamePlayers.isWinner,
         joinedAt: gamePlayers.joinedAt,
       })
       .from(gamePlayers)
@@ -285,6 +286,71 @@ export const saveGameStory = async (req: AuthenticatedRequest, res: Response) =>
   } catch (error) {
     console.error('Save story error:', error)
     res.status(500).json({ error: 'Failed to save story' })
+  }
+}
+
+export const saveGameOutcome = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const gameCode = req.params.gameId as string
+    const { story, winnerUserId } = req.body as { story?: string; winnerUserId?: string }
+
+    if (typeof story !== 'string' || story.trim().length === 0) {
+      return res.status(400).json({ error: 'Story is required' })
+    }
+
+    if (typeof winnerUserId !== 'string' || winnerUserId.trim().length === 0) {
+      return res.status(400).json({ error: 'Winner user id is required' })
+    }
+
+    const [game] = await db.select().from(games).where(eq(games.code, gameCode))
+    if (!game) return res.status(404).json({ error: 'Game not found' })
+
+    const winnerRows = await db
+      .select()
+      .from(gamePlayers)
+      .where(and(eq(gamePlayers.gameId, game.id), eq(gamePlayers.userId, winnerUserId)))
+
+    if (winnerRows.length === 0) {
+      return res.status(404).json({ error: 'Winner is not part of this game' })
+    }
+
+    await db
+      .update(gamePlayers)
+      .set({ isWinner: false })
+      .where(eq(gamePlayers.gameId, game.id))
+
+    const [winnerPlayer] = await db
+      .update(gamePlayers)
+      .set({ isWinner: true })
+      .where(and(eq(gamePlayers.gameId, game.id), eq(gamePlayers.userId, winnerUserId)))
+      .returning()
+
+    const [existingStory] = await db
+      .select()
+      .from(gameStories)
+      .where(eq(gameStories.gameId, game.id))
+
+    if (existingStory) {
+      await db
+        .update(gameStories)
+        .set({ story, winnerId: winnerUserId })
+        .where(eq(gameStories.gameId, game.id))
+    } else {
+      await db
+        .insert(gameStories)
+        .values({ gameId: game.id, story, winnerId: winnerUserId })
+    }
+
+    const [finishedGame] = await db
+      .update(games)
+      .set({ status: 'finished', finishedAt: new Date() })
+      .where(eq(games.id, game.id))
+      .returning()
+
+    res.json({ game: finishedGame, winner: winnerPlayer })
+  } catch (error) {
+    console.error('Save game outcome error:', error)
+    res.status(500).json({ error: 'Failed to save game outcome' })
   }
 }
 

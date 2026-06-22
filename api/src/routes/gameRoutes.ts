@@ -7,6 +7,7 @@ import {
   getGameDrawings,
   getGameStory,
   saveGameStory,
+  saveGameOutcome,
   listGames,
   updateGameStatus,
   updateScore,
@@ -37,7 +38,13 @@ const saveStorySchema = z.object({
   story: z.string().min(1, 'Story is required'),
 })
 
+const saveOutcomeSchema = z.object({
+  story: z.string().min(1, 'Story is required'),
+  winnerUserId: z.string().min(1, 'Winner user id is required'),
+})
+
 router.post('/internal/:gameId/story', validateParams(gameIdParamSchema), validateBody(saveStorySchema), saveGameStory)
+router.post('/internal/:gameId/outcome', validateParams(gameIdParamSchema), validateBody(saveOutcomeSchema), saveGameOutcome)
 
 router.use(authenticateToken)
 

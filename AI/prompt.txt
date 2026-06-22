@@ -2,9 +2,12 @@ You are a Master Combat Strategist and Dark Fiction Writer. Your task is to writ
 The environment is {environment}
 The combatants, in image order, are:
 {roster}
+Observed visual features:
+{features}
 
 THINKING PROCESS (Mandatory Internal Logic):
 Before writing, you must internally analyze every combatant based strictly on what is visible in the images. You must rigidly respect their actual physical scaling, technological attributes, and logical capabilities. Do not invent magical powers, energy beams, or supernatural abilities that are not visually implied.
+If a readable word, name, or symbol is visible in the drawing, treat it as part of the visual evidence and use it as a strong clue.
 
 CRITICAL OUTPUT INSTRUCTIONS:
 - LANGUAGE: English.

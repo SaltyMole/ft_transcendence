@@ -86,18 +86,33 @@ def prepare_inputs(processor: Any, images: list[Image.Image], prompt: str, devic
     return inputs
 
 
+def extract_visual_features(processor: Any, images: list[Image.Image], device: str) -> str:
+    feature_prompt = (
+        "You are inspecting combatant drawings. For each image, write one short numbered line describing only the visible features. "
+        "Include colors, shapes, pose, accessories, symbols, and any readable text or labels if present. "
+        "Do not use usernames or invent backstory. Keep the output compact and factual."
+    )
+    inputs = prepare_inputs(processor, images, feature_prompt, device)
+
+    with torch.no_grad():
+        generated_ids = model.generate(**inputs, max_new_tokens=128)
+
+    generated_only_ids = generated_ids[:, inputs["input_ids"].shape[1]:]
+    return processor.batch_decode(generated_only_ids, skip_special_tokens=True)[0].strip()
+
+
 def build_roster_text(drawings: list[dict[str, Any]]) -> str:
     roster_lines: list[str] = []
     for index, drawing in enumerate(drawings, start=1):
-        username = drawing.get("username") if isinstance(drawing, dict) else None
-        roster_lines.append(f"{index}. {username or f'Combatant {index}'}")
+        label = f"Combatant {index}"
+        roster_lines.append(f"{index}. {label}")
     return "\n".join(roster_lines)
 
-def analyze_winner_with_ai(model: Any, processor: Any, combat_text: str, device: str):
+def analyze_winner_with_ai(model: Any, processor: Any, combat_text: str, device: str, combatant_count: int):
     analysis_prompt = (
         f"Analyze the following combat story and determine the winner confidence.\n"
         f"Story: {combat_text}\n"
-        "Provide the result as: 'Prob1: <float>, Prob2: <float>, Winner: <name>'. "
+        f"There are {combatant_count} combatants. Provide the result as: 'Prob1: <float>, Prob2: <float>, Winner: Combatant <n>'. "
         "Output ONLY this format."
     )
     messages = [{"role": "user", "content": [{"type": "text", "text": analysis_prompt}]}]
@@ -117,7 +132,7 @@ def analyze_winner_with_ai(model: Any, processor: Any, combat_text: str, device:
     try:
         if m := re.search(r"Prob1:\s*([\d.]+)", result): prob1 = float(m.group(1))
         if m := re.search(r"Prob2:\s*([\d.]+)", result): prob2 = float(m.group(1))
-        if m := re.search(r"Winner:\s*(.+)", result): winner = m.group(1).strip()
+        if m := re.search(r"Winner:\s*Combatant\s*(\d+)", result, re.IGNORECASE): winner = f"Combatant {int(m.group(1))}"
     except Exception:
         pass
     return prob1, prob2, winner
@@ -175,6 +190,15 @@ async def persist_story(game_id: str, story: str) -> None:
             if response.status >= 400:
                 body = await response.text()
                 raise RuntimeError(f"Failed to persist story: {response.status} {body}")
+
+
+async def persist_outcome(game_id: str, story: str, winner_user_id: str) -> None:
+    outcome_url = f"{API_BASE_URL}/api/games/internal/{game_id}/outcome"
+    async with aiohttp.ClientSession() as session:
+        async with session.post(outcome_url, json={"story": story, "winnerUserId": winner_user_id}) as response:
+            if response.status >= 400:
+                body = await response.text()
+                raise RuntimeError(f"Failed to persist outcome: {response.status} {body}")
 
 
 # ==========================================
@@ -274,8 +298,9 @@ async def websocket_endpoint(websocket: WebSocket, game_id: str):
 
             images = [resize_image(await fetch_image(url)) for url in drawing_urls]
             roster_text = build_roster_text(drawing_urls)
+            visual_features = extract_visual_features(processor, images, model_device)
             prompt_template = read_prompt_template()
-            prompt = prompt_template.format(environment=env_name, roster=roster_text)
+            prompt = prompt_template.format(environment=env_name, roster=roster_text, features=visual_features)
 
             inputs = prepare_inputs(processor, images, prompt, model_device)
             streamer = TextIteratorStreamer(processor.tokenizer, skip_prompt=True, skip_special_tokens=True)
@@ -298,7 +323,22 @@ async def websocket_endpoint(websocket: WebSocket, game_id: str):
                 print(f"Failed to persist cached story for {game_id}: {persist_error}")
 
             await manager.broadcast("\n\n*Analyzing winner...*\n", game_id)
-            prob1, prob2, winner = analyze_winner_with_ai(model, processor, full_text, model_device)
+            prob1, prob2, winner = analyze_winner_with_ai(model, processor, full_text, model_device, len(images))
+
+            winner_match = re.search(r"Combatant\s*(\d+)", winner, re.IGNORECASE)
+            winner_index = int(winner_match.group(1)) if winner_match else 1
+            winner_index = max(1, min(winner_index, len(drawing_urls)))
+            winner_user_id = drawing_urls[winner_index - 1].get("userId") if isinstance(drawing_urls[winner_index - 1], dict) else None
+
+            if not isinstance(winner_user_id, str) or not winner_user_id:
+                winner_user_id = drawing_urls[0].get("userId") if isinstance(drawing_urls[0], dict) else ""
+
+            if winner_user_id:
+                try:
+                    await persist_outcome(game_id, full_text, winner_user_id)
+                except Exception as persist_error:
+                    print(f"Failed to persist game outcome for {game_id}: {persist_error}")
+
             await manager.broadcast(f"**Final Verdict:** {winner} (P1: {prob1:.2f}, P2: {prob2:.2f})", game_id)
 
     except WebSocketDisconnect:
