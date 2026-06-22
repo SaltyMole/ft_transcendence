@@ -50,7 +50,7 @@ const userIdSchema = z.object({
 })
 
 
-router.get('/stats', getUserStats)
+router.get('/:id/stats',validateParams(userIdSchema), getUserStats)
 router.get('/profile', getMyProfile)
 router.get('/:id/profile', validateParams(userIdSchema), getUserProfile)
 router.put('/profile', validateBody(updateProfileSchema), updateProfile)

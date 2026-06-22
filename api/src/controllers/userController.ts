@@ -141,7 +141,7 @@ export const updateAvatar = async (req: AuthenticatedRequest, res: Response) => 
 
 export const getUserStats = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user!.id
+    const  userId = req.params.id as string
 
     const [gameStats] = await db
       .select({
