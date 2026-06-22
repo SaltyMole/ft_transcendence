@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import {
-  getProfile,
+  getMyProfile,
   updateProfile,
   updateAvatar,
   changePassword,
@@ -45,7 +45,7 @@ const updateAvatarSchema = z.object({
 })
 
 router.get('/stats', getUserStats)
-router.get('/profile', getProfile)
+router.get('/profile', getMyProfile)
 router.put('/profile', validateBody(updateProfileSchema), updateProfile)
 router.put('/avatar', validateBody(updateAvatarSchema), updateAvatar)
 router.put('/password', validateBody(changePasswordSchema), changePassword)

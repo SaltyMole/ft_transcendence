@@ -5,7 +5,7 @@ import { users, gamePlayers, friendships } from '../db/schema.ts'
 import { eq, and, or, count, sum } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
 
-export const getProfile = async (req: AuthenticatedRequest, res: Response) => {
+export const getMyProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id
 
