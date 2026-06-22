@@ -249,6 +249,45 @@ export const getGameStory = async (req: AuthenticatedRequest, res: Response) => 
   }
 }
 
+export const saveGameStory = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const gameCode = req.params.gameId as string
+    const { story } = req.body as { story?: string }
+
+    if (typeof story !== 'string' || story.trim().length === 0) {
+      return res.status(400).json({ error: 'Story is required' })
+    }
+
+    const [game] = await db.select().from(games).where(eq(games.code, gameCode))
+    if (!game) return res.status(404).json({ error: 'Game not found' })
+
+    const [existingStory] = await db
+      .select()
+      .from(gameStories)
+      .where(eq(gameStories.gameId, game.id))
+
+    if (existingStory) {
+      const [updated] = await db
+        .update(gameStories)
+        .set({ story })
+        .where(eq(gameStories.gameId, game.id))
+        .returning()
+
+      return res.json({ story: updated })
+    }
+
+    const [created] = await db
+      .insert(gameStories)
+      .values({ gameId: game.id, story })
+      .returning()
+
+    res.status(201).json({ story: created })
+  } catch (error) {
+    console.error('Save story error:', error)
+    res.status(500).json({ error: 'Failed to save story' })
+  }
+}
+
 export const listGames = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const waitingGames = await db.select().from(games).where(eq(games.status, 'waiting'))

@@ -1,0 +1,1 @@
+print(open("./AI/prompt.txt", "r").read())

@@ -12,6 +12,8 @@ import Chat from "../components/Chat";
 import getDrawings from "../game/getDrawings";
 import getPlayers from "../game/getPlayers"
 import getCurrentUser from "../game/getCurrentUser"
+import getStory from "../game/getStory";
+import { AI_WS_URL } from "../config/api";
 
 const Lobby = () => {
     const { gameID } = useParams();
@@ -27,6 +29,29 @@ const Lobby = () => {
     const [story, setStory] = useState("");
     const [drawings, setDrawings] = useState([]);
     const [players, setPlayers] = useState([]);
+    const [storySocketReady, setStorySocketReady] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const fetchSavedStory = async () => {
+            try {
+                const savedStory = await getStory(gameID);
+                if (cancelled || !savedStory) return;
+
+                setStory(savedStory);
+                hasTriggeredStory.current = true;
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchSavedStory();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [gameID]);
 
     // 1. Get player ID
     useEffect(() => {
@@ -134,16 +159,20 @@ const Lobby = () => {
 
     // 7. WEBSOCKET CONNECTION
     useEffect(() => {
-        const ws = new WebSocket(`ws://localhost:8000/ws/story/${gameID}`);
+        const ws = new WebSocket(`${AI_WS_URL}/ws/story/${gameID}`);
         
-        ws.onopen = () => console.log("Connected to AI Story Server");
+        ws.onopen = () => {
+            console.log("Connected to AI Story Server");
+            setStorySocketReady(true);
+        };
         ws.onmessage = (event) => setStory((prev) => prev + event.data);
         ws.onerror = (error) => console.error("WebSocket Error:", error);
-        ws.onclose = () => console.log("WebSocket connection closed");
+        ws.onclose = () => setStorySocketReady(false);
 
         wsRef.current = ws;
 
         return () => {
+            setStorySocketReady(false);
             if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
                 ws.close();
             }
@@ -152,21 +181,36 @@ const Lobby = () => {
 
     // 8. AUTO-TRIGGER STORY GENERATION
     useEffect(() => {
-        if (players.length === 0 || drawings.length === 0 || !wsRef.current || !environment) return;
+        if (players.length === 0 || drawings.length === 0 || !storySocketReady || !environment || story) return;
         if (wsRef.current.readyState !== WebSocket.OPEN) return;
+
+        const sortedPlayers = [...players].sort((left, right) => {
+            return new Date(left.joinedAt).getTime() - new Date(right.joinedAt).getTime();
+        });
+        const storyLeaderId = sortedPlayers[0]?.userId;
+        if (storyLeaderId && storyLeaderId !== playerID) return;
 
         if (drawings.length === players.length && !hasTriggeredStory.current) {
             hasTriggeredStory.current = true;
-
-            // Python will now handle digging into the objects to find 'drawingData'
             wsRef.current.send(JSON.stringify({ 
                 action: "generate", 
                 drawings: drawings,
                 environment: environment
             }));
         }
-    }, [drawings, players, environment]);
+    }, [drawings, players, environment, storySocketReady, story, playerID]);
 
+
+    //Button to debug story generation that cleans the current story and sends a websocket to generate another one
+    const handleDebugGenerate = () => {
+        if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
+        setStory("");
+        wsRef.current.send(JSON.stringify({
+            action: "generate",
+            drawings: drawings,
+            environment: environment
+        }));
+    }
 
     if (!playerID) return null;
 

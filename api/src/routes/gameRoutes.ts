@@ -6,6 +6,7 @@ import {
   sendDrawing,
   getGameDrawings,
   getGameStory,
+  saveGameStory,
   listGames,
   updateGameStatus,
   updateScore,
@@ -22,8 +23,6 @@ import { z } from 'zod'
 
 const router = Router()
 
-router.use(authenticateToken)
-
 const gameIdParamSchema = z.object({ gameId: z.string().length(8) })
 
 const updateStatusSchema = z.object({
@@ -33,6 +32,14 @@ const updateStatusSchema = z.object({
 const updateScoreSchema = z.object({
   score: z.number().int().min(0),
 })
+
+const saveStorySchema = z.object({
+  story: z.string().min(1, 'Story is required'),
+})
+
+router.post('/internal/:gameId/story', validateParams(gameIdParamSchema), validateBody(saveStorySchema), saveGameStory)
+
+router.use(authenticateToken)
 
 router.get('/', listGames)
 router.post('/', createGame)
