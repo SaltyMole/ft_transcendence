@@ -98,7 +98,7 @@ export const updateProfile = async (
 ) => {
   try {
     const userId = req.user!.id
-    const { email, username } = req.body
+    const { email, username, bio } = req.body
 
     if (email) {
       const [existingUser] = await db.select().from(users).where(eq(users.email, email))
@@ -135,6 +135,7 @@ export const updateProfile = async (
       .set({
         email,
         username,
+        bio,
         updatedAt: new Date(),
       })
       .where(eq(users.id, userId))
@@ -262,23 +263,6 @@ export const changePassword = async (
   } catch (error) {
     console.error('Change password error:', error)
     res.status(500).json({ error: 'Failed to change password' })
-  }
-}
-
-export const updateBio = async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const userId = req.user!.id
-    const { bio } = req.body
-    const [updatedUser] = await db
-      .update(users)
-      .set({ bio, updatedAt: new Date() })
-      .where(eq(users.id, userId))
-      .returning({ id: users.id, bio: users.bio })
-
-    res.json({ message: 'Bio updated successfully', user: updatedUser })
-  } catch (error) {
-    console.error('Update avatar error:', error)
-    res.status(500).json({ error: 'Failed to update bio' })
   }
 }
 

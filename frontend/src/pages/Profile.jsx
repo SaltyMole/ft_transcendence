@@ -193,7 +193,7 @@ function Profile() {
                     {profile.username}
                   </h2>
                   <p className='text-[#58508D] font-bold mt-2'>
-                    {isSelfProfile ? 'Your profile and social links.' : 'Public profile and social links.'}
+                    {profile.bio}
                   </p>
                 </div>
 

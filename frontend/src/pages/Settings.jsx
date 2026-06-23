@@ -6,6 +6,7 @@ import Button from '../components/Button';
 function Settings() {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
+    const [bio, setBio] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -32,6 +33,7 @@ function Settings() {
                     const data = await response.json();
                     setEmail(data.user.email);
                     setUsername(data.user.username);
+                    setBio(data.user.bio || '');
                     setAvatar(data.user.avatar);
                     setIs2FAEnabled(data.user.twoFactorEnabled || false);
                 } else if (response.status === 401) {
@@ -55,7 +57,7 @@ function Settings() {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ email, username })
+                body: JSON.stringify({ email, username, bio })
             });
 
             const data = await response.json();
@@ -285,7 +287,19 @@ function Settings() {
                         {errors?.filter(error => error.field === "username").map((error, index) => (
                             <p key={index} className='text-center text-red-500'>{error.message}</p>
                         ))}
-                        
+
+                        <label className="input_label mt-5">
+                            Bio
+                            <textarea
+                                className="Input resize-none"
+                                placeholder="Tell us about yourself..."
+                                value={bio}
+                                onChange={e => setBio(e.target.value)}
+                                rows={3}
+                                maxLength={200}
+                            />
+                        </label>
+
                         <div className="flex px-2 items-center mt-5 justify-center gap-10">
                             <Button value="buttonP !pl-18 !pr-18" type="submit" text="Save Profile" />
                         </div>
