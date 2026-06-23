@@ -23,6 +23,7 @@ function PlayersPictures({ gameID }) {
 		<div className="PlayersWrapper">
 			{players.map((player) => (
 				<div key={player.userId} className="PlayerDiv">
+					{player.isWinner && <span className="WinnerBadge">Winner</span>}
 					<div className="PlayerPictureWrapper">
 					<img className="PlayerPicture" src={player.avatar} alt={player.username}/>
 					</div>

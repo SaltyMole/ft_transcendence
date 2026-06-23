@@ -11,6 +11,7 @@ import Chat from "../components/Chat";
 import getStory from "../game/getStory";
 import getCurrentUser from "../game/getCurrentUser"
 import getPlayer from "../game/getPlayer";
+import PlayersPictures from "../components/PlayersPictures";
 
 
 
@@ -92,7 +93,10 @@ const Loading = () => {
 						<img className="WinnerLight" src={spotlight} />
 					</div>
 					<h1 className="WinnerText">WINNER: {player.username} !</h1>
-					
+					<div className="ResultsRoster">
+						<h2 className="ResultsRosterTitle">Combatants</h2>
+						<PlayersPictures gameID={gameID} />
+					</div>
 					
 					<div className="CarouselAndStory">
 						<div className="Carousel">

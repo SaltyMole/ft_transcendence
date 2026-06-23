@@ -1,6 +1,6 @@
 
-import {BrowserRouter, Routes, Route, Link, Navigate, useParams, generatePath} from "react-router-dom";
-import { useState } from 'react';
+import {BrowserRouter, Routes, Route} from "react-router-dom";
+import { useEffect, useState } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Header from "./components/Header";
 import Head from "./components/Head";
@@ -21,11 +21,43 @@ import ProtectedRoute from "./pages/ProtectedRoute";
 import E404 from "./pages/404";
 import Settings from "./pages/Settings";
 import Friends from "./pages/Friends"
+import Messages from "./pages/Messages"
+
 //import About from "./pages/About";
 
 
 function App() {
-	const [isLoggedIn, setIsLoggedIn] = useState(() => { return !!localStorage.getItem("token");});
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [authReady, setAuthReady] = useState(false);
+
+	useEffect(() => {
+		const validateAuth = async () => {
+			try {
+				const response = await fetch('/api/users/profile', { credentials: 'include', });
+				if (response.ok) {
+					setIsLoggedIn(true);
+				} else {
+					localStorage.removeItem('token');
+					setIsLoggedIn(false);
+				}
+			} catch (error) {
+				console.error('Failed to validate auth token', error);
+				setIsLoggedIn(false);
+			} finally {
+				setAuthReady(true);
+			}
+		};
+
+		validateAuth();
+	}, []);
+
+	if (!authReady) {
+		return (
+			<div className="app min-h-screen flex items-center justify-center">
+				<p>Checking session...</p>
+			</div>
+		);
+	}
 	
   	return (
 	<GoogleOAuthProvider clientId="496213748350-bq85hc6fl5i2msfvq4817r9939010tqh.apps.googleusercontent.com">
@@ -46,6 +78,7 @@ function App() {
 					<Route path="/Results/:gameID" element={<Results />} />
 					<Route path="/Settings" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Settings /> </ProtectedRoute>} />
 					<Route path="/Friends" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Friends /> </ProtectedRoute>} />
+					<Route path="/Messages/:friendId" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Messages /> </ProtectedRoute>} />
 					<Route path="*" element={<E404 />} />
 				</Routes>
 			</Layout>

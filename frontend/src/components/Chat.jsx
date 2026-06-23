@@ -19,6 +19,8 @@ function Chat({
 	const [connected, setConnected] = useState(false);
 
 	useEffect(() => {
+		if (!gameID || !clientName) return;
+
 		const ws = new WebSocket(WS_URL);
 		wsRef.current = ws;
 
@@ -42,7 +44,7 @@ function Chat({
 		ws.onerror = (err) => console.error("WebSocket error:", err);
 
 		return () => ws.close();
-	}, []);
+	}, [clientName, gameID]);
 
 	function send_message() {
 		const ws = wsRef.current;
