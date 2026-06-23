@@ -1,6 +1,8 @@
-import { env, isDev, isTestEnv } from '../env.ts'
+import { env, isTestEnv } from '../env.ts'
 import express from 'express'
 import cors from 'cors'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import authRoutes from './routes/authRoutes.ts'
@@ -11,7 +13,12 @@ import gameRoutes from './routes/gameRoutes.ts'
 import morgan from 'morgan'
 import { errorHandler, notFound } from './middleware/errorHandler.ts'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 const app = express()
+
+app.use('/public', express.static(path.join(__dirname, '../public')))
 
 app.use(helmet())
 app.use(

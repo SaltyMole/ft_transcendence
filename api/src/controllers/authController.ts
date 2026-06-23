@@ -58,6 +58,7 @@ export const register = async (req: Request, res: Response) => {
         email: email.toLowerCase(),
         username,
         password: hashedPassword,
+        avatar: '/public/default-avatar.png',
       })
       .returning({
         id: users.id,
@@ -170,6 +171,7 @@ export const googleAuth = async (req: Request, res: Response) => {
           email: email.toLowerCase(),
           username: username || email.split('@')[0],
           password: hashedPassword,
+          avatar: '/public/default-avatar.png',
         })
         .returning()
       

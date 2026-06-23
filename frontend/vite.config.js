@@ -24,6 +24,10 @@ export default defineConfig({
         target: 'https://localhost:3000',
         secure: false,
       },
+      '/public': {
+        target: 'https://localhost:3000',
+        secure: false,
+      },
     },
 	watch: {
       ignored: ['**/bdd.json']
