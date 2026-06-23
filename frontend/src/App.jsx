@@ -79,7 +79,7 @@ function App() {
 					<Route path="/Settings" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Settings /> </ProtectedRoute>} />
 					<Route path="/Friends" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Friends /> </ProtectedRoute>} />
 					<Route path="/Messages/:friendId" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Messages /> </ProtectedRoute>} />
-					<Route path="/Profile/:id" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Profile /> </ProtectedRoute>} />
+					<Route path="/Profile/:userId" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Profile /> </ProtectedRoute>} />
 					<Route path="*" element={<E404 />} />
 				</Routes>
 			</Layout>
