@@ -15,9 +15,9 @@ const router = Router()
 
 router.use(authenticateToken)
 
-const friendIdSchema = z.object({ friendId: z.string().uuid() })
+const friendIdSchema = z.object({ friendId: z.uuid() })
 const respondSchema = z.object({ status: z.enum(['accepted', 'rejected']) })
-const friendshipIdParamSchema = z.object({ friendshipId: z.string().uuid() })
+const friendshipIdParamSchema = z.object({ friendshipId: z.uuid() })
 
 router.get('/', getFriends)
 router.get('/requests', getPendingRequests)

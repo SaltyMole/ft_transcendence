@@ -24,7 +24,7 @@ import { z } from 'zod'
 
 const router = Router()
 
-const gameIdParamSchema = z.object({ gameId: z.string().length(8) })
+const gameCodeParamSchema = z.object({ gameCode: z.string().length(8) })
 
 const updateStatusSchema = z.object({
   status: z.enum(['in_progress', 'finished']),
@@ -43,31 +43,33 @@ const saveOutcomeSchema = z.object({
   winnerUserId: z.string().min(1, 'Winner user id is required'),
 })
 
-router.post('/internal/:gameId/story', validateParams(gameIdParamSchema), validateBody(saveStorySchema), saveGameStory)
-router.post('/internal/:gameId/outcome', validateParams(gameIdParamSchema), validateBody(saveOutcomeSchema), saveGameOutcome)
+// Unauthenticated internal routes (backend-to-backend)
+router.post('/internal/:gameId/story', validateParams(gameCodeParamSchema), validateBody(saveStorySchema), saveGameStory)
+router.post('/internal/:gameId/outcome', validateParams(gameCodeParamSchema), validateBody(saveOutcomeSchema), saveGameOutcome)
 
+// Authenticated routes
 router.use(authenticateToken)
 
 router.get('/', listGames)
 router.post('/', createGame)
-router.get('/:gameId', validateParams(gameIdParamSchema), getGame)
-router.post('/:gameId/drawings', authenticateToken, validateParams(gameIdParamSchema), sendDrawing)
-router.get('/:gameId/drawings', authenticateToken, validateParams(gameIdParamSchema), getGameDrawings)
-router.get('/:gameId/story', authenticateToken, validateParams(gameIdParamSchema), getGameStory)
-router.get('/:gameId/winner', validateParams(gameIdParamSchema), getWinner)
-router.get('/:gameId/:playerId', validateParams(gameIdParamSchema), getPlayer)
-router.get('/check/:gameId/:playerId', validateParams(gameIdParamSchema), checkIsPlayerInGame)
-router.post('/:gameId/join', validateParams(gameIdParamSchema), joinGame)
-router.post('/removePlayer/:gameId/:playerId', authenticateToken, validateParams(gameIdParamSchema), removePlayer)
+router.get('/:gameCode', validateParams(gameCodeParamSchema), getGame)
+router.post('/:gameCode/drawings', validateParams(gameCodeParamSchema), sendDrawing)
+router.get('/:gameCode/drawings', validateParams(gameCodeParamSchema), getGameDrawings)
+router.get('/:gameCode/story',  validateParams(gameCodeParamSchema), getGameStory)
+router.get('/:gameCode/winner', validateParams(gameCodeParamSchema), getWinner)
+router.get('/:gameCode/:playerId', validateParams(gameCodeParamSchema), getPlayer)
+router.get('/check/:gameCode/:playerId', validateParams(gameCodeParamSchema), checkIsPlayerInGame)
+router.post('/:gameCode/join', validateParams(gameCodeParamSchema), joinGame)
+router.post('/removePlayer/:gameCode/:playerId', validateParams(gameCodeParamSchema), removePlayer)
 router.put(
-  '/:gameId/status',
-  validateParams(gameIdParamSchema),
+  '/:gameCode/status',
+  validateParams(gameCodeParamSchema),
   validateBody(updateStatusSchema),
   updateGameStatus
 )
 router.put(
-  '/:gameId/score',
-  validateParams(gameIdParamSchema),
+  '/:gameCode/score',
+  validateParams(gameCodeParamSchema),
   validateBody(updateScoreSchema),
   updateScore
 )
@@ -77,11 +79,11 @@ const sendGameMessageSchema = z.object({
 })
 
 router.post(
-  '/:gameId/messages',
-  validateParams(gameIdParamSchema),
+  '/:gameCode/messages',
+  validateParams(gameCodeParamSchema),
   validateBody(sendGameMessageSchema),
   sendGameMessage
 )
-router.get('/:gameId/messages', validateParams(gameIdParamSchema), getGameMessages)
+router.get('/:gameCode/messages', validateParams(gameCodeParamSchema), getGameMessages)
 
 export default router
