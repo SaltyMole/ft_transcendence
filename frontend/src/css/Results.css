@@ -1,0 +1,169 @@
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+
+.DarkenBackground {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #000000ce;
+    z-index: 0;
+}
+
+.OverlayResults {
+	background-color: rgba(0, 0, 0, 0.6); 
+	box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(199, 189, 189, 0.5),
+    inset 0 -1px 0 rgba(160, 152, 152, 0.1),
+    inset 0 0 20px 7px #a8adaeb3;
+	width: 60%; /*help todo fix*/
+	padding: 20px;
+	text-align: center;
+	color:white;
+	border-radius: 10px;
+	box-sizing: border-box;
+	height: auto;        /* grow with content instead of locking to parent */
+    min-height: 100%;    /* still fills the screen if content is short */
+    overflow-y: auto;
+    position: relative;
+}
+
+.ResultsContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: start;
+    height: auto;
+    /* gap: 2vh; */
+}
+
+.ResultsText {
+	display: flex;
+	font-size: calc(5vw);
+	color: #d7c9ff;
+
+	text-shadow: 10px 10px 10px #000000;
+	font-family: "Public Sans";
+	overflow-wrap: break-word;
+
+    z-index: 2;
+}
+
+.WinnerDiv {
+    display: flex;
+    width: 30vw;
+    height: 30vw;
+    justify-content: center;
+    align-items: end;
+    position: relative;
+    overflow: visible;
+}
+
+.WinnerPicture {
+    margin-bottom: 7%;
+    transform: scale(0.75);
+    animation: hithere 1s ease infinite;
+}
+@keyframes hithere {
+  30% { transform: scale(1); }
+  40%, 60% { transform: rotate(-20deg) scale(1); }
+  50% { transform: rotate(20deg) scale(1); }
+  70% { transform: rotate(0deg) scale(1); }
+  100% { transform: scale(0.75); }
+}
+
+.WinnerLight {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.WinnerText {
+    display: flex;
+	font-size: calc(2vw);
+	color: #ecfd7e;
+
+	text-shadow: 10px 10px 10px #000000;
+	font-family: "Public Sans";
+	overflow-wrap: break-word;
+
+    margin-bottom: 5vh;
+
+    animation: shake 10s ease infinite;
+}
+@keyframes shake {
+	0%, 100% {transform: translateX(0);}
+	10%, 30%, 50%, 70%, 90% {transform: translateX(-10px);}
+	20%, 40%, 60%, 80% {transform: translateX(10px);}
+}
+
+.ChatDivResults {
+	display: flex;
+	position: flex;
+	background-color: #0000007c;
+    border-radius: 2vh;
+    height: 40vh;
+    text-align: left;
+}
+
+.ResultsRoster {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.ResultsRosterTitle {
+    font-size: 1.4rem;
+    color: #ecfd7e;
+    text-shadow: 5px 5px 10px #000000;
+    font-family: "Public Sans";
+    margin: 0;
+}
+
+.CombatStory {
+    max-height: 65vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.CombatStory::-webkit-scrollbar {
+    width: 8px;
+}
+
+.CombatStory::-webkit-scrollbar-thumb {
+    background: #58508D;
+    border-radius: 999px;
+}
+
+@media (max-width: 120vh) {
+	.OverlayResults {
+		width: 100vw;
+        overflow-x: hidden;
+		margin-right: 0px;
+	}
+	.ResultsContent {
+		width: 90vw;
+	}
+    .ResultsText {
+        font-size: 10vw;
+    }
+    .WinnerDiv {
+        width: 75vw;
+        height: 75vw;
+    }
+    .WinnerText {
+        font-size: 5vw;
+    }
+}
+
+
+html, body {
+    height: auto;
+    overflow-y: auto;
+}

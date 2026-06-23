@@ -1,0 +1,40 @@
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+.DrawingCarouselContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.PlayerName {
+	display: flex;
+	font-size: 1vw;
+	color: #d7c9ff;
+
+	text-shadow: 10px 10px 10px #000000;
+	font-family: "Public Sans";
+	overflow-wrap: break-word;
+}
+
+.Buttons {
+	display: flex;
+	flex-direction: row;
+	gap: 1vw;
+}
+
+.Drawing {
+	width: 20vw;
+	aspect-ratio: 4/3;
+	border-radius: 1.5vh;
+}
+
+
+
+@media (max-width: 120vh)	{
+	.PlayerName {
+		font-size: 3vw;
+	}
+	.Drawing {
+		width: 40vw;
+	}
+}

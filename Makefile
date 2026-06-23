@@ -1,38 +1,47 @@
-.PHONY: all install frontend backend frontend-dev backend-dev clean fclean re
+.PHONY: all install frontend-run backend-run clean ai-certs certs frontend-setup backend-setup ai-setup ai-run backend-stop backend-run tmp-backend-run
 
-all: frontend backend
+# all: frontend backend
 
-install: frontend/node_modules backend/node_modules
+SHELL := /bin/zsh
 
-frontend/node_modules:
-	cd ./frontend && npm install
+frontend-setup:
+	cd frontend && npm install
 
-backend/node_modules:
-	cd ./backend && npm install
+frontend-run:
+	cd frontend && npm run dev -- --host
 
-frontend: frontend/node_modules
-	cd ./frontend && npm run build
+certs:
+	mkdir -p api/certs
+	openssl req -x509 -newkey rsa:2048 -keyout api/certs/key.pem -out api/certs/cert.pem \
+		-days 365 -nodes -subj "/CN=localhost" \
+		-addext "subjectAltName=IP:127.0.0.1,DNS:localhost"
 
-backend: backend/node_modules
-	cd ./backend && npm run build
+ai-certs:
+	mkdir -p AI/certs
+	openssl req -x509 -newkey rsa:2048 -keyout AI/certs/key.pem -out AI/certs/cert.pem \
+		-days 365 -nodes -subj "/CN=localhost" \
+		-addext "subjectAltName=IP:127.0.0.1,DNS:localhost"
 
-frontend-dev: frontend/node_modules
-	cd ./frontend && npm run dev
+backend-setup: certs
+	cd api && cp .env.example .env
+	docker compose up -d
+	cd api && npm install
+	cd api && npx drizzle-kit push --force
 
-backend-dev: backend/node_modules
-	cd ./backend && npm run start:dev
+ai-setup: ai-certs
+	cd AI && python -m venv venv
+	source ./AI/venv/bin/activate && pip install --upgrade pip
+	source ./AI/venv/bin/activate && pip install -r ./AI/requirements.txt
 
-clean:
-	rm -rf ./frontend/dist
-	rm -rf ./backend/dist
+ai-run:
+	source ./AI/venv/bin/activate && python ./AI/server.py
 
-fclean: clean
-	rm -rf ./frontend/node_modules
-	rm -rf ./backend/node_modules
-	rm -rf ./node_modules
-	rm -f ./frontend/package-lock.json
-	rm -f ./backend/package-lock.json
-	rm -f ./package-lock.json
-	rm -rf ./backend/pngs
+backend-run:
+	cd api && npm run dev
 
-re: fclean all
+tmp-backend-run:
+	cd api && node server.js
+
+backend-stop:
+	docker compose down
+	cd api && rm .env

@@ -1,0 +1,34 @@
+import { Router } from 'express'
+import {
+  searchUsersByUsername,
+  sendFriendRequest,
+  respondToFriendRequest,
+  getFriends,
+  getPendingRequests,
+  removeFriend,
+} from '../controllers/friendController.ts'
+import { authenticateToken } from '../middleware/auth.ts'
+import { validateBody, validateParams } from '../middleware/validation.ts'
+import { z } from 'zod'
+
+const router = Router()
+
+router.use(authenticateToken)
+
+const friendIdSchema = z.object({ friendId: z.uuid() })
+const respondSchema = z.object({ status: z.enum(['accepted', 'rejected']) })
+const friendshipIdParamSchema = z.object({ friendshipId: z.uuid() })
+
+router.get('/', getFriends)
+router.get('/requests', getPendingRequests)
+router.get('/search', searchUsersByUsername)
+router.post('/request', validateBody(friendIdSchema), sendFriendRequest)
+router.put(
+  '/:friendshipId/respond',
+  validateParams(friendshipIdParamSchema),
+  validateBody(respondSchema),
+  respondToFriendRequest
+)
+router.delete('/:friendshipId', validateParams(friendshipIdParamSchema), removeFriend)
+
+export default router

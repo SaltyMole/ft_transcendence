@@ -1,0 +1,97 @@
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+.ChatBox {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    justify-self: center;
+    margin-left: 1vw;
+    margin-right: 1vw;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    padding-right: 1vw;
+    flex: 1;
+
+    justify-content: flex-end;
+}
+.Chat {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+    min-height: 0;
+    overflow: auto;
+    color: #58508d;
+    text-shadow: 0px 2px 2px #00000059;
+    font-family: "Public Sans";
+    overflow-wrap: break-word;
+}
+
+.MessageName {
+	margin-left: 0.5vw;
+    font-size: calc(100% + 1vh);
+    color: #58508d;
+    text-shadow: 0px 2px 2px #00000059;
+    font-family: "Public Sans";
+    font-weight: 750;
+    overflow-wrap: break-word;
+}
+
+.MessageText {
+    font-size: calc(100% + 1vh);
+    color: #58508d;
+    text-shadow: 0px 2px 2px #00000059;
+    font-family: "Public Sans";
+    overflow-wrap: break-word;
+}
+
+.ChatInputBox {
+    background-color: #58508d;
+    display: flex;
+    min-height: 7vh;
+    margin-top: 1vh;
+    margin-left: 2vh;
+    margin-right: 2vh;
+    margin-bottom: 2vh;
+    border-radius: 5vh 5vh 5vh 5vh;
+    box-shadow: 2px 4px 3px #491a65;
+}
+.ChatInput {
+    background-color: #00000000;
+    border: none;
+    align-self: center;
+    outline: none;
+    margin-left: 1vw;
+    margin-right: auto;
+    min-width: 11vw;
+    width: 100vw;
+    min-height: 6vh;
+
+    font-size: 3vh;
+    font-family: "Public Sans";
+    color: #ffffff;
+}
+
+.SendChatButton {
+    background-color: #fffade;
+    min-height: 5vh;
+    height: 5vw;
+    max-height: 5vh;
+    min-width: 5vh;
+    width: 5vw;
+    max-width: 5vh;
+    border: none;
+    outline: none;
+    border-radius: 3vh 3vh 3vh 3vh;
+    align-self: center;
+    margin-left: auto;
+    margin-right: 0.5vw;
+    box-shadow: 2px 4px 3px #491a65;
+}
+.SendChatButton:hover {
+    transition-duration: 150ms;
+    box-shadow:
+        0 0 transparent,
+        inset 2px 2px 3px 1px #491a65;
+}

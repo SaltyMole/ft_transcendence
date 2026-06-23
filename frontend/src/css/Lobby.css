@@ -1,0 +1,158 @@
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+
+
+.LobbyContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 100%;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	gap: 1vh;
+}
+
+.LobbyText {
+	display: flex;
+	font-size: calc(5vw);
+	color: #d7c9ff;
+
+	text-shadow: 10px 10px 10px #000000;
+	font-family: "Public Sans";
+	overflow-wrap: break-word;
+}
+
+.Environment {
+	display: flex;
+	font-size: calc(2vw);
+	color: #58508D;
+	text-shadow: 5px 5px 8px #000000;
+	font-family: "Public Sans";
+	overflow-wrap: break-word;
+
+	padding-left: 1vw;
+	padding-right: 1vw;
+	background-color: #d7c9ff;
+	border-radius: 1vw;
+}
+
+.CarouselAndStory {
+	display: flex;
+	flex-direction: row;
+}
+
+.Carousel {
+	display: flex;
+	flex-direction: column;
+
+	top: 0;
+	position: sticky;
+	align-self: flex-start;
+	
+	width: 25vw;
+	height: fit-content;
+	background-color: #0000007f;
+	padding-top: 1vw;
+	padding-left: 1vw;
+	padding-right: 1vw;
+	padding-bottom: 1vw;
+	border-radius: 1vw;
+	color: #ffffff;
+	gap: 1vw;
+}
+
+.CarouselText {
+	font-size: 1.5vw;
+	color: #58508D;
+	text-shadow: 5px 5px 10px #000000;
+	background-color: #FFFADE;
+	width: 50%;
+	align-self: center;
+	border-radius: 1vw;
+}
+
+.ChatDivLobby {
+	display: flex;
+	position: flex;
+	background-color: #0000007c;
+    border-radius: 2vh;
+    height: 40vh;
+    text-align: left;
+}
+
+.CombatStory {
+	display: flex;
+	flex-direction: column;
+	font-size: calc(1.5vw);
+	color: #ffffff;
+	text-shadow: 10px 10px 10px #000000;
+	font-family: "Public Sans";
+	overflow-wrap: break-word;
+
+	width: 25vw;
+	text-align: left;
+	margin-left: 1vw;
+	margin-right: 1vw;
+	padding-top: 1vw;
+	padding-left: 1vw;
+	padding-right: 1vw;
+	padding-bottom: 1vw;
+	background-color: #00000071;
+	border-radius: 1vw;
+	max-height: 72vh;
+	overflow-y: auto;
+	padding-right: 0.75vw;
+}
+
+.CombatStory::-webkit-scrollbar {
+	width: 8px;
+}
+
+.CombatStory::-webkit-scrollbar-thumb {
+	background: #58508D;
+	border-radius: 999px;
+}
+
+.generateStoryButton {
+	margin-top: 1vh;
+}
+
+.CombatStoryText {
+	font-size: 1.5vw;
+	color: #58508D;
+	text-shadow: 5px 5px 10px #000000;
+	background-color: #FFFADE;
+	width: 50%;
+	align-self: center;
+	border-radius: 1vw;
+	text-align: center;
+}
+
+
+@media (max-width: 120vh) {
+	.overlay {
+		width: 100vw;
+		margin-right: 0px;
+	}
+	.Carousel {
+		width: calc(50vw - 3vh);
+	}
+	.CombatStory {
+		width: calc(50vw - 3vh);
+	}
+	.LobbyText {
+		font-size: 10vw;
+	}
+	.Environment {
+		font-size: 5vw;
+	}
+	.CarouselText {
+		font-size: 3.5vw;
+	}
+	.CombatStoryText {
+		font-size: 3.5vw;
+	}
+	.CombatStory {
+		font-size: 4vw;
+	}
+}
