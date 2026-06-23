@@ -33,6 +33,12 @@ export default defineConfig({
         ws: true,
         secure: false,
       },
+      '/ws/chat': {
+        target: 'wss://localhost:3000',
+        ws: true,
+        secure: false,
+        changeOrigin: true,
+      },
     },
 	watch: {
       ignored: ['**/bdd.json']
