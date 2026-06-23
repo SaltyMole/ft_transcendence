@@ -99,6 +99,18 @@
 	padding-bottom: 1vw;
 	background-color: #00000071;
 	border-radius: 1vw;
+	max-height: 72vh;
+	overflow-y: auto;
+	padding-right: 0.75vw;
+}
+
+.CombatStory::-webkit-scrollbar {
+	width: 8px;
+}
+
+.CombatStory::-webkit-scrollbar-thumb {
+	background: #58508D;
+	border-radius: 999px;
 }
 
 .generateStoryButton {
