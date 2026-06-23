@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1779013392235,
-      "tag": "0000_famous_marvel_boy",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1779867008541,
-      "tag": "0001_flat_triton",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1781017480416,
-      "tag": "0002_modern_bastion",
+      "when": 1782240854064,
+      "tag": "0000_sweet_johnny_storm",
       "breakpoints": true
     }
   ]

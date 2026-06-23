@@ -16,6 +16,7 @@ export const getMyProfile = async (req: AuthenticatedRequest, res: Response) => 
         email: users.email,
         username: users.username,
         avatar: users.avatar,
+        bio: users.bio,
         twoFactorEnabled: users.twoFactorEnabled,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
@@ -42,6 +43,7 @@ export const getUserProfile = async (req: AuthenticatedRequest, res: Response) =
       .select({
         id: users.id,
         username: users.username,
+        bio: users.bio,
         avatar: users.avatar,
         createdAt: users.createdAt,
       })
