@@ -21,8 +21,8 @@ import ProtectedRoute from "./pages/ProtectedRoute";
 import E404 from "./pages/404";
 import Settings from "./pages/Settings";
 import Friends from "./pages/Friends"
-import Messages from "./pages/Messages"
-
+import Messages from "./pages/Messages";
+import Profile from "./pages/Profile";
 //import About from "./pages/About";
 
 
@@ -68,6 +68,8 @@ function App() {
 				<Routes>
 					<Route path="/Login" element={<Login setIsLoggedIn={setIsLoggedIn}/>}/>
 					<Route path="/Register" element={<Register />}/>
+					<Route path="/messages/:friendId" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Messages /> </ProtectedRoute>} />
+					<Route path="/profile/:userId" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Profile /> </ProtectedRoute>} />
 					<Route path="/" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Home /> </ProtectedRoute>}  />
 					<Route path="/Game" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Game /> </ProtectedRoute>} />
 					<Route path="/PrivatePolicy" element={<PrivatePolicy />} />
@@ -78,7 +80,6 @@ function App() {
 					<Route path="/Results/:gameID" element={<Results />} />
 					<Route path="/Settings" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Settings /> </ProtectedRoute>} />
 					<Route path="/Friends" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Friends /> </ProtectedRoute>} />
-					<Route path="/Messages/:friendId" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Messages /> </ProtectedRoute>} />
 					<Route path="*" element={<E404 />} />
 				</Routes>
 			</Layout>

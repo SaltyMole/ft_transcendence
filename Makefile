@@ -1,4 +1,4 @@
-.PHONY: all install frontend-run backend-run clean
+.PHONY: all install frontend-run backend-run clean ai-certs certs frontend-setup backend-setup ai-setup ai-run backend-stop backend-run tmp-backend-run
 
 # all: frontend backend
 
@@ -16,13 +16,19 @@ certs:
 		-days 365 -nodes -subj "/CN=localhost" \
 		-addext "subjectAltName=IP:127.0.0.1,DNS:localhost"
 
+ai-certs:
+	mkdir -p AI/certs
+	openssl req -x509 -newkey rsa:2048 -keyout AI/certs/key.pem -out AI/certs/cert.pem \
+		-days 365 -nodes -subj "/CN=localhost" \
+		-addext "subjectAltName=IP:127.0.0.1,DNS:localhost"
+
 backend-setup: certs
 	cd api && cp .env.example .env
 	docker compose up -d
 	cd api && npm install
 	cd api && npx drizzle-kit push --force
 
-ai-setup:
+ai-setup: ai-certs
 	cd AI && python -m venv venv
 	source ./AI/venv/bin/activate && pip install --upgrade pip
 	source ./AI/venv/bin/activate && pip install -r ./AI/requirements.txt

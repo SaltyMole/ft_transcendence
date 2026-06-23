@@ -59,6 +59,37 @@ export const getUserProfile = async (req: AuthenticatedRequest, res: Response) =
   }
 }
 
+export const getUserFriends = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.params.id as string
+
+    const rows = await db
+      .select({
+        friendshipId: friendships.id,
+        since: friendships.createdAt,
+        id: users.id,
+        username: users.username,
+        avatar: users.avatar,
+      })
+      .from(friendships)
+      .innerJoin(users, or(
+        and(eq(friendships.userId, userId), eq(users.id, friendships.friendId)),
+        and(eq(friendships.friendId, userId), eq(users.id, friendships.userId))
+      ))
+      .where(
+        and(
+          eq(friendships.status, 'accepted'),
+          or(eq(friendships.userId, userId), eq(friendships.friendId, userId))
+        )
+      )
+
+    res.json({ friends: rows })
+  } catch (error) {
+    console.error('Get user friends error:', error)
+    res.status(500).json({ error: 'Failed to fetch user friends' })
+  }
+}
+
 export const updateProfile = async (
   req: AuthenticatedRequest,
   res: Response

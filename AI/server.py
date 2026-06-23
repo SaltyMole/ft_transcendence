@@ -8,6 +8,7 @@ import time
 from typing import Any, Optional, cast
 
 import aiohttp
+import ssl
 from PIL import Image
 import torch
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
@@ -15,10 +16,16 @@ from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration, Bits
 from threading import Thread
 from qwen_vl_utils import process_vision_info
 import base64
+from pathlib import Path
 
 MAX_IMAGE_SIZE = (252, 252)
 CACHE_TTL_SECONDS = 30 * 60
-API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:3000")
+API_BASE_URL = os.environ.get("API_BASE_URL", "https://localhost:3000")
+CERTS_DIR = Path(__file__).resolve().parent / "certs"
+
+ssl_context = ssl.create_default_context()
+ssl_context.check_hostname = False
+ssl_context.verify_mode = ssl.CERT_NONE
 
 def _filter_warnings() -> None:
     warnings.filterwarnings("ignore", category=UserWarning)
@@ -154,7 +161,8 @@ async def fetch_image(image_data: Any) -> Image.Image:
             encoded = url
 
         if encoded.startswith("http://") or encoded.startswith("https://"):
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(ssl=ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 async with session.get(encoded) as response:
                     response.raise_for_status()
                     content = await response.read()
@@ -185,7 +193,8 @@ def normalize_cached_story(cache_entry: Optional[dict[str, Any]]) -> Optional[st
 
 async def persist_story(game_id: str, story: str) -> None:
     story_url = f"{API_BASE_URL}/api/games/internal/{game_id}/story"
-    async with aiohttp.ClientSession() as session:
+    connector = aiohttp.TCPConnector(ssl=ssl_context)
+    async with aiohttp.ClientSession(connector=connector) as session:
         async with session.post(story_url, json={"story": story}) as response:
             if response.status >= 400:
                 body = await response.text()
@@ -194,7 +203,8 @@ async def persist_story(game_id: str, story: str) -> None:
 
 async def persist_outcome(game_id: str, story: str, winner_user_id: str) -> None:
     outcome_url = f"{API_BASE_URL}/api/games/internal/{game_id}/outcome"
-    async with aiohttp.ClientSession() as session:
+    connector = aiohttp.TCPConnector(ssl=ssl_context)
+    async with aiohttp.ClientSession(connector=connector) as session:
         async with session.post(outcome_url, json={"story": story, "winnerUserId": winner_user_id}) as response:
             if response.status >= 400:
                 body = await response.text()
@@ -246,6 +256,7 @@ class ConnectionManager:
 
     async def connect(self, websocket: WebSocket, game_id: str):
         await websocket.accept()
+        print(f"Player connected to game: {game_id}")
         if game_id not in self.active_connections:
             self.active_connections[game_id] = []
         self.active_connections[game_id].append(websocket)
@@ -272,28 +283,38 @@ manager = ConnectionManager()
 
 @app.websocket("/ws/story/{game_id}")
 async def websocket_endpoint(websocket: WebSocket, game_id: str):
+    print(f"[AI WS] connection requested for game_id={game_id}", flush=True)
     await manager.connect(websocket, game_id)
-    print(f"Player joined game: {game_id}")
+    print(f"[AI WS] connection accepted for game_id={game_id}", flush=True)
     
     try:
+        print(f"[AI WS] waiting for first message on game_id={game_id}", flush=True)
         data = await websocket.receive_json()
+        print(
+            f"[AI WS] received message for game_id={game_id} action={data.get('action')} drawings={len(data.get('drawings', []))} environment={data.get('environment', 'missing')}",
+            flush=True,
+        )
 
         if data.get("action") != "generate":
+            print(f"[AI WS] ignoring non-generate action for game_id={game_id}", flush=True)
             return
 
         drawing_urls = data.get("drawings", [])
         env_name = data.get("environment", "a mysterious arena")
 
         if not drawing_urls:
+            print(f"[AI WS] missing drawings for game_id={game_id}", flush=True)
             await websocket.send_text("Error: No drawings provided.")
             return
 
         async with manager.get_lock(game_id):
             cached_story = manager.get_cached_story(game_id)
             if cached_story:
+                print(f"[AI WS] cache hit for game_id={game_id}", flush=True)
                 await websocket.send_text(cached_story)
                 return
 
+            print(f"[AI WS] starting generation for game_id={game_id}", flush=True)
             manager.generating_games.add(game_id)
 
             images = [resize_image(await fetch_image(url)) for url in drawing_urls]
@@ -301,6 +322,7 @@ async def websocket_endpoint(websocket: WebSocket, game_id: str):
             visual_features = extract_visual_features(processor, images, model_device)
             prompt_template = read_prompt_template()
             prompt = prompt_template.format(environment=env_name, roster=roster_text, features=visual_features)
+            print(f"[AI WS] prompt ready for game_id={game_id} prompt_chars={len(prompt)} drawings={len(drawing_urls)}", flush=True)
 
             inputs = prepare_inputs(processor, images, prompt, model_device)
             streamer = TextIteratorStreamer(processor.tokenizer, skip_prompt=True, skip_special_tokens=True)
@@ -315,15 +337,18 @@ async def websocket_endpoint(websocket: WebSocket, game_id: str):
                 await manager.broadcast(new_text, game_id)
                 await asyncio.sleep(0.01)
 
+            print(f"[AI WS] generation finished for game_id={game_id} chars={len(full_text)}", flush=True)
             manager.cache_story(game_id, full_text)
 
             try:
                 await persist_story(game_id, full_text)
+                print(f"[AI WS] persisted story for game_id={game_id}", flush=True)
             except Exception as persist_error:
-                print(f"Failed to persist cached story for {game_id}: {persist_error}")
+                print(f"[AI WS] failed to persist story for game_id={game_id} error={persist_error}", flush=True)
 
             await manager.broadcast("\n\n*Analyzing winner...*\n", game_id)
             prob1, prob2, winner = analyze_winner_with_ai(model, processor, full_text, model_device, len(images))
+            print(f"[AI WS] winner analysis complete for game_id={game_id} winner={winner} prob1={prob1:.2f} prob2={prob2:.2f}", flush=True)
 
             winner_match = re.search(r"Combatant\s*(\d+)", winner, re.IGNORECASE)
             winner_index = int(winner_match.group(1)) if winner_match else 1
@@ -336,21 +361,38 @@ async def websocket_endpoint(websocket: WebSocket, game_id: str):
             if winner_user_id:
                 try:
                     await persist_outcome(game_id, full_text, winner_user_id)
+                    print(f"[AI WS] persisted outcome for game_id={game_id} winner_user_id={winner_user_id}", flush=True)
                 except Exception as persist_error:
-                    print(f"Failed to persist game outcome for {game_id}: {persist_error}")
+                    print(f"[AI WS] failed to persist outcome for game_id={game_id} error={persist_error}", flush=True)
 
             await manager.broadcast(f"**Final Verdict:** {winner} (P1: {prob1:.2f}, P2: {prob2:.2f})", game_id)
+            print(f"[AI WS] finished game_id={game_id}", flush=True)
 
     except WebSocketDisconnect:
-        print(f"Player disconnected from game {game_id}")
+        print(f"[AI WS] disconnected for game_id={game_id}", flush=True)
     except Exception as e:
-        print(f"Generation error: {e}")
+        print(f"[AI WS] generation error for game_id={game_id} error={e}", flush=True)
         if game_id in manager.generating_games:
             await manager.broadcast(f"\nServer Error: {str(e)}", game_id)
     finally:
         manager.disconnect(websocket, game_id)
         manager.generating_games.discard(game_id)
+        print(f"[AI WS] cleanup complete for game_id={game_id}", flush=True)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+    ssl_kwargs: dict[str, str] = {}
+    key_file = CERTS_DIR / "key.pem"
+    cert_file = CERTS_DIR / "cert.pem"
+
+    if key_file.exists() and cert_file.exists():
+        ssl_kwargs = {
+            "ssl_keyfile": str(key_file),
+            "ssl_certfile": str(cert_file),
+        }
+        print(f"[AI SERVER] using TLS certs from {CERTS_DIR}", flush=True)
+
+    print(f"[AI SERVER] listening on port 8000 with {'TLS' if ssl_kwargs else 'plain HTTP'}", flush=True)
+
+    uvicorn.run(app, host="0.0.0.0", port=8000, **ssl_kwargs)

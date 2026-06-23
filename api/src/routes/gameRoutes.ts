@@ -25,6 +25,7 @@ import { z } from 'zod'
 const router = Router()
 
 const gameCodeParamSchema = z.object({ gameCode: z.string().length(8) })
+const gameIdParamSchema = z.object({ gameId: z.string().length(8) })
 
 const updateStatusSchema = z.object({
   status: z.enum(['in_progress', 'finished']),
@@ -44,8 +45,8 @@ const saveOutcomeSchema = z.object({
 })
 
 // Unauthenticated internal routes (backend-to-backend)
-router.post('/internal/:gameId/story', validateParams(gameCodeParamSchema), validateBody(saveStorySchema), saveGameStory)
-router.post('/internal/:gameId/outcome', validateParams(gameCodeParamSchema), validateBody(saveOutcomeSchema), saveGameOutcome)
+router.post('/internal/:gameId/story', validateParams(gameIdParamSchema), validateBody(saveStorySchema), saveGameStory)
+router.post('/internal/:gameId/outcome', validateParams(gameIdParamSchema), validateBody(saveOutcomeSchema), saveGameOutcome)
 
 // Authenticated routes
 router.use(authenticateToken)

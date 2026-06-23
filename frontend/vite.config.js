@@ -28,6 +28,11 @@ export default defineConfig({
         target: 'https://localhost:3000',
         secure: false,
       },
+      '/ws/story': {
+        target: 'https://localhost:8000',
+        ws: true,
+        secure: false,
+      },
     },
 	watch: {
       ignored: ['**/bdd.json']
