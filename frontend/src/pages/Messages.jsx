@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Button from '../components/Button';
 
 function Messages() {
@@ -150,7 +150,7 @@ function Messages() {
                     {/* Chat Header */}
                     <div className="flex items-center gap-3 md:gap-4 bg-[#c9b3ff] p-3 md:p-4 border-b-2 border-[#58508D] shrink-0">
                         {friendInfo ? (
-                            <>
+                            <Link to={`/profile/${friendId}`} className="flex items-center gap-3 group">
                                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-[50%] overflow-hidden border-2 border-[#58508D] bg-white shrink-0 flex items-center justify-center">
                                     <img 
                                         src={friendInfo.avatar || defaultAvatar} 
@@ -158,10 +158,10 @@ function Messages() {
                                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                     />
                                 </div>
-                                <h2 className="text-[#4D007E] font-extrabold text-lg md:text-2xl uppercase tracking-wider truncate !p-0 !m-0 text-left">
+                                <h2 className="text-[#4D007E] font-extrabold text-lg md:text-2xl uppercase tracking-wider truncate !p-0 !m-0 text-left group-hover:underline">
                                     {friendInfo.username}
                                 </h2>
-                            </>
+                            </Link>
                         ) : (
                             <h2 className="text-[#4D007E] font-extrabold text-lg md:text-2xl uppercase tracking-wider !p-0 !m-0">Messages</h2>
                         )}

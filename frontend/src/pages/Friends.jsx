@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // <-- ADDED THIS
+import { Link, useNavigate } from 'react-router-dom';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import LinkUser from '../components/LinkUser';
 
 function Friends() {
     const navigate = useNavigate(); // <-- ADDED THIS
@@ -199,12 +200,14 @@ function Friends() {
                             {searchResults.map((user) => (
                                 <div key={user.id} className='flex items-center justify-between gap-3 py-2 border-b border-[#c9b3ff] last:border-0'>
                                     <div className='flex items-center gap-3'>
-                                        <img
-                                            src={user.avatar || defaultAvatar}
-                                            alt={user.username}
-                                            className='!w-10 !h-10 rounded-[50%] object-cover border-2 border-[#58508D]'
-                                        />
-                                        <p className='text-[#4D007E] font-bold'>{user.username}</p>
+                                        <Link to={`/profile/${user.id}`} className='flex items-center gap-3 group'>
+                                            <img
+                                                src={user.avatar || defaultAvatar}
+                                                alt={user.username}
+                                                className='!w-10 !h-10 rounded-[50%] object-cover border-2 border-[#58508D]'
+                                            />
+                                            <p className='text-[#4D007E] font-bold group-hover:underline'>{user.username}</p>
+                                        </Link>
                                     </div>
 
                                     <div>
@@ -251,12 +254,14 @@ function Friends() {
                             {requests.map((request) => (
                                 <div key={request.friendshipId} className='flex items-center justify-between gap-3 py-2 border-b border-[#c9b3ff] last:border-0'>
                                     <div className='flex items-center gap-3'>
-                                        <img
-                                            src={request.from.avatar || defaultAvatar}
-                                            alt={request.from.username}
-                                            className='!w-10 !h-10 rounded-[50%] object-cover border-2 border-[#58508D]'
-                                        />
-                                        <p className='text-[#4D007E] font-bold'>{request.from.username}</p>
+                                        <Link to={`/profile/${request.from.id}`} className='flex items-center gap-3 group'>
+                                            <img
+                                                src={request.from.avatar || defaultAvatar}
+                                                alt={request.from.username}
+                                                className='!w-10 !h-10 rounded-[50%] object-cover border-2 border-[#58508D]'
+                                            />
+                                            <p className='text-[#4D007E] font-bold group-hover:underline'>{request.from.username}</p>
+                                        </Link>
                                     </div>
                                     <div className='flex gap-2'>
                                         <Button
@@ -284,18 +289,18 @@ function Friends() {
                         <div className='mt-3 max-h-72 overflow-y-auto bg-[#FFFADE] rounded-xl p-3 border border-[#58508D]'>
                             {friends.map((friend) => (
                                 <div key={friend.friendshipId} className='flex items-center justify-between gap-3 py-2 border-b border-[#c9b3ff] last:border-0'>
-                                    <div className='flex items-center gap-3'>
+                                    <Link to={`/profile/${friend.id}`} className='flex items-center gap-3 group'>
                                         <img
                                             src={friend.avatar || defaultAvatar}
                                             alt={friend.username}
                                             className='!w-10 !h-10 rounded-[50%] object-cover border-2 border-[#58508D]'
                                         />
                                         <div>
-                                            <p className='text-[#4D007E] font-bold'>{friend.username}</p>
+                                            <p className='text-[#4D007E] font-bold group-hover:underline'>{friend.username}</p>
+											{/* <LinkUser user={friend.username} color="text-[#4D007E] font-bold"/> */}
                                             <p className='text-[#7972A3] text-xs'>Friend since {new Date(friend.since).toLocaleDateString()}</p>
                                         </div>
-                                    </div>
-                                    {/* <-- ADDED THIS DIV AND THE MESSAGE BUTTON --> */}
+                                    </Link>
                                     <div className='flex gap-2'>
                                         <Button
                                             value="buttonP !text-sm !px-3"
