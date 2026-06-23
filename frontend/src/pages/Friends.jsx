@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import { Link } from 'react-router-dom';
+import LinkUser from '../components/LinkUser';
 
 function Friends() {
 	const [searchValue, setSearchValue] = useState('');
@@ -288,7 +290,7 @@ function Friends() {
 											className='!w-10 !h-10 rounded-[50%] object-cover border-2 border-[#58508D]'
 										/>
 										<div>
-											<p className='text-[#4D007E] font-bold'>{friend.username}</p>
+											<LinkUser user= {friend.username} color='text-[#4D007E] font-bold'/>
 											<p className='text-[#7972A3] text-xs'>Friend since {new Date(friend.since).toLocaleDateString()}</p>
 										</div>
 									</div>
