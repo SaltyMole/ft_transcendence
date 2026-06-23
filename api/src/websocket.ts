@@ -1,4 +1,4 @@
-import type { Server } from 'http'
+import type { Server } from 'node:https'
 import { WebSocket, WebSocketServer } from 'ws'
 import { verifyToken } from './utils/jwt.ts'
 import { db } from './db/connection.ts'

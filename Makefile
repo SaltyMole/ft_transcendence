@@ -8,7 +8,13 @@ frontend-setup:
 frontend-run:
 	cd frontend && npm run dev -- --host
 
-backend-setup:
+certs:
+	mkdir -p api/certs
+	openssl req -x509 -newkey rsa:2048 -keyout api/certs/key.pem -out api/certs/cert.pem \
+		-days 365 -nodes -subj "/CN=localhost" \
+		-addext "subjectAltName=IP:127.0.0.1,DNS:localhost"
+
+backend-setup: certs
 	cd api && cp .env.example .env
 	docker compose up -d
 	cd api && npm install
