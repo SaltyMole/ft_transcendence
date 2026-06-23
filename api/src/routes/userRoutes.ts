@@ -7,6 +7,7 @@ import {
   changePassword,
   deleteAccount,
   getUserStats,
+  getUserOnlineStatus,
 } from '../controllers/userController.ts'
 import { authenticateToken } from '../middleware/auth.ts'
 import { validateBody, validateParams } from '../middleware/validation.ts'
@@ -50,7 +51,8 @@ const userIdSchema = z.object({
 })
 
 
-router.get('/:id/stats',validateParams(userIdSchema), getUserStats)
+router.get('/:id/stats', validateParams(userIdSchema), getUserStats)
+router.get('/:id/status', validateParams(userIdSchema), getUserOnlineStatus)
 router.get('/profile', getMyProfile)
 router.get('/:id/profile', validateParams(userIdSchema), getUserProfile)
 router.put('/profile', validateBody(updateProfileSchema), updateProfile)

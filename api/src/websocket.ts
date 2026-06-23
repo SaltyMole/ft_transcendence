@@ -54,6 +54,38 @@ async function areFriends(userId: string, otherId: string): Promise<boolean> {
   return !!friendship
 }
 
+export function isUserOnline(userId: string): boolean {
+  return connectedUsers.has(userId)
+}
+
+export function getOnlineUserIds(): string[] {
+  return Array.from(connectedUsers.keys())
+}
+
+async function getFriendIds(userId: string): Promise<string[]> {
+  const rows = await db
+    .select({ friendId: friendships.friendId, userId: friendships.userId })
+    .from(friendships)
+    .where(
+      and(
+        eq(friendships.status, 'accepted'),
+        or(eq(friendships.userId, userId), eq(friendships.friendId, userId))
+      )
+    )
+  return rows.map((r) => (r.userId === userId ? r.friendId : r.userId))
+}
+
+async function broadcastPresenceToFriends(userId: string, online: boolean) {
+  try {
+    const friendIds = await getFriendIds(userId)
+    for (const friendId of friendIds) {
+      sendToUser(friendId, { type: 'presence_update', userId, online })
+    }
+  } catch (err) {
+    console.error('broadcastPresenceToFriends error:', err)
+  }
+}
+
 function broadcastToRoom(gameID: string, data: object, senderWs: WebSocket | null = null) {
   const room = rooms[gameID]
   if (!room) return
@@ -148,11 +180,21 @@ export function setupWebSocket(server: Server) {
             return
           }
           verifyToken(token)
-            .then((user) => {
+            .then(async (user) => {
               ws.userId = user.id
               ws.username = user.username
               registerUser(ws, user.id)
-              ws.send(JSON.stringify({ type: 'dm_ready', userId: user.id, username: user.username }))
+              await broadcastPresenceToFriends(user.id, true)
+              const friendIds = await getFriendIds(user.id)
+              const onlineFriendIds = friendIds.filter((id) => isUserOnline(id))
+              ws.send(
+                JSON.stringify({
+                  type: 'dm_ready',
+                  userId: user.id,
+                  username: user.username,
+                  onlineFriends: onlineFriendIds,
+                })
+              )
               console.log(`${user.username} authenticated for DMs`)
             })
             .catch(() => {
@@ -213,7 +255,11 @@ export function setupWebSocket(server: Server) {
       if (ws.currentRoom && rooms[ws.currentRoom]) {
         rooms[ws.currentRoom].delete(ws)
       }
+      const disconnectedUserId = ws.userId
       unregisterUser(ws)
+      if (disconnectedUserId && !isUserOnline(disconnectedUserId)) {
+        broadcastPresenceToFriends(disconnectedUserId, false)
+      }
       console.log(`${ws.username ?? 'Client'} disconnected`)
     })
   })

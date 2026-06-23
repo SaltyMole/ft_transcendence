@@ -4,6 +4,7 @@ import { db } from '../db/connection.ts'
 import { users, gamePlayers, friendships } from '../db/schema.ts'
 import { eq, and, or, count, sum } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
+import { isUserOnline } from '../websocket.ts'
 
 export const getMyProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -229,6 +230,11 @@ export const changePassword = async (
     console.error('Change password error:', error)
     res.status(500).json({ error: 'Failed to change password' })
   }
+}
+
+export const getUserOnlineStatus = (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.params.id as string
+  res.json({ userId, online: isUserOnline(userId) })
 }
 
 export const deleteAccount = async (req: AuthenticatedRequest, res: Response) => {
