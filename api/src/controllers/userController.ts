@@ -232,6 +232,23 @@ export const changePassword = async (
   }
 }
 
+export const updateBio = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id
+    const { bio } = req.body
+    const [updatedUser] = await db
+      .update(users)
+      .set({ bio, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning({ id: users.id, bio: users.bio })
+
+    res.json({ message: 'Bio updated successfully', user: updatedUser })
+  } catch (error) {
+    console.error('Update avatar error:', error)
+    res.status(500).json({ error: 'Failed to update bio' })
+  }
+}
+
 export const getUserOnlineStatus = (req: AuthenticatedRequest, res: Response) => {
   const userId = req.params.id as string
   res.json({ userId, online: isUserOnline(userId) })

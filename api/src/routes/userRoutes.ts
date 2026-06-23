@@ -8,6 +8,7 @@ import {
   deleteAccount,
   getUserStats,
   getUserOnlineStatus,
+  updateBio
 } from '../controllers/userController.ts'
 import { authenticateToken } from '../middleware/auth.ts'
 import { validateBody, validateParams } from '../middleware/validation.ts'
@@ -50,6 +51,9 @@ const userIdSchema = z.object({
   id: z.uuid() 
 })
 
+const updateBioSchema = z.object({
+  bio : z.string().max(140, 'Bio must be at max 140 characters')
+})
 
 router.get('/:id/stats', validateParams(userIdSchema), getUserStats)
 router.get('/:id/status', validateParams(userIdSchema), getUserOnlineStatus)
@@ -59,5 +63,6 @@ router.put('/profile', validateBody(updateProfileSchema), updateProfile)
 router.put('/avatar', validateBody(updateAvatarSchema), updateAvatar)
 router.put('/password', validateBody(changePasswordSchema), changePassword)
 router.delete('/', deleteAccount)
+router.put('/profile', validateBody(updateBioSchema), updateBio)
 
 export default router

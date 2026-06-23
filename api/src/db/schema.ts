@@ -22,6 +22,7 @@ export const users = pgTable('users', {
   username: varchar('username', { length: 50 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
   avatar: text('avatar'), // base64 encoded image or data URL
+  bio: varchar('password', { length: 140 }),
   twoFactorEnabled: boolean('two_factor_enabled').default(false).notNull(),
   twoFactorSecret: varchar('two_factor_secret', { length: 255 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
