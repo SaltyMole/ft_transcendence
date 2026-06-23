@@ -52,13 +52,6 @@ function Game()
 							<p className="flex flex-row justify-center items-center"> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFADE"><path d="M383-480 200-664l56-56 240 240-240 240-56-56 183-184Zm264 0L464-664l56-56 240 240-240 240-56-56 183-184Z"/></svg> <Button action={handleCreateGame} value="buttonP"text="Play"/> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFADE"><path d="M440-240 200-480l240-240 56 56-183 184 183 184-56 56Zm264 0L464-480l240-240 56 56-183 184 183 184-56 56Z"/> </svg> </p>
 						</div>
 					</div>
-					<div className = "overlayGames items-center ">
-						<div className="bim flex flex-col justify-between">
-							<h2 className= "justify-start"> Solo</h2>
-							<p className="text-white m-2" >Play a game against an AI</p>						
-							<p className="flex flex-row justify-center items-center"> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFADE"><path d="M383-480 200-664l56-56 240 240-240 240-56-56 183-184Zm264 0L464-664l56-56 240 240-240 240-56-56 183-184Z"/></svg><Button value="buttonP"text="Play"/> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFADE"><path d="M440-240 200-480l240-240 56 56-183 184 183 184-56 56Zm264 0L464-480l240-240 56 56-183 184 183 184-56 56Z"/></svg></p>
-						</div>
-					</div>
 				</div>
 			</div>
       	</main>

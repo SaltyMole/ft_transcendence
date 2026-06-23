@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import LinkUser from '../components/LinkUser';
 
 function Friends() {
     const navigate = useNavigate(); // <-- ADDED THIS
@@ -296,6 +297,7 @@ function Friends() {
                                         />
                                         <div>
                                             <p className='text-[#4D007E] font-bold group-hover:underline'>{friend.username}</p>
+											{/* <LinkUser user={friend.username} color="text-[#4D007E] font-bold"/> */}
                                             <p className='text-[#7972A3] text-xs'>Friend since {new Date(friend.since).toLocaleDateString()}</p>
                                         </div>
                                     </Link>

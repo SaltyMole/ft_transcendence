@@ -24,7 +24,7 @@ function Header({setIsLoggedIn}) {
       <nav>
 		<div>   
 			<div id = "pages" > 
-				<p><Link to="/">Accueil</Link>
+				<p><Link to="/">Home</Link>
         		<Link to="/Game">Game</Link>
 				<Link to="/Friends">Friends</Link>
 				<Link to="/Settings">Settings</Link>
