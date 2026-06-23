@@ -55,7 +55,7 @@ function PrivatePolicy()
 			
 			<h2 className="text-4xl font-bold" >8. Third-Party Services</h2>
 			The application relies in particular on:<br/><br/>
-			• API 42 (OAuth authentication) <br/><br/>	
+			•Google API (OAuth authentication) <br/><br/>	
 			We are not responsible for the privacy practices of third parties.
 
 			<h2 className="text-4xl font-bold" >9. Changes to this Policy</h2>
