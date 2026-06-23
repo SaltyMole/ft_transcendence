@@ -19,7 +19,7 @@ const Lobby = () => {
     const { gameID } = useParams();
     const navigate = useNavigate();
     const playerContinuingGame = useRef(false);
-    const hasTriggeredStory = useRef(false); 
+    const hasTriggeredStory = useRef(false);
     const wsRef = useRef(null);
 
     const [playerID, setPlayerID] = useState(null);
@@ -30,6 +30,7 @@ const Lobby = () => {
     const [drawings, setDrawings] = useState([]);
     const [players, setPlayers] = useState([]);
     const [storySocketReady, setStorySocketReady] = useState(false);
+    const hasSentStoryRequest = useRef(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -51,6 +52,10 @@ const Lobby = () => {
         return () => {
             cancelled = true;
         };
+    }, [gameID]);
+
+    useEffect(() => {
+        hasSentStoryRequest.current = false;
     }, [gameID]);
 
     // 1. Get player ID
@@ -159,15 +164,27 @@ const Lobby = () => {
 
     // 7. WEBSOCKET CONNECTION
     useEffect(() => {
-        const ws = new WebSocket(`${AI_WS_URL}/ws/story/${gameID}`);
+        console.log(`[Lobby] opening AI websocket for gameID=${gameID}`);
+        const aiSocketUrl = AI_WS_URL.startsWith('http')
+            ? `${AI_WS_URL}/ws/story/${gameID}`
+            : `${AI_WS_URL}/${gameID}`;
+        const ws = new WebSocket(aiSocketUrl);
         
         ws.onopen = () => {
-            console.log("Connected to AI Story Server");
+            console.log(`[Lobby] AI websocket open for gameID=${gameID}`);
             setStorySocketReady(true);
         };
-        ws.onmessage = (event) => setStory((prev) => prev + event.data);
-        ws.onerror = (error) => console.error("WebSocket Error:", error);
-        ws.onclose = () => setStorySocketReady(false);
+        ws.onmessage = (event) => {
+            console.log(`[Lobby] AI websocket message for gameID=${gameID} length=${event.data.length}`);
+            setStory((prev) => prev + event.data);
+        };
+        ws.onerror = (error) => {
+            console.error(`[Lobby] AI websocket error for gameID=${gameID}`, error);
+        };
+        ws.onclose = () => {
+            console.log(`[Lobby] AI websocket closed for gameID=${gameID}`);
+            setStorySocketReady(false);
+        };
 
         wsRef.current = ws;
 
@@ -181,24 +198,24 @@ const Lobby = () => {
 
     // 8. AUTO-TRIGGER STORY GENERATION
     useEffect(() => {
-        if (players.length === 0 || drawings.length === 0 || !storySocketReady || !environment || story) return;
-        if (wsRef.current.readyState !== WebSocket.OPEN) return;
+        const socketReady = wsRef.current?.readyState === WebSocket.OPEN && storySocketReady;
+        const hasAllPlayers = players.length > 0;
+        const hasAllDrawings = drawings.length > 0 && drawings.length === players.length;
+        const canGenerate = socketReady && hasAllPlayers && hasAllDrawings && Boolean(environment) && !story && !hasSentStoryRequest.current;
 
-        const sortedPlayers = [...players].sort((left, right) => {
-            return new Date(left.joinedAt).getTime() - new Date(right.joinedAt).getTime();
-        });
-        const storyLeaderId = sortedPlayers[0]?.userId;
-        if (storyLeaderId && storyLeaderId !== playerID) return;
+        console.log(`[Lobby] AI trigger check gameID=${gameID} socketReady=${socketReady} players=${players.length} drawings=${drawings.length} environment=${Boolean(environment)} story=${Boolean(story)} sent=${hasSentStoryRequest.current}`);
 
-        if (drawings.length === players.length && !hasTriggeredStory.current) {
-            hasTriggeredStory.current = true;
-            wsRef.current.send(JSON.stringify({ 
-                action: "generate", 
-                drawings: drawings,
-                environment: environment
-            }));
-        }
-    }, [drawings, players, environment, storySocketReady, story, playerID]);
+        if (!canGenerate) return;
+
+        hasSentStoryRequest.current = true;
+        hasTriggeredStory.current = true;
+        console.log(`[Lobby] sending AI generate request gameID=${gameID}`);
+        wsRef.current.send(JSON.stringify({
+            action: "generate",
+            drawings,
+            environment,
+        }));
+    }, [drawings, players, environment, storySocketReady, story]);
 
 
     //Button to debug story generation that cleans the current story and sends a websocket to generate another one

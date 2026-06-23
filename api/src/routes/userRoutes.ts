@@ -2,6 +2,7 @@ import { Router } from 'express'
 import {
   getMyProfile,
   getUserProfile,
+  getUserFriends,
   updateProfile,
   updateAvatar,
   changePassword,
@@ -59,6 +60,7 @@ router.get('/:id/stats', validateParams(userIdSchema), getUserStats)
 router.get('/:id/status', validateParams(userIdSchema), getUserOnlineStatus)
 router.get('/profile', getMyProfile)
 router.get('/:id/profile', validateParams(userIdSchema), getUserProfile)
+router.get('/:id/friends', validateParams(userIdSchema), getUserFriends)
 router.put('/profile', validateBody(updateProfileSchema), updateProfile)
 router.put('/avatar', validateBody(updateAvatarSchema), updateAvatar)
 router.put('/password', validateBody(changePasswordSchema), changePassword)

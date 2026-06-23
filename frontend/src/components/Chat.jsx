@@ -25,7 +25,6 @@ function Chat({
 		wsRef.current = ws;
 
 		ws.onopen = () => {
-			console.log("Connected to WebSocket server");
 			setConnected(true);
 			ws.send(JSON.stringify({ type: "join", gameID: gameID, username: clientName }));
 		};
@@ -37,7 +36,6 @@ function Chat({
 		};
 
 		ws.onclose = () => {
-			console.log("Disconnected from WebSocket server");
 			setConnected(false);
 		};
 		

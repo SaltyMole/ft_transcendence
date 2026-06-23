@@ -293,6 +293,32 @@ Retourne les statistiques de jeu de l'utilisateur connecté.
 
 ---
 
+### GET `/users/:id/stats`
+
+Retourne les statistiques de jeu d'un utilisateur donné. Cette route est utile pour afficher un profil public.
+
+**Paramètre** `:id` — UUID de l'utilisateur
+
+**Réponse** `200`
+
+Le format de réponse est identique à `GET /users/stats` et contient notamment `stats.wins`.
+
+```json
+{
+  "stats": {
+    "gamesPlayed": 10,
+    "wins": 6,
+    "losses": 4,
+    "winRate": 60,
+    "totalScore": 1540,
+    "averageScore": 154,
+    "friendCount": 3
+  }
+}
+```
+
+---
+
 ### GET `/users/profile`
 
 Retourne le profil de l'utilisateur connecté.
@@ -309,6 +335,63 @@ Retourne le profil de l'utilisateur connecté.
     "createdAt": "2026-05-16T10:00:00.000Z",
     "updatedAt": "2026-05-16T10:00:00.000Z"
   }
+}
+```
+
+---
+
+### GET `/users/:id/profile`
+
+Retourne le profil public d'un utilisateur donné.
+
+**Paramètre** `:id` — UUID de l'utilisateur
+
+**Réponse** `200`
+
+```json
+{
+  "id": "uuid",
+  "username": "pauline",
+  "avatar": "data:image/png;base64,...",
+  "createdAt": "2026-05-16T10:00:00.000Z"
+}
+```
+
+---
+
+### GET `/users/:id/status`
+
+Retourne le statut en ligne d'un utilisateur donné.
+
+**Paramètre** `:id` — UUID de l'utilisateur
+
+**Réponse** `200`
+
+```json
+{ "userId": "uuid", "online": true }
+```
+
+---
+
+### GET `/users/:id/friends`
+
+Retourne la liste des amis acceptés d'un utilisateur donné.
+
+**Paramètre** `:id` — UUID de l'utilisateur
+
+**Réponse** `200`
+
+```json
+{
+  "friends": [
+    {
+      "friendshipId": "uuid",
+      "since": "2026-05-16T10:00:00.000Z",
+      "id": "uuid",
+      "username": "paul",
+      "avatar": null
+    }
+  ]
 }
 ```
 
