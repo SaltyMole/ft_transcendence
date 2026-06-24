@@ -68,7 +68,7 @@ function Profile() {
 
       setProfile(profileData.user || profileData);
       setFriends(friendsData.friends || []);
-      setStats(resolvedIsSelf ? profileData.user : statsData.stats || null);
+      setStats(statsData.stats || null);
       setOnline(resolvedIsSelf ? true : statusData.online ?? null);
 
       if (!resolvedIsSelf) {
