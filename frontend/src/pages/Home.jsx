@@ -9,13 +9,13 @@ function Home() {
 				<div className='input_container'>
 					<h2 className="underline font-extrabold text-Purple" >Goal</h2>
 					<p className="text-Purple p-5">
-						Welcome to our game !<tr/> 
-						This game is a drawing game.<tr/> 
-						You are an adventurer, you are going on an adventure alone or with other adventurers.<tr/> 
-						Your objective, drawing stuff to fight your enemies.<tr/> 
-						Each turn, a new ennemy appears.<tr/> 
-						The worst proposition dies.<tr/> 
-						The final goal is to be the last one standing.<tr/> 
+						Welcome to our game !<br/> 
+						This game is a drawing game.<br/> 
+						You are an adventurer, you are going on an adventure alone or with other adventurers.<br/> 
+						Your objective, drawing stuff to fight your enemies.<br/> 
+						Each turn, a new ennemy appears.<br/> 
+						The worst proposition dies.<br/> 
+						The final goal is to be the last one standing.<br/> 
 					</p>
 
 				</div>
