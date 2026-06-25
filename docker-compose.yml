@@ -75,6 +75,16 @@ services:
     container_name: transcendance_frontend
     ports:
       - "5173:5173"
+    volumes:
+      - ./frontend:/app/frontend
+      - frontend_node_modules:/app/frontend/node_modules
+      - frontend_certs:/app/frontend/certs
+    command: >
+      sh -c 'mkdir -p certs && if [ ! -f certs/key.pem ] || [ ! -f certs/cert.pem ]; then
+      openssl req -x509 -newkey rsa:2048 -keyout certs/key.pem -out certs/cert.pem
+      -days 365 -nodes -subj "/CN=localhost"
+      -addext "subjectAltName=IP:127.0.0.1,DNS:localhost";
+      fi && npm run dev -- --host 0.0.0.0'
     depends_on:
       api:
         condition: service_healthy
@@ -101,3 +111,5 @@ services:
 
 volumes:
   postgres_data:
+  frontend_node_modules:
+  frontend_certs:
