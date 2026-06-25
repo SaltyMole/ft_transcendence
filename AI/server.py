@@ -20,8 +20,9 @@ from pathlib import Path
 
 MAX_IMAGE_SIZE = (252, 252)
 CACHE_TTL_SECONDS = 30 * 60
-API_BASE_URL = os.environ.get("API_BASE_URL", "https://localhost:3000")
+API_BASE_URL = os.environ.get("API_BASE_URL", "https://api:3000")
 CERTS_DIR = Path(__file__).resolve().parent / "certs"
+REQUIRE_CUDA = os.environ.get("AI_REQUIRE_CUDA", "1").lower() not in {"0", "false", "no"}
 
 ssl_context = ssl.create_default_context()
 ssl_context.check_hostname = False
@@ -30,6 +31,31 @@ ssl_context.verify_mode = ssl.CERT_NONE
 def _filter_warnings() -> None:
     warnings.filterwarnings("ignore", category=UserWarning)
     warnings.filterwarnings("ignore", category=FutureWarning)
+
+
+def _cuda_diagnostics() -> str:
+    return (
+        f"torch.version.cuda={torch.version.cuda!r}, "
+        f"torch.cuda.is_available()={torch.cuda.is_available()}, "
+        f"torch.cuda.device_count()={torch.cuda.device_count()}"
+    )
+
+
+def _model_uses_cuda(model: Any) -> bool:
+    hf_device_map = getattr(model, "hf_device_map", None)
+    if isinstance(hf_device_map, dict):
+        if any("cuda" in str(device_name).lower() for device_name in hf_device_map.values()):
+            return True
+
+    for parameter in model.parameters():
+        if parameter.device.type == "cuda":
+            return True
+
+    for buffer in model.buffers():
+        if buffer.device.type == "cuda":
+            return True
+
+    return False
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
@@ -41,23 +67,27 @@ def load_model(model_name: str, device: str) -> Any:
         try:
             quantization_config = BitsAndBytesConfig(load_in_8bit=True)
             model = cast(Any, Qwen2_5_VLForConditionalGeneration.from_pretrained(
-                model_name, quantization_config=quantization_config, device_map="auto"
+                model_name,
+                quantization_config=quantization_config,
+                device_map="auto",
             ))
             model.eval()
             print("Loaded model in 8-bit on GPU")
+            if not _model_uses_cuda(model):
+                raise RuntimeError(f"Model did not land on CUDA after 8-bit load: {get_model_device(model)}")
             return model
-        except Exception:
-            try:
-                model = cast(Any, Qwen2_5_VLForConditionalGeneration.from_pretrained(
-                    model_name, torch_dtype=torch.float16, low_cpu_mem_usage=True
-                ))
-                model.to("cuda")
-                model.half()
-                model.eval()
-                print("Loaded model in fp16 on GPU")
-                return model
-            except Exception:
-                pass
+        except Exception as exc:
+            if REQUIRE_CUDA:
+                raise RuntimeError(
+                    "CUDA is required but the model could not be loaded on GPU. "
+                    f"8-bit error: {exc!r}; {_cuda_diagnostics()}"
+                ) from exc
+
+    if REQUIRE_CUDA:
+        raise RuntimeError(
+            "CUDA is required but unavailable in this container. "
+            f"{_cuda_diagnostics()}"
+        )
 
     model = cast(Any, Qwen2_5_VLForConditionalGeneration.from_pretrained(model_name))
     model.to("cpu")
@@ -218,13 +248,23 @@ app = FastAPI()
 _filter_warnings()
 os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
+
+@app.get("/health")
+async def health_check() -> dict[str, str]:
+    return {"status": "ok"}
+
 MODEL_NAME = "Qwen/Qwen2.5-VL-3B-Instruct"
 device = "cuda" if torch.cuda.is_available() else "cpu"
+
+if REQUIRE_CUDA and device != "cuda":
+    raise RuntimeError(f"CUDA is required but torch did not detect a GPU: {_cuda_diagnostics()}")
 
 print("Loading AI Model into memory... Please wait.")
 processor = AutoProcessor.from_pretrained(MODEL_NAME)
 model = load_model(MODEL_NAME, device)
-model_device = str(get_model_device(model))
+model_device = "cuda" if _model_uses_cuda(model) else str(get_model_device(model))
+if REQUIRE_CUDA and model_device != "cuda":
+    raise RuntimeError(f"CUDA is required but the model loaded on {model_device}")
 print(f"Server is ready! Model running on: {model_device}")
 
 

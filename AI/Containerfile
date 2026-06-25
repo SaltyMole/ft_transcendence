@@ -1,0 +1,30 @@
+FROM pytorch/pytorch:2.6.0-cuda12.4-cudnn9-runtime
+
+WORKDIR /app/AI
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential openssl curl ca-certificates \
+    && curl -fsSLo /tmp/cuda-keyring.deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb \
+    && apt-get install -y /tmp/cuda-keyring.deb \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libnvidia-compute-580=580.159.03-1ubuntu1 \
+        libnvidia-decode-580=580.159.03-1ubuntu1 \
+        libnvidia-cfg1-580=580.159.03-1ubuntu1 \
+        libnvidia-gpucomp-580=580.159.03-1ubuntu1 \
+        nvidia-persistenced=580.159.03-1ubuntu1 \
+        nvidia-utils-580=580.159.03-1ubuntu1 \
+    && rm -f /tmp/cuda-keyring.deb \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir $(grep -vE '^(torch|torchvision)([<>=].*)?$' requirements.txt)
+
+COPY . .
+RUN mkdir -p /app/AI/certs && \
+    openssl req -x509 -newkey rsa:2048 -keyout /app/AI/certs/key.pem -out /app/AI/certs/cert.pem \
+        -days 365 -nodes -subj "/CN=localhost" \
+        -addext "subjectAltName=IP:127.0.0.1,DNS:localhost"
+
+EXPOSE 8000
+CMD ["python", "server.py"]

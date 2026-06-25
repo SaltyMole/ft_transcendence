@@ -12,29 +12,29 @@ export default defineConfig({
 
   server: {
     https: {
-      key: fs.readFileSync(path.resolve('../api/certs/key.pem')),
-      cert: fs.readFileSync(path.resolve('../api/certs/cert.pem')),
+      key: fs.readFileSync(path.resolve('./certs/key.pem')),
+      cert: fs.readFileSync(path.resolve('./certs/cert.pem')),
     },
     proxy: {
       '/api': {
-        target: 'https://localhost:3000',
+        target: 'https://api:3000',
         secure: false,
       },
       '/gameroute': {
-        target: 'https://localhost:3000',
+        target: 'https://api:3000',
         secure: false,
       },
       '/public': {
-        target: 'https://localhost:3000',
+        target: 'https://api:3000',
         secure: false,
       },
       '/ws/story': {
-        target: 'https://localhost:8000',
+        target: 'https://ai:8000',
         ws: true,
         secure: false,
       },
       '/ws/chat': {
-        target: 'wss://localhost:3000',
+        target: 'wss://api:3000',
         ws: true,
         secure: false,
         changeOrigin: true,
