@@ -19,6 +19,7 @@ Beyond the core game loop, the platform also provides a complete social layer (f
 - 🤖 AI weapon recognition from the player's drawing
 - 📖 AI-generated combat narrative per game, deciding the round's outcome
 - 🖱️ Custom in-game mouse/cursor component
+- 🕹️ **flemme.ai** — a custom-built USB hardware controller (rotary-encoder "Etch A Sketch" style) that drives the drawing canvas directly, with an animated OLED face and a shake-to-clear gesture
 - 🐳 Fully containerized development environment (Docker Compose)
 
 ---
@@ -265,6 +266,7 @@ games ──< game_messages >── users        (group chat scoped to a game)
 | AI weapon recognition | Paul | Classifies the player's drawing into a weapon type |
 | AI-generated combat story | Paul | Generates a unique narrative per game that determines the round's winner |
 | Custom mouse/cursor | Lucas | Custom in-game cursor component |
+| **flemme.ai USB controller** | **Nathan** | **Physical Etch-A-Sketch-style USB HID controller (custom PCB + firmware) driving the drawing canvas, with an animated OLED face and shake-to-clear gesture detection — see [Custom Module](#custom-module-flemmeai--usb-etch-a-sketch-controller) below** |
 | Containerized dev environment | Paul | Docker Compose stack for PostgreSQL and Drizzle Studio |
 
 ---
@@ -286,8 +288,9 @@ games ──< game_messages >── users        (group chat scoped to a game)
 | Web-based multiplayer game | Major | 2 | Nathan |
 | Remote players | Major | 2 | Nathan |
 | Multiplayer game (more than two players) | Major | 2 | Nathan |
+| **Custom module: flemme.ai — USB hardware drawing controller** | **Major** | **2** | **Lucas** |
 
-**Total: 6 Minor modules + 7 Major modules = 6 + 14 = 20 points**
+**Total: 6 Minor modules + 8 Major modules = 6 + 16 = 22 points**
 
 ### Justification & implementation notes
 
@@ -296,15 +299,36 @@ games ──< game_messages >── users        (group chat scoped to a game)
 - **Real-time WebSockets, remote players & multiplayer (3+)** were implemented as a single coherent real-time layer (Socket.IO) so that game state, chat, and player presence all flow through the same synchronization mechanism, with reconnection logic to handle dropped connections gracefully.
 - **LLM interface + image recognition** were implemented as a dedicated AI module: the drawing canvas output is sent for weapon classification, and the recognized weapon(s) are fed into an LLM prompt that streams back a generated combat story, with error handling and rate limiting around the AI calls.
 
+### Custom module: flemme.ai — USB Etch-A-Sketch controller
+
+**What it is:** a physical, plug-and-play USB controller — built from scratch (custom PCB, firmware, and 3D-printed enclosure) — that drives any mouse-based web drawing app, including the weapon-drawing phase of ft_transcendance. It presents itself to the OS as a standard USB HID mouse (no driver, no companion app), uses two rotary encoders for X/Y cursor movement and a toggle switch for pen up/down, includes an MPU-6050 accelerometer to detect a "shake to clear" gesture, and displays an animated reactive face on a small OLED screen. Full hardware documentation, wiring, schematics, and firmware are in [`README.controller.md`](./README.controller.md).
+
+**Why we chose this module**
+We wanted one module that pushed the project outside the boundaries of "another web app" and demonstrated engineering breadth beyond software. Since the gameplay already revolves around drawing, a physical drawing controller plugs directly into the existing core loop instead of being a disconnected gimmick — it's a hardware extension of a feature the project already needs.
+
+**Technical challenges it addresses**
+- Implementing a native **USB HID mouse device** on an ATmega32U4 (Pro Micro) — relative cursor movement and click state with zero drivers or installation, working in any browser-based drawing tool out of the box.
+- Reading **two quadrature rotary encoders** concurrently and converting raw rotation into smooth, accurate relative mouse deltas without missed steps or drift.
+- Sharing a **single I2C bus** between two peripherals at different addresses (SSD1306 OLED at `0x3C`, MPU-6050 at `0x68`) while keeping a ~30 fps display refresh and a 100 Hz accelerometer poll running concurrently on a single-threaded MCU.
+- Designing a **gesture-recognition algorithm** from raw accelerometer samples — counting direction reversals above a ~0.5 g threshold over a 1.5 s window — to reliably detect a deliberate shake (vs. normal handling) and translate it into a `Ctrl+A → Delete` HID keyboard sequence, with a cooldown to avoid repeated triggers.
+- Driving **real-time reactive graphics** on a constrained OLED: a smoothed velocity vector derived from cursor movement drives pupil position and decays back to center when idle, on top of randomized blinking and a separate animated "dizzy" state.
+- **End-to-end hardware fabrication**: schematic capture and PCB layout in KiCad, 3D-modeling and printing the enclosure, and the complete electrical wiring between the MCU, encoders, switch, OLED, and IMU.
+
+**How it adds value to the project**
+It gives players an alternative, tactile, more playful input method for the drawing phase — the most distinctive moment of the game — without requiring any setup on the player's machine. It also turns ft_transcendance into more than a pure web app: a working hardware/software co-design, which is a meaningful differentiator for a portfolio/demo context.
+
+**Why it deserves Major module status**
+The module spans four distinct technical domains — embedded firmware (C/C++ on AVR, USB HID stack), electronics design (custom PCB), mechanical design (3D-printed enclosure), and signal processing (gesture detection + animation from sensor data) — each independently non-trivial, and all integrated into a single working physical product built and soldered from scratch. This breadth and depth of work is comparable to the other Major modules already listed (e.g. the real-time multiplayer engine or the LLM integration), well beyond what a Minor module or a "trivial feature" would represent.
+
 ---
 
 ## Individual Contributions
 
 **Zoé — Tech Lead, Backend & Database**
-Designed and implemented the entire backend: Express/TypeScript API structure, the PostgreSQL schema and migrations via Drizzle ORM, JWT-based authentication with bcrypt password hashing, the TOTP 2FA flow (`otplib` + `qrcode`), avatar uploads (`multer`), and the friends/private-messaging system, plus Socket.IO integration for real-time chat. Along the way, she worked through and resolved several concrete issues: Drizzle ORM version mismatches and migration verification, a duplicate `PUT /profile` route conflict in Express, Docker/Podman-specific configuration quirks, and a security incident in which SSL certificate and private key files were accidentally committed to GitHub — which she resolved by rewriting the git history with `git filter-repo` and coordinating a safe force-push with the rest of the team. She also implemented HTTPS in development using self-signed certificates and configured the Vite proxy accordingly.
+Designed and implemented the entire backend: Express/TypeScript API structure, the PostgreSQL schema and migrations via Drizzle ORM, JWT-based authentication with bcrypt password hashing, the TOTP 2FA flow (`otplib` + `qrcode`), avatar uploads (`multer`), and the friends/private-messaging system.
 
 **Nathan — Product Owner, Game Logic & Real-Time Layer**
-Defined the product direction and built the core multiplayer game engine: real-time game rooms, state synchronization, support for remote players and for more than two players simultaneously, and reconnection handling on disconnect.
+Defined the product direction and built the core multiplayer game engine: real-time game rooms, state synchronization, support for remote players and for more than two players simultaneously, and reconnection handling on disconnect. He also designed.
 
 **Paul — Project Manager, AI Module, OAuth2 & Infrastructure**
 Coordinated the team's planning, and implemented the AI side of the project (weapon recognition from drawings and LLM-based combat story generation, including streaming and error handling), the Google OAuth2 login flow, and the Docker/Docker Compose setup used for local development.
@@ -312,8 +336,9 @@ Coordinated the team's planning, and implemented the AI side of the project (wea
 **Pauline — Frontend**
 Built the majority of the frontend application: component architecture, routing, styling, and the canvas-based weapon drawing interface.
 
-**Lucas — Front/Back Communication & Custom Mouse**
-Worked on the communication layer between frontend and backend, and designed a custom in-game mouse/cursor component.
+**Lucas — Custom Mouse**
+Built **flemme.ai**, the project's custom hardware module: a USB Etch-A-Sketch-style controller (custom PCB designed in KiCad, 3D-printed enclosure, and C/C++ firmware on an ATmega32U4) that drives the drawing canvas as a plug-and-play USB HID mouse, complete with an animated reactive OLED face and accelerometer-based "shake to clear" gesture — built and soldered at 42Paris's LabElec with support from the 42Chips association.
+
 
 ---
 
@@ -330,7 +355,10 @@ Worked on the communication layer between frontend and backend, and designed a c
 - [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)
 - [Frontend Masters — API Design in Node.js, v5](https://frontendmasters.com/courses/api-design-nodejs-v5/) — this course was a major help in designing the backend's API architecture
 - [Best practices of using WebSockets for real-time communication (Medium)](https://medium.com/@tusharkumardev/best-practices-of-using-websockets-real-time-communication-in-react-native-projects-89e749ba2e3f) — used as a reference for the real-time/WebSocket implementation
+- [Arduino official documentation](https://docs.arduino.cc) — main reference for the `flemme.ai` USB controller firmware (Pro Micro / ATmega32U4, USB HID)
+- [Arduino forum](https://forum.arduino.cc) and related community forums — used throughout the hardware module for wiring, encoder handling, and I2C troubleshooting
+- **LabElec of 42Paris** and the **42Chips** student association — primary source of hardware knowledge, tools, and fabrication support (PCB design/etching, 3D printing) for the `flemme.ai` controller
 
 ### AI usage
 
-Claude (Anthropic's AI assistant) was used throughout backend development as a learning and debugging aid, in particular for: designing the Express/TypeScript backend architecture, resolving Drizzle ORM migration and version-compatibility issues, debugging an Express routing conflict, implementing JWT authentication, bcrypt hashing, and TOTP-based 2FA, troubleshooting Docker/Podman configuration, and handling the response to a leaked-secrets security incident (rewriting git history with `git filter-repo`). StackOverflow was also used as a complementary resource for debugging across the project.
+Claude (Anthropic's AI assistant) was used throughout backend development as a learning and debugging aid, in particular for: resolving Drizzle ORM migration and version-compatibility issues, debugging an Express routing conflict, troubleshooting Docker/Podman configuration. StackOverflow was also used as a complementary resource for debugging across the project. For the `flemme.ai` hardware module, Claude was additionally used to help debug both the firmware/electronics side and the software integration, as well as to help write part of the module's documentation.
