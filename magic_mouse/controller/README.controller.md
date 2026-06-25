@@ -28,7 +28,6 @@ The OLED and the MPU-6050 share the I2C bus (SDA/SCL, pins 2/3) at different add
 ## How it works
 
 ### Drawing
-
 The controller presents itself to the computer as a **standard USB HID mouse** — no driver, no companion app needed. Any web drawing tool that responds to mouse events works out of the box.
 
 - Rotating encoder X sends `Mouse.move(dx, 0)` — moves the cursor horizontally
@@ -36,11 +35,9 @@ The controller presents itself to the computer as a **standard USB HID mouse** �
 - Flipping the toggle switch sends `Mouse.press(MOUSE_LEFT)` or `Mouse.release()`, toggling the drawing stroke on and off
 
 ### Shake to clear
-
 The MPU-6050 is polled at 100 Hz. The firmware counts **direction reversals** in the acceleration signal above a threshold (≈ 0.5 g). A deliberate shake — at least 6 reversals sustained over 1.5 seconds — triggers a **Ctrl+A → Delete** keyboard sequence, clearing the canvas. A 3-second cooldown prevents accidental re-triggers. This requires the web app to support select-all + delete (Excalidraw and tldraw both do).
 
 ### OLED face
-
 The display refreshes at ~30 fps and shows one of two states:
 
 **Normal face** — a circular face with white eyes and filled pupils. The pupils track the direction of the last cursor movement using a smoothed velocity vector that decays back to center when idle (~300 ms). The face blinks at random intervals (every 2–6 seconds).
@@ -68,7 +65,6 @@ GND         ───── all grounds
 ```
 
 Wiring was helped with the design and etching of a PCB, the case for the controller was designed and printed with Bambu suite.
-
 All was done and manufactured at the LabElec of 42Paris
 
 ---
@@ -77,5 +73,5 @@ All was done and manufactured at the LabElec of 42Paris
 
 - First and main source of both knowledge and infrastructure was the **LabElec of 42Paris** and the support of the **42Chips** association's members.
 - As we use a clone of the Arduino Leonardo MCU, https://docs.arduino.cc was our main source of official documentation.
-- In the same way, https://forum.arduino.cc and similar forums helped a great deal at every steps and layer of this part of the project.
-- AI models such as Claude were used to debug both hardware and software, as well as to help write part of this document.
+- In the same way, https://forum.arduino.cc and similar forums helped a great deal at every stepts and layer of this part of the project.
+- IA models such as Claude were used to debug both hardware and software, as well as to help write part of this document.
