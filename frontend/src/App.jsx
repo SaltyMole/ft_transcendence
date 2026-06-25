@@ -33,7 +33,12 @@ function App() {
 	useEffect(() => {
 		const validateAuth = async () => {
 			try {
-				const response = await fetch('/api/users/profile', { credentials: 'include', });
+				if (!localStorage.getItem('token')) {
+					setIsLoggedIn(false);
+					setAuthReady(true);
+					return;
+				}
+				const response = await fetch('/api/users/caca', { credentials: 'include', });
 				if (response.ok) {
 					setIsLoggedIn(true);
 				} else {
@@ -68,10 +73,10 @@ function App() {
 				<Routes>
 					<Route path="/Login" element={<Login setIsLoggedIn={setIsLoggedIn}/>}/>
 					<Route path="/Register" element={<Register />}/>
-					<Route path="/" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Home /> </ProtectedRoute>}  />
-					<Route path="/Game" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Game /> </ProtectedRoute>} />
 					<Route path="/PrivatePolicy" element={<PrivatePolicy />} />
 					<Route path="/TermsOfService" element={<TermsOfService />}/> 
+					<Route path="/" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Home /> </ProtectedRoute>}  />
+					<Route path="/Game" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Game /> </ProtectedRoute>} />
 					<Route path="/Drawing/:gameID" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Drawing /> </ProtectedRoute>} />
 					<Route path="/Matchmaking/:gameID" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Matchmaking /> </ProtectedRoute>}/>
 					<Route path="/Lobby/:gameID" element={<ProtectedRoute isLoggedIn={isLoggedIn}> <Lobby /> </ProtectedRoute>} />
