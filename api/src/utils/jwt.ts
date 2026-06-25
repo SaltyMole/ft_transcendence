@@ -25,11 +25,6 @@ export const generateToken = async (payload: JwtPayload): Promise<string> => {
 }
 
 export const verifyToken = async (token: string): Promise<JwtPayload> => {
-	// // DEV FAKE BEGIN
-	// if (token === 'connected') {
-	// 	return { id: '74f72441-1393-4743-855f-d79c26e5396d', email: 'dev@dev.com', username: 'dev' }
-	// }
-	// // DEV FAKE END
 
   const secretKey = createSecretKey(env.JWT_SECRET, 'utf-8')
   const { payload } = await jwtVerify(token, secretKey)

@@ -20,7 +20,10 @@ function PrivatePolicy()
 			<p>• OAuth tokens<br/>
 			• Two-factor authentication data (if enabled)<br/><br/></p>
 			<p className= "font-bold pt-5">Usage data<br/><br/></p>
-			<p>(to be completed)<br/><br/></p>
+			<p>• Game history and statistics (wins, losses, scores)<br/>
+			• Connection timestamps and session duration<br/>
+			• IP address (for security and abuse prevention)<br/>
+			• Browser and device information<br/><br/></p>
 			<p className= "font-bold pt-5">Communications<br/><br/></p>
 			<p>• Messages sent via chat <br/><br/></p>
 			<h2 className="text-4xl font-bold" >3. Use of Data</h2>
@@ -36,8 +39,13 @@ function PrivatePolicy()
 			• Authentication providers (Google API)<br/>
 			• Infrastructure services strictly necessary for the application to function<br/><br/></p>
 			<h2 className="text-4xl font-bold" >5. Storage and Security </h2>
-			<p>We implement security measures, including:<br/>
-			(to be completed)<br/>
+			<p>We implement security measures, including:<br/><br/>
+			• HTTPS encryption for all data in transit<br/>
+			• JWT tokens for session management, with short expiration times<br/>
+			• Secure HttpOnly cookies to prevent client-side access<br/>
+			• Two-factor authentication (2FA) option for user accounts<br/>
+			• Input validation and sanitization to prevent injection attacks<br/>
+			• Secure HTTP headers (CSP, X-Frame-Options, etc.)<br/><br/>
 			Despite these measures, no system is completely invulnerable.<br/><br/></p>
 			
 			<h2 className="text-4xl font-bold" >6. Data Retention </h2>

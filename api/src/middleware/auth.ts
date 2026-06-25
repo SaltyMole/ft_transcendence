@@ -12,12 +12,8 @@ export const authenticateToken = async (
   next: NextFunction
 ) => {
   try {
-
-	// DEV FAKE BEGIN
+    
     const token = req.cookies?.token
-	// const token = req.cookies?.token ?? req.headers.authorization?.split(' ')[1]
-	// DEV FAKE END
-
     if (!token) {
       return res.status(401).json({ error: 'Access token required' })
     }
