@@ -59,9 +59,6 @@ def _model_uses_cuda(model: Any) -> bool:
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-# ==========================================
-# MODEL UTILITIES
-# ==========================================
 def load_model(model_name: str, device: str) -> Any:
     if device == "cuda":
         try:
@@ -240,10 +237,6 @@ async def persist_outcome(game_id: str, story: str, winner_user_id: str) -> None
                 body = await response.text()
                 raise RuntimeError(f"Failed to persist outcome: {response.status} {body}")
 
-
-# ==========================================
-# FASTAPI & WEBSOCKET SETUP
-# ==========================================
 app = FastAPI()
 _filter_warnings()
 os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
@@ -267,10 +260,6 @@ if REQUIRE_CUDA and model_device != "cuda":
     raise RuntimeError(f"CUDA is required but the model loaded on {model_device}")
 print(f"Server is ready! Model running on: {model_device}")
 
-
-# ==========================================
-# MULTIPLAYER BROADCAST MANAGER
-# ==========================================
 class ConnectionManager:
     def __init__(self):
         self.active_connections: dict[str, list[WebSocket]] = {}
