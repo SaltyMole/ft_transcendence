@@ -38,7 +38,7 @@ function App() {
 					setAuthReady(true);
 					return;
 				}
-				const response = await fetch('/api/users/caca', { credentials: 'include', });
+				const response = await fetch('/api/users/profile', { credentials: 'include', });
 				if (response.ok) {
 					setIsLoggedIn(true);
 				} else {
